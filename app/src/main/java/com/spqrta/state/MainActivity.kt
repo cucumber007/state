@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalUnitApi::class, ExperimentalMaterialApi::class)
+@file:Suppress("USELESS_CAST")
 
 package com.spqrta.state
 
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,9 +20,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.TextUnitType.Companion.Sp
 import com.spqrta.state.app.App
+import com.spqrta.state.app.state.*
+import com.spqrta.state.app.view_state.ButtonForm
+import com.spqrta.state.app.view_state.ViewState
+import com.spqrta.state.ui.control.Button
+import com.spqrta.state.ui.control.Control
+import com.spqrta.state.ui.control.Main
+import com.spqrta.state.ui.control.Ordinal
 import com.spqrta.state.ui.theme.AppTheme
+import com.spqrta.state.ui.theme.Grey
+import com.spqrta.state.ui.theme.Teal200
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +41,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
 @Composable
 fun AppView() {
     val state = App.state.collectAsState().value
@@ -56,61 +65,88 @@ fun AppView() {
                     fontSize = TextUnit(20f, TextUnitType.Sp),
                     fontWeight = FontWeight.Bold
                 )
-                StateView()
-                ControlsView()
+                MainView(state)
             }
         }
     }
 }
 
-@Preview
 @Composable
-fun StateView() {
-    Text(
-        text = "State",
-    )
+fun MainView(state: AppState) {
+    FrameView(AppState.opticViewState.getStrict(state))
 }
 
-@Preview
 @Composable
-fun ControlsView() {
-    Column {
-        Button(
-            onClick = {
-            },
-            Modifier
-                .padding(
-                    top = Dp(16f),
-                    bottom = Dp(16f)
-                )
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text(text = "Regenerate")
+fun FrameView(viewState: ViewState) {
+    Box(Modifier.fillMaxSize()) {
+        Column {
+            Box(
+                Modifier
+                    .weight(1f)
+                    .padding(top = Dp(8f))
+                    .fillMaxSize()
+            ) {
+                ViewStateView(viewState)
+            }
+            ControlsView(ViewState.opticControls.getStrict(viewState))
         }
     }
 }
 
-//@Composable
-//fun ColumnScope.CardView(card: Card) {
-//    return Surface(
-//        onClick = { App.view.onCardClicked(card) },
-//        modifier = Modifier
-//            .padding(bottom = Dp(18f))
-//            .fillMaxWidth()
-//            .align(Alignment.CenterHorizontally)
-//    ) {
-//        Text(
-//            text = if (card.hidden) "Press to reveal" else card.text,
-//            fontSize = TextUnit(20f, Sp),
-//            textAlign = TextAlign.Center,
-//            color = if (card.hidden) Color.DarkGray else Color.Black,
-//            fontWeight = if (card.hidden) {
-//                FontWeight.Light
-//            } else if (card.bold) {
-//                FontWeight.Bold
-//            } else {
-//                FontWeight.Normal
-//            }
-//        )
-//    }
-//}
+@Composable
+fun ViewStateView(viewState: ViewState) {
+    when (viewState) {
+        is ButtonForm -> {
+            Box(Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier
+                        .align(alignment = Alignment.Center),
+                    text = viewState.text,
+                    fontSize = TextUnit(32f, TextUnitType.Sp),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    } as Any?
+}
+
+@Composable
+fun ControlsView(controls: List<Control>) {
+    Column {
+        controls.forEach { control ->
+            when (control) {
+                is Button -> {
+                    Button(
+                        onClick = {
+                            App.handleAction(control.action)
+                        },
+                        modifier = Modifier
+                            .padding(
+                                top = Dp(0f),
+                                bottom = Dp(0f)
+                            )
+                            .align(Alignment.CenterHorizontally),
+                        colors = when(control.style) {
+                            Main -> {
+                                ButtonDefaults.buttonColors(
+                                    backgroundColor = Teal200,
+                                    contentColor = Color.Black
+                                )
+                            }
+                            Ordinal -> {
+                                ButtonDefaults.buttonColors(
+                                    backgroundColor = Grey,
+                                    contentColor = Color.Black
+                                )
+                            }
+                        }
+                    ) {
+                        Box(Modifier.fillMaxWidth()) {
+                            Text(textAlign = TextAlign.Center, text = control.text)
+                        }
+                    }
+                }
+            } as Any?
+        }
+    }
+}
