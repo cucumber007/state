@@ -1,9 +1,10 @@
-@file:OptIn(ExperimentalUnitApi::class, ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalUnitApi::class, ExperimentalMaterialApi::class, ExperimentalUnitApi::class)
 @file:Suppress("USELESS_CAST")
 
 package com.spqrta.state
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -12,10 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
 import com.spqrta.state.app.state.*
 import com.spqrta.state.app.view_state.ButtonForm
+import com.spqrta.state.app.view_state.StubView
 import com.spqrta.state.app.view_state.ViewState
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
@@ -73,7 +73,7 @@ fun AppView() {
 
 @Composable
 fun MainView(state: AppState) {
-    FrameView(AppState.opticViewState.getStrict(state))
+    FrameView(AppStateOptics.optViewState.getStrict(state))
 }
 
 @Composable
@@ -88,7 +88,7 @@ fun FrameView(viewState: ViewState) {
             ) {
                 ViewStateView(viewState)
             }
-            ControlsView(ViewState.opticControls.getStrict(viewState))
+            ControlsView(ViewState.optControls.getStrict(viewState))
         }
     }
 }
@@ -106,6 +106,9 @@ fun ViewStateView(viewState: ViewState) {
                     textAlign = TextAlign.Center,
                 )
             }
+        }
+        StubView -> {
+            Text("")
         }
     } as Any?
 }

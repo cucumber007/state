@@ -5,48 +5,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
-open class ReducerResult<S, E>(val newState: S, val effects: Set<E>) {
-    constructor(newState: S) : this(newState, setOf())
-
-    fun withAdditionalEffects(vararg effects: E): ReducerResult<S, E> {
-        return ReducerResult(newState, this.effects + effects.toSet())
-    }
-
-    fun withAdditionalEffects(effects: Set<E>): ReducerResult<S, E> {
-        return ReducerResult(newState, this.effects + effects)
-    }
-
-    fun withAdditionalEffects(effects: (S) -> Set<E>): ReducerResult<S, E> {
-        return ReducerResult(newState, this.effects + effects.invoke(this.newState))
-    }
-
-    fun <N> withState(state: (S) -> N): ReducerResult<N, out E> {
-        return ReducerResult(state.invoke(this.newState), this.effects)
-    }
-
-    fun <NE> withEffects(state: (Set<E>) -> Set<NE>): ReducerResult<S, NE> {
-        return ReducerResult(this.newState, state.invoke(effects))
-    }
-
-    fun toNullable(): ReducerResult<S?, out E> {
-        return this.withState { it as S? }
-    }
-
-    fun <OS, NS> mergeResult(
-        resultFunction: (S) -> ReducerResult<OS, out E>,
-        merge: (state1: S, state2: OS) -> NS
-    ): ReducerResult<NS, E> {
-        val result = resultFunction.invoke(newState)
-        return ReducerResult(
-            merge.invoke(newState, result.newState),
-            effects + result.effects
-        )
-    }
-
+open class ReducerResult<State, Effect>(val newState: State, val effects: Set<Effect>) {
     override fun toString(): String {
         return "${javaClass.simpleName}(newState=$newState, effects=$effects)"
+    }
+
+    fun <S1> flatMap(mapFunction: (ReducerResult<State, Effect>) -> ReducerResult<S1, Effect>): ReducerResult<S1, Effect> {
+        return mapFunction(this)
+    }
+
+    fun <NewState> flatMapState(mapFunction: (ReducerResult<State, Effect>) -> NewState): ReducerResult<NewState, Effect> {
+        return ReducerResult(mapFunction(this), this.effects)
+    }
+
+    fun <NewEffect> flatMapEffects(mapFunction: (ReducerResult<State, Effect>) -> Set<NewEffect>): ReducerResult<State, NewEffect> {
+        return ReducerResult(this.newState, mapFunction(this))
     }
 }
 

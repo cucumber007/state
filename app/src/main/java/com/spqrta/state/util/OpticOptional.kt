@@ -33,13 +33,9 @@ fun <A : Any, S : Any, E : Any, BigS : Any> wrap(
     // sends action to given reducer if the given sub state is present in global state
     // (or else does nothing)
     return optic.get(state)?.let { newState ->
-        reducer.invoke(action, newState).withState {
-            optic.set(state, it).let {
-                it
-            }
+        reducer.invoke(action, newState).flatMapState {
+            optic.set(state, it.newState)
         }
-    }.let {
-        it
     } ?: state.withEffects()
 }
 
