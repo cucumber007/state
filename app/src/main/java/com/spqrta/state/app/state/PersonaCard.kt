@@ -52,10 +52,10 @@ object UndefinedPersona : PersonaCard() {
 object Productive : PersonaCard()
 
 @Serializable
-object Depressive : PersonaCard()
+object Depressed : PersonaCard()
 
 @Serializable
 object Unstable : PersonaCard()
 
 @Serializable
-object Explosive : PersonaCard()
+object Irritated : PersonaCard()

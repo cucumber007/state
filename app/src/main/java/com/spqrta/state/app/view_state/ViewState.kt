@@ -19,8 +19,8 @@ sealed class ViewState {
                 UndefinedPersona -> {
                     ButtonForm("How are you feeling now?", listOf(
                         Productive,
-                        Depressive,
-                        Explosive,
+                        Depressed,
+                        Irritated,
                         Unstable
                     ).map {
                         Button(
@@ -30,7 +30,7 @@ sealed class ViewState {
                         )
                     })
                 }
-                Depressive -> {
+                Depressed -> {
                     ButtonForm(text = state.persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
@@ -38,7 +38,7 @@ sealed class ViewState {
                         )
                     ))
                 }
-                Explosive -> {
+                Irritated -> {
                     ButtonForm(text = state.persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
