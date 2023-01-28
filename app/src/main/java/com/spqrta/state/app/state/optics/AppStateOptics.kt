@@ -1,5 +1,8 @@
-package com.spqrta.state.app.state
+package com.spqrta.state.app.state.optics
 
+import com.spqrta.state.app.state.AppNotInitialized
+import com.spqrta.state.app.state.AppReady
+import com.spqrta.state.app.state.AppState
 import com.spqrta.state.app.view_state.ViewState
 import com.spqrta.state.util.OpticGetStrict
 import com.spqrta.state.util.OpticOptional

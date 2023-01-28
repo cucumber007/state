@@ -16,6 +16,13 @@ sealed class Res<T> {
         }
     }
 
+    fun withFallback(value: T): T {
+        return when (this) {
+            is Success -> this.success
+            is Failure -> value
+        }
+    }
+
     fun <E> flatMapSuccess(mapFunction: (T) -> Res<E>): Res<E> {
         return when (this) {
             is Success -> mapFunction(this.success)

@@ -1,4 +1,4 @@
-package com.spqrta.state.util
+package com.spqrta.state.util.state_machine
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -6,26 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-open class ReducerResult<State, Effect>(val newState: State, val effects: Set<Effect>) {
-    override fun toString(): String {
-        return "${javaClass.simpleName}(newState=$newState, effects=$effects)"
-    }
-
-    fun <S1> flatMap(mapFunction: (ReducerResult<State, Effect>) -> ReducerResult<S1, Effect>): ReducerResult<S1, Effect> {
-        return mapFunction(this)
-    }
-
-    fun <NewState> flatMapState(mapFunction: (ReducerResult<State, Effect>) -> NewState): ReducerResult<NewState, Effect> {
-        return ReducerResult(mapFunction(this), this.effects)
-    }
-
-    fun <NewEffect> flatMapEffects(mapFunction: (ReducerResult<State, Effect>) -> Set<NewEffect>): ReducerResult<State, NewEffect> {
-        return ReducerResult(this.newState, mapFunction(this))
-    }
-}
-
-
-//todo dedicated package
 class StateMachine<A, S, E>(
     private val tag: String,
     initialState: S,

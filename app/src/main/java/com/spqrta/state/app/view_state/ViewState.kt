@@ -15,7 +15,8 @@ sealed class ViewState {
         }
 
         private fun getViewState(state: AppReady): ViewState {
-            return when (state.persona) {
+            val persona = state.dailyState.persona
+            return when (persona) {
                 UndefinedPersona -> {
                     ButtonForm("How are you feeling now?", listOf(
                         Productive,
@@ -31,7 +32,7 @@ sealed class ViewState {
                     })
                 }
                 Depressed -> {
-                    ButtonForm(text = state.persona.toString(), buttons = listOf(
+                    ButtonForm(text = persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
                             action = PersonaCard.GetBackAction
@@ -39,7 +40,7 @@ sealed class ViewState {
                     ))
                 }
                 Irritated -> {
-                    ButtonForm(text = state.persona.toString(), buttons = listOf(
+                    ButtonForm(text = persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
                             action = PersonaCard.GetBackAction
@@ -47,7 +48,7 @@ sealed class ViewState {
                     ))
                 }
                 Productive -> {
-                    ButtonForm(text = state.persona.toString(), buttons = listOf(
+                    ButtonForm(text = persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
                             action = PersonaCard.GetBackAction
@@ -55,7 +56,7 @@ sealed class ViewState {
                     ))
                 }
                 Unstable -> {
-                    ButtonForm(text = state.persona.toString(), buttons = listOf(
+                    ButtonForm(text = persona.toString(), buttons = listOf(
                         Button(
                             text = PersonaCard.I_AM_BACK,
                             action = PersonaCard.GetBackAction

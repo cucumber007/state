@@ -1,6 +1,7 @@
-package com.spqrta.state.util
+package com.spqrta.state.util.state_machine
 
 import com.spqrta.state.app.AppEffect
+import com.spqrta.state.util.IllegalActionException
 
 
 fun <A : Any, S : Any, E : Any> illegalAction(

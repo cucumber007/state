@@ -3,14 +3,11 @@ package com.spqrta
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.spqrta.state.MainView
-import com.spqrta.state.app.state.AppReady
-import com.spqrta.state.app.state.AppState
-import com.spqrta.state.app.state.Depressed
-import com.spqrta.state.app.state.UndefinedPersona
+import com.spqrta.state.app.state.*
 
 sealed class PreviewState(val state: AppState)
-object UndefinedPersonaPreview: PreviewState(AppReady(UndefinedPersona))
-object DefinedPersonaPreview: PreviewState(AppReady(Depressed))
+object UndefinedPersonaPreview: PreviewState(AppReady(DailyState(UndefinedPersona)))
+object DefinedPersonaPreview: PreviewState(AppReady(DailyState(Depressed)))
 
 @Preview
 @Composable

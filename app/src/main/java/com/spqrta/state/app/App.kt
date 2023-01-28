@@ -3,14 +3,10 @@ package com.spqrta.state.app
 import com.spqrta.state.AppScope
 import com.spqrta.state.app.state.*
 import com.spqrta.state.use_case.UseCases
-import com.spqrta.state.util.ReducerResult
-import com.spqrta.state.util.StateMachine
-import com.spqrta.state.util.illegalAction
-import com.spqrta.state.util.withEffects
+import com.spqrta.state.util.state_machine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
@@ -47,7 +43,12 @@ object App {
                         state.withEffects(LoadStateEffect)
                     }
                     is StateLoadedAction -> {
-                        action.state.withEffects()
+                        chain(action.state.withEffects()) {
+                            AppReady.reduce(OnResumeAction(), it)
+                        }
+                    }
+                    is OnResumeAction -> {
+                        state.withEffects()
                     }
                     else -> illegalAction(action, state)
                 }
@@ -66,6 +67,9 @@ object App {
                     }
                     is AppErrorAction -> {
                         throw action.exception
+                    }
+                    is OnResumeAction -> {
+                        AppReady.reduce(action, state)
                     }
                 }.flatMapEffects {
                     it.effects + SaveStateEffect(it.newState)

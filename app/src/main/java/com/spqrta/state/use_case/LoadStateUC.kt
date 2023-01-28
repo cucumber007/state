@@ -7,6 +7,7 @@ import com.spqrta.state.app.state.AppReady
 import com.spqrta.state.app.state.StateLoadedAction
 import com.spqrta.state.util.Res
 import com.spqrta.state.util.ResUnit
+import com.spqrta.state.util.collections.asList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 
@@ -17,9 +18,9 @@ class LoadStateUC(
 
     fun flow(): Flow<List<AppAction>> {
         return {
-            appScope.preferencesRepository.state.load().mapSuccess {
+            appScope.preferencesRepository.state.load().withFallback(AppReady.INITIAL).let {
                 it ?: AppReady.INITIAL
-            }.toActions { StateLoadedAction(it) }
+            }.let { StateLoadedAction(it).asList() }
         }.asFlow()
     }
 

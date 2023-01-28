@@ -4,7 +4,6 @@
 package com.spqrta.state
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
 import com.spqrta.state.app.state.*
+import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.app.view_state.ButtonForm
 import com.spqrta.state.app.view_state.StubView
 import com.spqrta.state.app.view_state.ViewState
@@ -31,6 +31,7 @@ import com.spqrta.state.ui.control.Ordinal
 import com.spqrta.state.ui.theme.AppTheme
 import com.spqrta.state.ui.theme.Grey
 import com.spqrta.state.ui.theme.Teal200
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppView()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.handleAction(OnResumeAction())
     }
 }
 
