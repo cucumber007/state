@@ -1,6 +1,6 @@
 package com.spqrta.state.ui.control
 
-import com.spqrta.state.app.state.AppAction
+import com.spqrta.state.app.action.AppAction
 
 sealed class Control
 data class Button(

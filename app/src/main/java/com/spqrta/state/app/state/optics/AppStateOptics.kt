@@ -1,14 +1,14 @@
 package com.spqrta.state.app.state.optics
 
-import com.spqrta.state.app.state.AppNotInitialized
-import com.spqrta.state.app.state.AppReady
-import com.spqrta.state.app.state.AppState
+import com.spqrta.state.app.features.core.AppNotInitialized
+import com.spqrta.state.app.features.core.AppReady
+import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.view_state.ViewState
-import com.spqrta.state.util.OpticGetStrict
-import com.spqrta.state.util.OpticOptional
+import com.spqrta.state.util.optics.OpticGetStrict
+import com.spqrta.state.util.optics.OpticOptional
 
 object AppStateOptics {
-    private val optInitialized = object: OpticOptional<AppState, AppReady> {
+    val optReady = object: OpticOptional<AppState, AppReady> {
         override fun get(state: AppState): AppReady? {
             return when(state) {
                 is AppReady -> state

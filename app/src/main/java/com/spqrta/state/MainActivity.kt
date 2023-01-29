@@ -19,13 +19,15 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
-import com.spqrta.state.app.state.OnResumeAction
+import com.spqrta.state.app.action.OnResumeAction
+import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.state.*
 import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.app.view_state.ButtonForm
 import com.spqrta.state.app.view_state.StubView
+import com.spqrta.state.app.view_state.TimeredPromptForm
 import com.spqrta.state.app.view_state.ViewState
-import com.spqrta.state.ui.Timer
+import com.spqrta.state.ui.TimerView
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
 import com.spqrta.state.ui.control.Main
@@ -119,6 +121,12 @@ fun ViewStateView(viewState: ViewState) {
         StubView -> {
             Text("")
         }
+        is TimeredPromptForm -> {
+            Column {
+                Text(viewState.text)
+                TimerView(view = viewState.timerView)
+            }
+        }
     } as Any?
 }
 
@@ -164,7 +172,7 @@ fun ControlsView(controls: List<Control>) {
 }
 
 @Composable
-fun TimerView(view: Timer) {
+fun TimerView(view: TimerView) {
     Text(
         modifier = Modifier.padding(Dp(16f)),
         text = view.stringValue

@@ -8,7 +8,7 @@ fun <A : Any, S : Any, E : Any> illegalAction(
     action: A,
     state: S,
     makeEffect: (IllegalActionException) -> E
-): ReducerResult<S, E> {
+): Reduced<S, E> {
     return IllegalActionException(action, state).let {
 //        if (MyApplication.DEBUG_MODE) {
         if (true) {
@@ -21,7 +21,7 @@ fun <A : Any, S : Any, E : Any> illegalAction(
     }
 }
 
-fun <A : Any, S : Any> illegalAction(action: A, state: S): ReducerResult<out S, out AppEffect> {
+fun <A : Any, S : Any> illegalAction(action: A, state: S): Reduced<out S, out AppEffect> {
     return IllegalActionException(action, state).let {
 //        if (MyApplication.DEBUG_MODE) {
         if (true) {

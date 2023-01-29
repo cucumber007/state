@@ -1,9 +1,9 @@
 package com.spqrta.state.use_case
 
 import com.spqrta.state.AppScope
-import com.spqrta.state.app.state.AppAction
-import com.spqrta.state.app.state.AppReady
-import com.spqrta.state.app.state.StateLoadedAction
+import com.spqrta.state.app.action.AppAction
+import com.spqrta.state.app.action.StateLoadedAction
+import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.util.collections.asList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

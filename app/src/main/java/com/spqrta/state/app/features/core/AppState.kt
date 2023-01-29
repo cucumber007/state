@@ -1,16 +1,28 @@
-package com.spqrta.state.app.state
+package com.spqrta.state.app.features.core
 
-import com.spqrta.state.app.AppEffect
+import com.spqrta.state.app.*
+import com.spqrta.state.app.action.OnResumeAction
+import com.spqrta.state.app.features.daily.clock_mode.ClockMode
+import com.spqrta.state.app.features.daily.clock_mode.Update
+import com.spqrta.state.app.features.daily.DailyState
+import com.spqrta.state.app.features.daily.personas.*
+import com.spqrta.state.app.features.daily.timers.Timers
+import com.spqrta.state.app.features.stats.Stats
 import com.spqrta.state.app.state.optics.AppReadyOptics
+import com.spqrta.state.app.state.optics.AppReadyOptics.optDailyState
+import com.spqrta.state.app.state.optics.AppReadyOptics.optStats
 import com.spqrta.state.util.*
-import com.spqrta.state.util.state_machine.ReducerResult
+import com.spqrta.state.util.optics.*
+import com.spqrta.state.util.state_machine.Reduced
 import com.spqrta.state.util.state_machine.withEffects
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-sealed class AppState
+sealed class AppState {
+    override fun toString(): String = javaClass.simpleName
+}
 
 object AppNotInitialized : AppState()
 
@@ -23,17 +35,12 @@ data class AppReady(
     val timers: Timers = Timers(),
     val stats: Stats = Stats()
 ) : AppState() {
-    companion object {
-        val optTimers = AppReadyOptics.optTimers
-        val optClockMode = AppReadyOptics.optClockMode
-        private val optStats = AppReadyOptics.optStats
-        val optPersona = AppReadyOptics.optPersona
-        private val optDailyState = AppReadyOptics.optDailyState
 
+    companion object {
         val INITIAL = AppReady(DailyState.INITIAL)
 
-        fun reduce(action: OnResumeAction, state: AppReady): ReducerResult<out AppReady, out AppEffect> {
-            return wrap(state, AppReady.optDailyState, AppReady.optStats) { oldDailyState, oldStats ->
+        fun reduce(action: OnResumeAction, state: AppReady): Reduced<out AppReady, out AppEffect> {
+            return wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
                 if (action.datetime.isAfter(LocalDateTime.of(oldDailyState.date, LocalTime.of(5, 0)))) {
                     (DailyState.INITIAL to updateStats(oldStats, oldDailyState)).withEffects()
                 } else {

@@ -10,7 +10,7 @@ class StateMachine<A, S, E>(
     private val tag: String,
     initialState: S,
     private val scope: CoroutineScope,
-    private val reduce: (state: S, action: A) -> ReducerResult<out S, out E>,
+    private val reduce: Reducer<A, S, E>,
     private val applyEffects: (effects: Set<E>) -> Unit,
     // effects that are need to be executed to move to certain state
     // in addition to ones emitted by reduce()
@@ -22,7 +22,7 @@ class StateMachine<A, S, E>(
 
     fun handleAction(action: A) {
         scope.launch {
-            reduce(_state.value, action).let {
+            reduce(action, _state.value).let {
                 _state.value = it.newState
                 val effects = stateChangeEffects.invoke(it.newState) + it.effects
                 applyEffects(effects)
@@ -49,15 +49,15 @@ class StateMachine<A, S, E>(
     }
 }
 
-fun <S : Any, E : Any> S.withEffects(vararg effects: E): ReducerResult<S, E> {
-    return ReducerResult(
+fun <S : Any, E : Any> S.withEffects(vararg effects: E): Reduced<S, E> {
+    return Reduced(
         this,
         effects.toMutableSet()
     )
 }
 
-fun <S : Any, E : Any> S.withEffects(effects: Set<E>): ReducerResult<S, E> {
-    return ReducerResult(
+fun <S : Any, E : Any> S.withEffects(effects: Set<E>): Reduced<S, E> {
+    return Reduced(
         this,
         effects
     )

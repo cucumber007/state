@@ -1,4 +1,4 @@
-package com.spqrta.state.app.state
+package com.spqrta.state.app.features.stats
 
 import kotlinx.serialization.Serializable
 

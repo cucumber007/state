@@ -3,9 +3,18 @@
 package com.spqrta.state.app
 
 import com.spqrta.state.AppScope
+import com.spqrta.state.app.action.AppAction
+import com.spqrta.state.app.action.PromptAction
+import com.spqrta.state.app.features.core.AppNotInitialized
+import com.spqrta.state.app.features.core.AppState
+import com.spqrta.state.app.features.core.Core
+import com.spqrta.state.app.features.daily.DailyState
 import com.spqrta.state.app.state.*
+import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.use_case.UseCases
 import com.spqrta.state.util.collections.asList
+import com.spqrta.state.util.optics.OpticGet
+import com.spqrta.state.util.optics.identityGet
 import com.spqrta.state.util.state_machine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -22,11 +31,17 @@ object App {
     )
     private val effectsScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
+    private val reducer: Reducer<AppAction, AppState, AppEffect> =
+        Core.reducer + widen(
+            identityGet(),
+            AppStateOptics.optReady,
+            DailyState.reducer
+        )
     private val stateMachine = StateMachine(
         javaClass.simpleName,
         AppNotInitialized,
         actionsScope,
-        this::reduce,
+        reducer,
         this::applyEffects
     )
     val state = stateMachine.state
@@ -37,69 +52,6 @@ object App {
 
     fun handleAction(action: AppAction) {
         stateMachine.handleAction(action)
-    }
-
-    private fun reduce(
-        state: AppState,
-        action: AppAction
-    ): ReducerResult<out AppState, out AppEffect> {
-        return when (state) {
-            AppNotInitialized -> {
-                when (action) {
-                    InitAppAction -> {
-                        state.withEffects(LoadStateEffect)
-                    }
-                    is StateLoadedAction -> {
-                        chain(action.state.withEffects(
-                            ActionEffect(Timers.StartTimer(TestTimer))
-                        )) {
-                            AppReady.reduce(OnResumeAction(), it)
-                        }
-                    }
-                    is OnResumeAction -> {
-                        state.withEffects()
-                    }
-                    else -> illegalAction(action, state)
-                }
-            }
-            is AppReady -> {
-                when (action) {
-                    is StateLoadedAction,
-                    InitAppAction -> {
-                        illegalAction(action, state)
-                    }
-                    is UndefinedPersona.DefinePersonaAction -> {
-                        UndefinedPersona.reduce(action, state)
-                    }
-                    is PersonaCard.GetBackAction -> {
-                        PersonaCard.reduce(action, state)
-                    }
-                    is AppErrorAction -> {
-                        throw action.exception
-                    }
-                    is OnResumeAction -> {
-                        AppReady.reduce(action, state)
-                    }
-                    is ClockMode.ClockAction -> {
-                        chain(
-                            ClockMode.reduce(action, state)
-                        ) {
-                            if(action is Timers.TimerAction) {
-                                Timers.reduce(action, state)
-                            } else {
-                                it.withEffects()
-                            }
-                        }
-
-                    }
-                    is Timers.TimerAction -> {
-                        Timers.reduce(action, state)
-                    }
-                }.flatMapEffects {
-                    it.effects + SaveStateEffect(it.newState)
-                }
-            }
-        }
     }
 
     private fun applyEffects(effects: Set<AppEffect>) {
@@ -119,9 +71,35 @@ object App {
                         is ActionEffect -> {
                             { effect.action.asList() }.asFlow()
                         }
+                        is AddPromptEffect -> {
+                            { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
+                        }
                     }.collect { actions -> actions.forEach(::handleAction) }
                 }
             }
         }
     }
+}
+
+fun <
+        State : Any,
+        Effect : Any,
+        BigAction : Any,
+        A1 : Any
+        >
+        dispatchChain(
+    action: BigAction,
+    state: State,
+    pair1: Pair<OpticGet<BigAction, A1>, (A1, State) -> Reduced<State, Effect>>,
+): Reduced<State, Effect> {
+    var result: Reduced<State, Effect> = state.withEffects()
+    listOf(pair1).forEach { pair ->
+        val optic = pair.first
+        val reducer = pair.second
+        val previousState = result.newState
+        result = optic.get(action)?.let {
+            reducer(it, previousState)
+        } ?: previousState.withEffects()
+    }
+    return result
 }

@@ -2,11 +2,9 @@ package com.spqrta.state.external.preferences
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.spqrta.state.app.state.AppReady
-import com.spqrta.state.app.state.AppState
+import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.util.Res
 import com.spqrta.state.util.asSuccess
-import com.spqrta.state.util.toResult
 import com.squareup.moshi.Moshi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString

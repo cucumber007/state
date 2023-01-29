@@ -2,8 +2,8 @@
 
 package com.spqrta.state.util
 
-import com.spqrta.state.app.state.AppAction
-import com.spqrta.state.app.state.AppErrorAction
+import com.spqrta.state.app.action.AppAction
+import com.spqrta.state.app.action.AppErrorAction
 import com.spqrta.state.util.collections.asList
 
 typealias ResUnit = Res<Unit>
