@@ -16,12 +16,13 @@ sealed class PersonaCard {
     object GetBackAction : Action()
 
     companion object {
-        fun reduce(
-            action: PersonaCardAction,
-            state: AppReady
-        ): ReducerResult<out AppReady, out AppEffect> {
-            return wrap(state, AppReadyOptics.optPersona) { oldPersona ->
-                UndefinedPersona.withEffects()
+        fun reduce(action: PersonaCardAction, state: AppReady): ReducerResult<out AppReady, out AppEffect> {
+            return when(action) {
+                GetBackAction -> {
+                    wrap(state, AppReadyOptics.optPersona) { oldPersona ->
+                        UndefinedPersona.withEffects()
+                    }
+                }
             }
         }
 
@@ -44,8 +45,8 @@ object UndefinedPersona : PersonaCard() {
         }
     }
 
-    sealed interface UndefinedPersonaAction
-    sealed class Action : AppAction, UndefinedPersonaAction
+    sealed interface UndefinedPersonaAction : AppAction
+    sealed class Action : UndefinedPersonaAction
     data class DefinePersonaAction(val persona: PersonaCard) : Action()
 }
 

@@ -1,12 +1,16 @@
+@file:Suppress("OPT_IN_USAGE")
+
 package com.spqrta.state.app
 
 import com.spqrta.state.AppScope
 import com.spqrta.state.app.state.*
 import com.spqrta.state.use_case.UseCases
+import com.spqrta.state.util.collections.asList
 import com.spqrta.state.util.state_machine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
@@ -35,15 +39,20 @@ object App {
         stateMachine.handleAction(action)
     }
 
-    private fun reduce(state: AppState, action: AppAction): ReducerResult<out AppState, out AppEffect> {
-        return when(state) {
+    private fun reduce(
+        state: AppState,
+        action: AppAction
+    ): ReducerResult<out AppState, out AppEffect> {
+        return when (state) {
             AppNotInitialized -> {
-                when(action) {
+                when (action) {
                     InitAppAction -> {
                         state.withEffects(LoadStateEffect)
                     }
                     is StateLoadedAction -> {
-                        chain(action.state.withEffects()) {
+                        chain(action.state.withEffects(
+                            ActionEffect(Timers.StartTimer(TestTimer))
+                        )) {
                             AppReady.reduce(OnResumeAction(), it)
                         }
                     }
@@ -71,6 +80,21 @@ object App {
                     is OnResumeAction -> {
                         AppReady.reduce(action, state)
                     }
+                    is ClockMode.ClockAction -> {
+                        chain(
+                            ClockMode.reduce(action, state)
+                        ) {
+                            if(action is Timers.TimerAction) {
+                                Timers.reduce(action, state)
+                            } else {
+                                it.withEffects()
+                            }
+                        }
+
+                    }
+                    is Timers.TimerAction -> {
+                        Timers.reduce(action, state)
+                    }
                 }.flatMapEffects {
                     it.effects + SaveStateEffect(it.newState)
                 }
@@ -82,18 +106,20 @@ object App {
         effects.forEach { effect ->
             effectsScope.launch {
                 with(useCases) {
-                    when(effect) {
+                    when (effect) {
                         LoadStateEffect -> {
                             loadStateUC.flow()
                         }
                         is SaveStateEffect -> {
                             saveStateUC.flow(effect.state)
                         }
-                    }.collect { actions ->
-                        actions.forEach {
-                            handleAction(it)
+                        is TickEffect -> {
+                            tickUC.flow(effect.duration)
                         }
-                    }
+                        is ActionEffect -> {
+                            { effect.action.asList() }.asFlow()
+                        }
+                    }.collect { actions -> actions.forEach(::handleAction) }
                 }
             }
         }

@@ -15,7 +15,7 @@ fun Preview() {
     MainView(UndefinedPersonaPreview.state)
 }
 
-@Preview
+//@Preview
 @Composable
 fun Preview1() {
     MainView(DefinedPersonaPreview.state)

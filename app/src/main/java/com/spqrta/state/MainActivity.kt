@@ -19,11 +19,13 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
+import com.spqrta.state.app.state.OnResumeAction
 import com.spqrta.state.app.state.*
 import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.app.view_state.ButtonForm
 import com.spqrta.state.app.view_state.StubView
 import com.spqrta.state.app.view_state.ViewState
+import com.spqrta.state.ui.Timer
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
 import com.spqrta.state.ui.control.Main
@@ -31,7 +33,6 @@ import com.spqrta.state.ui.control.Ordinal
 import com.spqrta.state.ui.theme.AppTheme
 import com.spqrta.state.ui.theme.Grey
 import com.spqrta.state.ui.theme.Teal200
-import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,14 +104,16 @@ fun FrameView(viewState: ViewState) {
 fun ViewStateView(viewState: ViewState) {
     when (viewState) {
         is ButtonForm -> {
-            Box(Modifier.fillMaxSize()) {
-                Text(
-                    modifier = Modifier
-                        .align(alignment = Alignment.Center),
-                    text = viewState.text,
-                    fontSize = TextUnit(32f, TextUnitType.Sp),
-                    textAlign = TextAlign.Center,
-                )
+            Column {
+                Box(Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier
+                            .align(alignment = Alignment.Center),
+                        text = viewState.text,
+                        fontSize = TextUnit(32f, TextUnitType.Sp),
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
         StubView -> {
@@ -158,4 +161,12 @@ fun ControlsView(controls: List<Control>) {
             } as Any?
         }
     }
+}
+
+@Composable
+fun TimerView(view: Timer) {
+    Text(
+        modifier = Modifier.padding(Dp(16f)),
+        text = view.stringValue
+    )
 }

@@ -1,12 +1,9 @@
 package com.spqrta.state.use_case
 
-import android.icu.lang.UCharacter.DecompositionType.INITIAL
 import com.spqrta.state.AppScope
 import com.spqrta.state.app.state.AppAction
 import com.spqrta.state.app.state.AppReady
 import com.spqrta.state.app.state.StateLoadedAction
-import com.spqrta.state.util.Res
-import com.spqrta.state.util.ResUnit
 import com.spqrta.state.util.collections.asList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

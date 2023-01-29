@@ -1,13 +1,19 @@
 package com.spqrta.state.app.state.optics
 
-import com.spqrta.state.app.state.AppReady
-import com.spqrta.state.app.state.DailyState
-import com.spqrta.state.app.state.PersonaCard
-import com.spqrta.state.app.state.Stats
+import com.spqrta.state.app.state.*
 import com.spqrta.state.util.OpticOptional
 import com.spqrta.state.util.plus
 
 object AppReadyOptics {
+    val optTimers = object: OpticOptional<AppReady, Map<TimerId, Timer>> {
+        override fun get(state: AppReady): Map<TimerId, Timer> {
+            return state.timers.timers
+        }
+
+        override fun set(state: AppReady, subState: Map<TimerId, Timer>): AppReady {
+            return state.copy(timers = Timers(subState))
+        }
+    }
     val optStats = object: OpticOptional<AppReady, Stats> {
         override fun get(state: AppReady): Stats {
             return state.stats
@@ -15,6 +21,16 @@ object AppReadyOptics {
 
         override fun set(state: AppReady, subState: Stats): AppReady {
             return state.copy(stats = subState)
+        }
+    }
+
+    val optClockMode = object: OpticOptional<AppReady, ClockMode> {
+        override fun get(state: AppReady): ClockMode {
+            return state.clockMode
+        }
+
+        override fun set(state: AppReady, subState: ClockMode): AppReady {
+            return state.copy(clockMode = subState)
         }
     }
 

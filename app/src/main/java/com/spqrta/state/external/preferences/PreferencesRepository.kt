@@ -17,6 +17,9 @@ class PreferencesRepository(
     private val appContext: Context
 ) {
 
+    private val json = Json {
+        allowStructuredMapKeys = true
+    }
     private val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
 
     val state = object : SharedPreferencesStringEntry<AppReady>(
@@ -24,11 +27,11 @@ class PreferencesRepository(
         preferences
     ) {
         override fun serialize(data: AppReady): Res<String> {
-            return Json.encodeToString(data).asSuccess()
+            return json.encodeToString(data).asSuccess()
         }
 
         override fun deserialize(rawData: String): Res<AppReady> {
-            return Json.decodeFromString<AppReady>(rawData).asSuccess()
+            return json.decodeFromString<AppReady>(rawData).asSuccess()
         }
     }
 
