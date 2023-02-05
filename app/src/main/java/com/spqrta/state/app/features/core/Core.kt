@@ -1,5 +1,6 @@
 package com.spqrta.state.app.features.core
 
+import android.media.effect.Effect
 import com.spqrta.state.app.*
 import com.spqrta.state.app.action.*
 import com.spqrta.state.app.features.daily.clock_mode.ClockMode
@@ -7,6 +8,7 @@ import com.spqrta.state.app.features.daily.personas.Persona
 import com.spqrta.state.app.features.daily.personas.UndefinedPersona
 import com.spqrta.state.app.features.daily.timers.PromptTimer
 import com.spqrta.state.app.features.daily.timers.Timers
+import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.util.optics.identityOptional
 import com.spqrta.state.util.optics.typeGet
 import com.spqrta.state.util.state_machine.*
@@ -16,6 +18,12 @@ object Core {
         typeGet(),
         identityOptional(),
         Core::reduce
+    )
+
+    val saveStateReducer = widen(
+        typeGet(),
+        AppStateOptics.optReady,
+        Core::reduceSaveState
     )
 
     private fun reduce(
@@ -30,9 +38,7 @@ object Core {
                     }
                     is StateLoadedAction -> {
                         chain(
-                            action.state.withEffects(
-                                AddPromptEffect(TimeredPrompt(PromptTimer))
-                            )
+                            action.state.withEffects()
                         ) {
                             AppReady.reduce(OnResumeAction(), it)
                         }
@@ -55,10 +61,17 @@ object Core {
                     is OnResumeAction -> {
                         AppReady.reduce(action, state)
                     }
-                }.flatMapEffects {
-                    it.effects + SaveStateEffect(it.newState)
                 }
             }
         }
+    }
+
+    private fun reduceSaveState(
+        action: AppAction,
+        state: AppReady
+    ): Reduced<out AppReady, out AppEffect> {
+        return state.withEffects(
+            SaveStateEffect(state)
+        )
     }
 }

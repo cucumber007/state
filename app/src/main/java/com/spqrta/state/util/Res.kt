@@ -18,8 +18,14 @@ sealed class Res<T> {
 
     fun withFallback(value: T): T {
         return when (this) {
-            is Success -> this.success
-            is Failure -> value
+            is Success -> {
+                this.success
+            }
+            is Failure -> {
+                value.also {
+                    this.failure.printStackTrace()
+                }
+            }
         }
     }
 

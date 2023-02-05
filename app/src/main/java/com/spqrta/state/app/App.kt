@@ -36,7 +36,7 @@ object App {
             identityGet(),
             AppStateOptics.optReady,
             DailyState.reducer
-        )
+        )+ Core.saveStateReducer
     private val stateMachine = StateMachine(
         javaClass.simpleName,
         AppNotInitialized,

@@ -4,11 +4,13 @@ import com.spqrta.state.app.ActionEffect
 import com.spqrta.state.app.AppEffect
 import com.spqrta.state.app.TickEffect
 import com.spqrta.state.app.action.ClockAction
+import com.spqrta.state.app.action.StateLoadedAction
 import com.spqrta.state.app.action.TimerAction
 import com.spqrta.state.app.action.TimerAction.*
 import com.spqrta.state.app.features.daily.clock_mode.Update
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.daily.clock_mode.ClockMode
+import com.spqrta.state.app.features.daily.clock_mode.None
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.util.Seconds
 import com.spqrta.state.util.optics.typeGet
@@ -19,9 +21,11 @@ import com.spqrta.state.util.state_machine.withEffects
 import com.spqrta.state.util.toSeconds
 import com.spqrta.state.util.optics.wrap
 import com.spqrta.state.util.state_machine.widen
+import com.spqrta.state.util.toMinutes
 import kotlinx.serialization.Serializable
 import java.time.Duration
 import java.time.LocalDateTime
+import java.util.*
 
 @Serializable
 data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
@@ -32,7 +36,7 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
             Timers::reduce
         )
 
-        fun reduce(
+        private fun reduce(
             action: TimerAction,
             state: Pair<Map<TimerId, Timer>, ClockMode>
         ): Reduced<Pair<Map<TimerId, Timer>, ClockMode>, out AppEffect> {
@@ -52,7 +56,7 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
                 is ClockAction.TickAction -> {
                     val (newTimers, endedTimers) = updateTimersAndGetEnded(action, oldTimers)
                     val newClockMode = if (newTimers.isEmpty()) {
-                        Update
+                        None
                     } else {
                         oldClockMode
                     }
@@ -62,6 +66,9 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
                 }
                 is TimerEnded -> {
                     (oldTimers.filter { it.key != action.timerId } to oldClockMode).withEffects()
+                }
+                is ProlongTimerAction -> {
+                    state.withEffects()
                 }
             }
         }
@@ -98,6 +105,8 @@ sealed class TimerId(val duration: Seconds) {
 
 @Serializable
 object PromptTimer : TimerId(10.toSeconds())
+@Serializable
+object WorkTimer : TimerId(15.toMinutes())
 
 @Serializable
 data class Timer(

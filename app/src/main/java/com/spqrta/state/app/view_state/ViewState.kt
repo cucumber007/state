@@ -2,6 +2,7 @@ package com.spqrta.state.app.view_state
 
 import com.spqrta.state.app.*
 import com.spqrta.state.app.action.PersonaAction
+import com.spqrta.state.app.action.ProductiveAction
 import com.spqrta.state.app.action.UndefinedPersonaAction
 import com.spqrta.state.app.features.core.AppNotInitialized
 import com.spqrta.state.app.features.core.AppReady
@@ -28,7 +29,10 @@ sealed class ViewState {
                 when (activePrompt) {
                     is TimeredPrompt -> {
                         val timers = AppReadyOptics.optTimers.get(state)!!
-                        TimeredPromptForm("TimeredPrompt", TimerView(timers[activePrompt.timerId]!!.left))
+                        TimeredPromptForm(
+                            "TimeredPrompt",
+                            TimerView(timers[activePrompt.timerId]!!.left)
+                        )
                     }
                 }
             } else {
@@ -70,13 +74,60 @@ sealed class ViewState {
                         )
                     }
                     is Productive -> {
+                        val (text, activityButtons, timer) = when (persona.activity) {
+                            Fiz -> {
+                                Triple(
+                                    "Do your exercises",
+                                    listOf(
+                                        Button(
+                                            text = "Done",
+                                            action = ProductiveAction.ActivityDone(persona.activity)
+                                        )
+                                    ),
+                                    null
+                                )
+                            }
+                            None -> {
+                                Triple(
+                                    "Fiz is the priority!",
+                                    listOf(
+                                        Button(
+                                            text = "Start fiz",
+                                            action = ProductiveAction.ActivityDone(persona.activity)
+                                        )
+                                    ), null
+                                )
+                            }
+                            is Work -> {
+                                val timer = AppReadyOptics.optTimers.get(state)?.let {
+                                    it[persona.activity.timer]?.let { timer ->
+                                        TimerView(timer.left)
+                                    }
+                                }
+                                Triple(
+                                    "Work",
+                                    listOf(
+                                        Button(
+                                            text = "Need more time",
+                                            action = ProductiveAction.NeedMoreTime(persona.activity)
+                                        )
+                                    ),
+                                    timer
+                                )
+                            }
+                        }
                         ButtonForm(
-                            text = persona.toString(), buttons = listOf(
+                            text = listOf(
+                                persona.javaClass.simpleName,
+                                text
+                            ).joinToString("\n\n"),
+                            timer = timer,
+                            buttons = listOf(
                                 Button(
-                                    text = Persona.I_AM_BACK,
+                                    text = Persona.I_AM_NOT_GOOD,
                                     action = PersonaAction.GetBackAction
                                 )
-                            )
+                            ) + activityButtons
                         )
                     }
                     Unstable -> {
@@ -108,7 +159,8 @@ sealed class ViewState {
 object StubView : ViewState()
 data class ButtonForm(
     val text: String,
-    val buttons: List<Button>
+    val buttons: List<Button>,
+    val timer: TimerView? = null
 ) : ViewState()
 
 data class TimeredPromptForm(

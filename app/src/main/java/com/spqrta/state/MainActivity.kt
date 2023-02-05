@@ -116,6 +116,11 @@ fun ViewStateView(viewState: ViewState) {
                         textAlign = TextAlign.Center,
                     )
                 }
+                if(viewState.timer != null) {
+                    Box(Modifier.fillMaxWidth()) {
+                        TimerView(view = viewState.timer)
+                    }
+                }
             }
         }
         StubView -> {
@@ -173,8 +178,12 @@ fun ControlsView(controls: List<Control>) {
 
 @Composable
 fun TimerView(view: TimerView) {
-    Text(
-        modifier = Modifier.padding(Dp(16f)),
-        text = view.stringValue
-    )
+    Box(Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            fontSize = TextUnit(24f, TextUnitType.Sp),
+            text = view.stringValue,
+            textAlign = TextAlign.Center,
+        )
+    }
 }

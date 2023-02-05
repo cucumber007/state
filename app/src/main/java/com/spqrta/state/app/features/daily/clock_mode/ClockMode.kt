@@ -4,7 +4,9 @@ import com.spqrta.state.app.AppEffect
 import com.spqrta.state.app.TickEffect
 import com.spqrta.state.app.action.ClockAction
 import com.spqrta.state.app.action.ClockAction.*
+import com.spqrta.state.app.action.StateLoadedAction
 import com.spqrta.state.app.features.core.AppReady
+import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.app.state.optics.AppStateOptics
 import com.spqrta.state.util.Seconds
@@ -28,7 +30,7 @@ sealed class ClockMode {
         )
 
         @Suppress("UnnecessaryVariable")
-        fun reduce(action: ClockAction, clockMode: ClockMode): Reduced<out ClockMode, out AppEffect> {
+        private fun reduce(action: ClockAction, clockMode: ClockMode): Reduced<out ClockMode, out AppEffect> {
             return when(action) {
                 is TickAction -> {
                     when(clockMode) {
@@ -46,6 +48,9 @@ sealed class ClockMode {
                             )
                         }
                     }
+                }
+                is StateLoadedAction -> {
+                    reduce(TickAction(action.dateTime), clockMode)
                 }
             }
         }

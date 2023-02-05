@@ -1,7 +1,9 @@
 package com.spqrta.state.app.action
 
+import com.spqrta.state.app.AppEffect
 import com.spqrta.state.app.PromptsEnabled
 import com.spqrta.state.app.features.daily.timers.TimerId
+import com.spqrta.state.util.TimeValue
 import java.time.LocalDateTime
 
 sealed interface TimerAction : AppAction {
@@ -12,5 +14,6 @@ sealed interface TimerAction : AppAction {
     ) : Action()
     data class TimerEnded(
         val timerId: TimerId
-    ): Action(), PromptAction
+    ): Action(), PromptAction, ProductiveAction
+    data class ProlongTimerAction(val timerId: TimerId, val amount: TimeValue): Action()
 }
