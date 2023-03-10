@@ -30,10 +30,13 @@ sealed class ClockMode {
         )
 
         @Suppress("UnnecessaryVariable")
-        private fun reduce(action: ClockAction, clockMode: ClockMode): Reduced<out ClockMode, out AppEffect> {
-            return when(action) {
+        private fun reduce(
+            action: ClockAction,
+            clockMode: ClockMode
+        ): Reduced<out ClockMode, out AppEffect> {
+            return when (action) {
                 is TickAction -> {
-                    when(clockMode) {
+                    when (clockMode) {
                         None -> {
                             clockMode.withEffects()
                         }
@@ -57,10 +60,15 @@ sealed class ClockMode {
     }
 }
 
-object None: ClockMode()
-object Second: ClockMode() {
+@Serializable
+object None : ClockMode()
+
+@Serializable
+object Second : ClockMode() {
     val timeout: Seconds = 1.toSeconds()
 }
-object Update: ClockMode() {
+
+@Serializable
+object Update : ClockMode() {
     val timeout: Seconds = 5.toSeconds()
 }

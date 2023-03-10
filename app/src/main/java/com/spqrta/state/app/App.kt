@@ -36,7 +36,8 @@ object App {
             identityGet(),
             AppStateOptics.optReady,
             DailyState.reducer
-        )+ Core.saveStateReducer
+        ) + Core.saveStateReducer
+
     private val stateMachine = StateMachine(
         javaClass.simpleName,
         AppNotInitialized,
@@ -52,6 +53,12 @@ object App {
 
     fun handleAction(action: AppAction) {
         stateMachine.handleAction(action)
+    }
+
+    fun runEffect(effect: AppEffect) {
+        effectsScope.launch {
+            applyEffects(setOf(effect))
+        }
     }
 
     private fun applyEffects(effects: Set<AppEffect>) {
@@ -73,6 +80,9 @@ object App {
                         }
                         is AddPromptEffect -> {
                             { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
+                        }
+                        PlayNotificationSoundEffect -> {
+                            playNotificationSoundUC.flow()
                         }
                     }.collect { actions -> actions.forEach(::handleAction) }
                 }

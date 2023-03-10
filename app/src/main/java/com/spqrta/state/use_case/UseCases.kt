@@ -8,4 +8,5 @@ class UseCases(
     val saveStateUC = SaveStateUC(appScope)
     val loadStateUC = LoadStateUC(appScope)
     val tickUC = TickUC(appScope)
+    val playNotificationSoundUC = PlayNotificationSoundUC(appScope.appContext)
 }

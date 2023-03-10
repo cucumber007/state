@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
+import com.spqrta.state.app.PlayNotificationSoundEffect
 import com.spqrta.state.app.action.OnResumeAction
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.state.*
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         App.handleAction(OnResumeAction())
+        App.runEffect(PlayNotificationSoundEffect)
     }
 }
 
