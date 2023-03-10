@@ -9,6 +9,9 @@ import com.spqrta.state.app.features.daily.timers.Timer
 import com.spqrta.state.app.features.daily.timers.TimerId
 import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.stats.Stats
+import com.spqrta.state.app.features.storage.Storage
+import com.spqrta.state.app.state.optics.AppReadyOptics.optDailyState
+import com.spqrta.state.app.state.optics.AppReadyOptics.optPrompts
 import com.spqrta.state.util.optics.*
 
 object AppReadyOptics {
@@ -50,27 +53,19 @@ object AppReadyOptics {
         }
     }
 
-    val optPersona = optDailyState.add(object : OpticOptional<DailyState, Persona> {
-        override fun get(state: DailyState): Persona {
-            return state.persona
-        }
+    val optPersona = optDailyState + ({ state: DailyState ->
+        state.persona
+    } to { state: DailyState, subState: Persona ->
+        state.copy(persona = subState)
+    }).asOptic()
 
-        override fun set(state: DailyState, subState: Persona): DailyState {
-            return state.copy(persona = subState)
-        }
-    })
+    val optPrompts = optDailyState + ({ state: DailyState ->
+        state.prompts
+    } to { state: DailyState, subState: List<Prompt> ->
+        state.copy(prompts = subState)
+    }).asOptic()
 
-    val optPrompts = optDailyState.add(object : OpticOptional<DailyState, List<Prompt>> {
-        override fun get(state: DailyState): List<Prompt> {
-            return state.prompts
-        }
-
-        override fun set(state: DailyState, subState: List<Prompt>): DailyState {
-            return state.copy(prompts = subState)
-        }
-    })
-
-    private val optPromptsEnabled = optDailyState get { state: DailyState ->
+    private val optPromptsEnabled = optDailyState withGet { state: DailyState ->
         when(val persona = state.persona) {
             is Productive -> persona.promptsEnabled
             Depressed,
@@ -86,4 +81,17 @@ object AppReadyOptics {
     ) { prompts, _ ->
         prompts.minByOrNull { it.priority.toString() + it.javaClass.simpleName }
     }
+
+    val optStorage = object : Optic<AppReady, Storage> {
+        override fun getStrict(state: AppReady): Storage {
+            return state.storage
+        }
+
+        override fun set(state: AppReady, subState: Storage): AppReady {
+            return state.copy(storage = subState)
+        }
+    }
+
+    val optIsStorageOk = optStorage withGet Storage.optIsOk
+
 }

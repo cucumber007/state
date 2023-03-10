@@ -4,6 +4,7 @@ import com.spqrta.state.app.features.core.AppNotInitialized
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.view_state.ViewState
+import com.spqrta.state.app.view_state.getViewState
 import com.spqrta.state.util.optics.OpticGetStrict
 import com.spqrta.state.util.optics.OpticOptional
 
@@ -23,7 +24,7 @@ object AppStateOptics {
 
     val optViewState = object : OpticGetStrict<AppState, ViewState> {
         override fun getStrict(state: AppState): ViewState {
-            return ViewState.getViewState(state)
+            return getViewState(state)
         }
     }
 }

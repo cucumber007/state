@@ -3,6 +3,7 @@ package com.spqrta.state.app.features.daily.prompts
 import com.spqrta.state.app.Prompt
 import com.spqrta.state.app.TimeredPrompt
 import com.spqrta.state.app.features.daily.timers.WorkTimer
+import com.spqrta.state.app.features.storage.CaloryPacks
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

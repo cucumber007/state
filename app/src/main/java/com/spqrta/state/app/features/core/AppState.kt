@@ -8,6 +8,7 @@ import com.spqrta.state.app.features.daily.DailyState
 import com.spqrta.state.app.features.daily.personas.*
 import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.stats.Stats
+import com.spqrta.state.app.features.storage.Storage
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.app.state.optics.AppReadyOptics.optDailyState
 import com.spqrta.state.app.state.optics.AppReadyOptics.optStats
@@ -33,7 +34,8 @@ data class AppReady(
     val clockMode: ClockMode = Update,
     @Contextual
     val timers: Timers = Timers(),
-    val stats: Stats = Stats()
+    val stats: Stats = Stats(),
+    val storage: Storage = Storage(),
 ) : AppState() {
 
     companion object {
@@ -54,4 +56,3 @@ data class AppReady(
         }
     }
 }
-

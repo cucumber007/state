@@ -8,11 +8,6 @@ import com.spqrta.state.util.state_machine.withEffects
 
 // todo refactor naming
 
-interface OpticOptional<S : Any, Sub : Any> : OpticGet<S, Sub>, OpticSet<S, Sub> {
-    override fun get(state: S): Sub?
-    override fun set(state: S, subState: Sub): S
-}
-
 interface OpticSet<S : Any, Sub> {
     fun set(state: S, subState: Sub): S
 }
@@ -21,40 +16,15 @@ interface OpticGet<S : Any, Sub> {
     fun get(state: S): Sub?
 }
 
+interface OpticOptional<S : Any, Sub : Any> : OpticGet<S, Sub>, OpticSet<S, Sub>
+
 interface OpticGetStrict<S : Any, Sub>: OpticGet<S, Sub> {
     fun getStrict(state: S): Sub
     override fun get(state: S): Sub? = getStrict(state)
 }
 
-fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.add(
-    secondOptic: OpticOptional<Sub, Sub1>
-): OpticOptional<S, Sub1> {
-    val firstOptic: OpticOptional<S, Sub> = this
-    return object : OpticOptional<S, Sub1> {
-        override fun get(state: S): Sub1? {
-            return firstOptic.get(state)?.let { secondOptic.get(it) }
-        }
+interface Optic<S : Any, Sub : Any> : OpticOptional<S, Sub>, OpticGetStrict<S, Sub>
 
-        override fun set(state: S, subState: Sub1): S {
-            return firstOptic.get(state)?.let {
-                secondOptic.set(it, subState)
-            }?.let {
-                firstOptic.set(state, it)
-            } ?: state
-        }
-    }
-}
-
-fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.plusGet(
-    secondOptic: OpticGet<Sub, Sub1>
-): OpticGet<S, Sub1> {
-    val firstOptic: OpticOptional<S, Sub> = this
-    return object : OpticGet<S, Sub1> {
-        override fun get(state: S): Sub1? {
-            return firstOptic.get(state)?.let { secondOptic.get(it) }
-        }
-    }
-}
 
 fun <T, S : Any, T1, T2> withSubState(
     state: S,
@@ -136,25 +106,7 @@ fun <BigS: Any, S1: Any, S2: Any, NewS: Any> gather(
     }
 }
 
-fun <A: Any, B: Any> ((A) -> B?).asOpticGet(): OpticGet<A, B> {
-    return object: OpticGet<A, B> {
-        override fun get(state: A): B? {
-            return this@asOpticGet.invoke(state)
-        }
-    }
-}
 
-fun <A: Any, B: Any> Pair<((A) -> B?), ((A, B) -> A)>.asOpticOptional(): OpticOptional<A, B> {
-    return object: OpticOptional<A, B> {
-        override fun get(state: A): B? {
-            return this@asOpticOptional.first.invoke(state)
-        }
-
-        override fun set(state: A, subState: B): A {
-            return this@asOpticOptional.second.invoke(state, subState)
-        }
-    }
-}
 
 inline fun <A: Any, reified B: Any> typeGet() : OpticGet<A, B>  {
     return object: OpticGet<A, B> {
@@ -170,32 +122,4 @@ fun <T: Any> identityGet() : OpticGet<T, T>  {
 
 fun <T: Any> identityOptional(): OpticOptional<T, T>  {
     return ({ a: T -> a } to { a: T, b: T -> b }).asOpticOptional()
-}
-
-operator fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.plus(
-    other: OpticOptional<Sub, Sub1>
-): OpticOptional<S, Sub1> {
-    return this.add(other)
-}
-
-infix fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.get(
-    other: OpticGet<Sub, Sub1>
-): OpticGet<S, Sub1> {
-    return this.plusGet(other)
-}
-
-infix fun <S : Any, Sub1 : Any, Sub2 : Any> OpticOptional<S, Sub1>.with(
-    other: OpticOptional<S, Sub2>
-): OpticOptional<S, Pair<Sub1, Sub2>> {
-    return ({ a: S ->
-        this.get(a)?.let { sub1 ->
-            other.get(a)?.let { sub2 ->
-                (sub1 to sub2)
-            }
-        }
-    } to { a: S, b: Pair<Sub1, Sub2> ->
-        this.set(a, b.first).let { newS ->
-            other.set(newS, b.second)
-        }
-    }).asOpticOptional()
 }
