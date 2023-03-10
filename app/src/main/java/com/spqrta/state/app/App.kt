@@ -6,6 +6,7 @@ import com.spqrta.state.AppScope
 import com.spqrta.state.app.action.AppAction
 import com.spqrta.state.app.action.PromptAction
 import com.spqrta.state.app.features.core.AppNotInitialized
+import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.core.Core
 import com.spqrta.state.app.features.daily.DailyState
@@ -41,6 +42,10 @@ object App {
             identityGet(),
             AppStateOptics.optReady,
             Storage.reducer
+        ) + widen(
+            identityGet(),
+            AppStateOptics.optReady,
+            AppReady.reducer
         ) + Core.saveStateReducer
 
     private val stateMachine = StateMachine(

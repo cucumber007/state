@@ -1,10 +1,12 @@
 package com.spqrta.state.app.action
 
 import com.spqrta.state.app.Prompt
-import kotlin.reflect.KClass
+import com.spqrta.state.app.features.daily.routine.Routine
+import com.spqrta.state.app.features.daily.timers.TimerId
 
 sealed interface PromptAction : AppAction {
     sealed class Action : PromptAction
     data class AddPrompt(val prompt: Prompt) : Action()
-    data class PromptResolved(val promptClass: KClass<*>) : Action()
+    data class TimeredPromptResolved(val timerId: TimerId) : Action()
+    data class RoutinePromptResolved(val routine: Routine) : Action()
 }

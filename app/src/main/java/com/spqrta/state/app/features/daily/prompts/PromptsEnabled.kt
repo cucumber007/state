@@ -1,0 +1,47 @@
+package com.spqrta.state.app
+
+import com.spqrta.state.app.action.PromptAction
+import com.spqrta.state.app.action.TimerAction
+import com.spqrta.state.app.features.daily.timers.PromptTimer
+import com.spqrta.state.util.collections.asSet
+import com.spqrta.state.util.state_machine.Reduced
+import com.spqrta.state.util.state_machine.effectIf
+import com.spqrta.state.util.state_machine.withEffects
+import kotlinx.serialization.Serializable
+
+@Serializable
+object PromptsEnabled {
+    override fun toString(): String = javaClass.simpleName
+
+    fun reduce(action: PromptAction, oldPrompts: List<Prompt>): Reduced<List<Prompt>, out AppEffect> {
+        return when (action) {
+            is PromptAction.AddPrompt -> {
+                val prompt = action.prompt
+                (oldPrompts + prompt).withEffects(
+                    if (prompt is TimeredPrompt) {
+                        ActionEffect(TimerAction.StartTimer(prompt.timerId)).asSet()
+                    } else {
+                        setOf()
+                    }
+                )
+            }
+            is TimerAction.TimerEnded -> {
+                oldPrompts.withEffects(
+                    effectIf(action.timerId is PromptTimer) {
+                        ActionEffect(PromptAction.TimeredPromptResolved(action.timerId))
+                    }
+                )
+            }
+            is PromptAction.TimeredPromptResolved -> {
+                (oldPrompts.filter {
+                    !(it is TimeredPrompt && it.timerId == action.timerId)
+                }).withEffects()
+            }
+            is PromptAction.RoutinePromptResolved -> {
+                (oldPrompts.filter {
+                    !(it is RoutinePrompt && it.routine == action.routine)
+                }).withEffects()
+            }
+        }
+    }
+}

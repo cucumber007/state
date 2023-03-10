@@ -1,8 +1,7 @@
-package com.spqrta
+package com.spqrta.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.spqrta.state.MainView
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.daily.DailyState
@@ -15,7 +14,6 @@ import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.daily.timers.WorkTimer
 import com.spqrta.state.util.toSeconds
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 
 sealed class PreviewState(val state: AppState)
 object UndefinedPersonaPreview : PreviewState(AppReady(DailyState(persona = UndefinedPersona)))
@@ -28,7 +26,7 @@ object ProductivePersonaPreview :
         )
     )
 
-//@Preview
+@Preview
 @Composable
 fun Preview() {
     MainView(UndefinedPersonaPreview.state)

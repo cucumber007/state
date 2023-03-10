@@ -58,8 +58,9 @@ object Core {
                     is AppErrorAction -> {
                         throw action.exception
                     }
+                    // todo to app ready actions
                     is OnResumeAction -> {
-                        AppReady.reduce(action, state)
+                        state.withEffects()
                     }
                 }
             }

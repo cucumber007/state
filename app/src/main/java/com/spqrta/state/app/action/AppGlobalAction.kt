@@ -10,7 +10,9 @@ sealed class AppGlobalAction : AppAction {
 
 data class AppErrorAction(val exception: Exception) : AppGlobalAction()
 object InitAppAction : AppGlobalAction()
-data class OnResumeAction(val datetime: LocalDateTime = LocalDateTime.now()) : AppGlobalAction()
+data class OnResumeAction(
+    val datetime: LocalDateTime = LocalDateTime.now()
+) : AppGlobalAction(), AppReadyAction
 data class StateLoadedAction(
     val state: AppReady,
     val dateTime: LocalDateTime = LocalDateTime.now()

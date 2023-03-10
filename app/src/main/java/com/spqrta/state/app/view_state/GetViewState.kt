@@ -1,14 +1,12 @@
 package com.spqrta.state.app.view_state
 
+import com.spqrta.state.app.RoutinePrompt
 import com.spqrta.state.app.TimeredPrompt
-import com.spqrta.state.app.action.PersonaAction
-import com.spqrta.state.app.action.ProductiveAction
-import com.spqrta.state.app.action.UndefinedPersonaAction
+import com.spqrta.state.app.action.*
 import com.spqrta.state.app.features.core.AppNotInitialized
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.daily.personas.*
-import com.spqrta.state.app.action.StorageAction
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.ui.TimerView
 import com.spqrta.state.ui.control.Button
@@ -29,6 +27,17 @@ private fun getViewState(state: AppReady): ViewState {
                 TimeredPromptForm(
                     "TimeredPrompt",
                     TimerView(timers[activePrompt.timerId]!!.left)
+                )
+            }
+            is RoutinePrompt -> {
+                ButtonForm(
+                    activePrompt.routine.javaClass.simpleName,
+                    listOf(
+                        Button(
+                            text = "Done",
+                            action = PromptAction.RoutinePromptResolved(activePrompt.routine)
+                        )
+                    )
                 )
             }
         }

@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.spqrta.state.app.App
 import com.spqrta.state.app.PlayNotificationSoundEffect
+import com.spqrta.state.app.action.AppReadyAction
 import com.spqrta.state.app.action.OnResumeAction
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.state.*
@@ -48,7 +50,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         App.handleAction(OnResumeAction())
-        App.runEffect(PlayNotificationSoundEffect)
+//        App.runEffect(PlayNotificationSoundEffect)
     }
 }
 
@@ -70,6 +72,33 @@ fun AppView() {
                         end = Dp(16f),
                     )
             ) {
+                Box {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = Dp(8f))
+                    ) {
+                        Button(
+                            onClick = {
+                                App.handleAction(AppReadyAction.ResetDayAction)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Grey,
+                                contentColor = Color.Black
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = Dp(8f)),
+                            ) {
+                            Text(
+                                text = "Reset day",
+                                Modifier.align(Alignment.CenterVertically),
+                                fontSize = TextUnit(20f, TextUnitType.Sp),
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                    }
+                }
                 Text(
                     text = "State",
                     Modifier.align(Alignment.CenterHorizontally),
@@ -118,7 +147,7 @@ fun ViewStateView(viewState: ViewState) {
                         textAlign = TextAlign.Center,
                     )
                 }
-                if(viewState.timer != null) {
+                if (viewState.timer != null) {
                     Box(Modifier.fillMaxWidth()) {
                         TimerView(view = viewState.timer)
                     }
@@ -153,7 +182,7 @@ fun ControlsView(controls: List<Control>) {
                                 bottom = Dp(0f)
                             )
                             .align(Alignment.CenterHorizontally),
-                        colors = when(control.style) {
+                        colors = when (control.style) {
                             Main -> {
                                 ButtonDefaults.buttonColors(
                                     backgroundColor = Teal200,
