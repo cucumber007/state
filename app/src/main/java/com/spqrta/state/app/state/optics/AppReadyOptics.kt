@@ -66,8 +66,9 @@ object AppReadyOptics {
     }).asOptic()
 
     private val optPromptsEnabled = optDailyState withGet { state: DailyState ->
-        when(val persona = state.persona) {
-            is Productive -> persona.promptsEnabled
+        when (val persona = state.persona) {
+//            is Productive -> persona.promptsEnabled
+            is Productive -> null
             Depressed,
             Irritated,
             UndefinedPersona,

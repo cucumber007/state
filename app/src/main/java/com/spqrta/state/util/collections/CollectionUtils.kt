@@ -46,3 +46,14 @@ fun <T> T.asList(): List<T> {
     return listOf(this)
 }
 
+fun <T> List<T>.replaceIf(condition: (T) -> Boolean, replacement: (T) -> T): List<T> {
+    return this.toMutableList().apply {
+        replaceAll {
+            if (condition(it)) {
+                replacement(it)
+            } else {
+                it
+            }
+        }
+    }
+}

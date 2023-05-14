@@ -10,6 +10,7 @@ import com.spqrta.state.app.action.ProductiveAction.*
 import com.spqrta.state.app.action.TimerAction
 import com.spqrta.state.app.action.UndefinedPersonaAction
 import com.spqrta.state.app.action.UndefinedPersonaAction.*
+import com.spqrta.state.app.features.daily.personas.productive.Flipper
 import com.spqrta.state.app.features.daily.timers.WorkTimer
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.util.IllegalActionException
@@ -30,7 +31,7 @@ sealed class Persona {
 
     companion object {
         val optProductive = ({ state: Persona ->
-            if(state is Productive) state else null
+            if (state is Productive) state else null
         } to { state: Persona, subState: Productive ->
             subState as Persona
         }).asOpticOptional()
@@ -47,6 +48,10 @@ sealed class Persona {
             typeGet(),
             AppReadyOptics.optPersona + optProductive + Productive.optActivity,
             Productive::reduce
+        ) + widen(
+            typeGet(),
+            AppReadyOptics.optPersona + optProductive + Productive.optFlipper,
+            Flipper::reduce
         )
 
         fun reduce(action: PersonaAction, state: Persona): Reduced<out Persona, out AppEffect> {
@@ -71,75 +76,6 @@ object UndefinedPersona : Persona() {
         return when (action) {
             is DefinePersonaAction -> {
                 action.persona.withEffects()
-            }
-        }
-    }
-}
-
-@Serializable
-data class Productive(
-    val promptsEnabled: PromptsEnabled = PromptsEnabled,
-    val activity: ActivityState = None
-) : Persona() {
-    companion object {
-        val optActivity = ({ state: Productive ->
-            state.activity
-        } to { state: Productive, subState: ActivityState ->
-            state.copy(activity = subState)
-        }).asOpticOptional()
-
-        fun reduce(
-            action: ProductiveAction,
-            state: ActivityState
-        ): Reduced<out ActivityState, out AppEffect> {
-            return when (action) {
-                is ActivityDone -> {
-                    if (state::class != action.activity::class) {
-                        throw IllegalActionException(action, state)
-                    } else {
-                        when (state) {
-                            Fiz -> {
-                                Work(WorkTimer).withEffects(
-                                    ActionEffect(TimerAction.StartTimer(WorkTimer))
-                                )
-                            }
-                            None -> {
-                                Fiz.withEffects()
-                            }
-                            is Work -> {
-                                Fiz.withEffects()
-                            }
-                        }
-                    }
-                }
-                is NeedMoreTime -> {
-                    when (state) {
-                        is Work -> {
-                            state.withEffects(
-                                ActionEffect(
-                                    TimerAction.ProlongTimerAction(
-                                        state.timer,
-                                        5.toSeconds()
-                                    )
-                                )
-                            )
-                        }
-                        Fiz, None -> {
-                            throw IllegalActionException(action, state)
-                        }
-                    }
-
-                }
-                is TimerAction.TimerEnded -> {
-                    when(state) {
-                        is Work -> {
-                            if(action.timerId == state.timer) {
-                                reduce(ActivityDone(state), state)
-                            } else state.withEffects()
-                        }
-                        Fiz, None -> state.withEffects()
-                    }
-                }
             }
         }
     }

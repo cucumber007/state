@@ -1,14 +1,6 @@
 package com.spqrta.state.app.view_state
 
-import com.spqrta.state.app.*
-import com.spqrta.state.app.action.PersonaAction
-import com.spqrta.state.app.action.ProductiveAction
-import com.spqrta.state.app.action.UndefinedPersonaAction
-import com.spqrta.state.app.features.core.AppNotInitialized
-import com.spqrta.state.app.features.core.AppReady
-import com.spqrta.state.app.features.core.AppState
-import com.spqrta.state.app.features.daily.personas.*
-import com.spqrta.state.app.state.optics.AppReadyOptics
+import com.spqrta.state.app.features.daily.personas.productive.Flipper
 import com.spqrta.state.ui.TimerView
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
@@ -22,6 +14,7 @@ sealed class ViewState {
                     is ButtonForm -> state.buttons
                     StubView -> listOf()
                     is TimeredPromptForm -> listOf()
+                    is FlipperView -> state.controls
                 }
             }
         }
@@ -38,4 +31,9 @@ data class ButtonForm(
 data class TimeredPromptForm(
     val text: String,
     val timerView: TimerView
+) : ViewState()
+
+class FlipperView(
+    val flipper: Flipper,
+    val controls: List<Button>
 ) : ViewState()

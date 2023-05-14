@@ -9,6 +9,7 @@ import com.spqrta.state.app.features.daily.personas.Depressed
 import com.spqrta.state.app.features.daily.personas.Productive
 import com.spqrta.state.app.features.daily.personas.UndefinedPersona
 import com.spqrta.state.app.features.daily.personas.Work
+import com.spqrta.state.app.features.daily.personas.productive.Flipper
 import com.spqrta.state.app.features.daily.timers.Timer
 import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.daily.timers.WorkTimer
@@ -22,24 +23,29 @@ object ProductivePersonaPreview :
     PreviewState(
         AppReady(
             timers = Timers(mapOf(WorkTimer to Timer(LocalDateTime.now(), 1.toSeconds()))),
-            dailyState = DailyState(persona = Productive(activity = Work(WorkTimer)))
+            dailyState = DailyState(
+                persona = Productive(
+                    activity = Work(WorkTimer),
+                    flipper = Flipper()
+                )
+            )
         )
     )
 
-@Preview
+//@Preview
 @Composable
 fun Preview() {
-    MainView(UndefinedPersonaPreview.state)
+    MainView(UndefinedPersonaPreview.state, com.spqrta.state.ui.Portrait)
 }
 
 //@Preview
 @Composable
 fun Preview1() {
-    MainView(DefinedPersonaPreview.state)
+    MainView(DefinedPersonaPreview.state, com.spqrta.state.ui.Portrait)
 }
 
 @Preview
 @Composable
 fun Preview3() {
-    MainView(ProductivePersonaPreview.state)
+    MainView(ProductivePersonaPreview.state, com.spqrta.state.ui.Portrait)
 }

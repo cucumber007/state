@@ -3,6 +3,7 @@
 package com.spqrta.state.app
 
 import com.spqrta.state.AppScope
+import com.spqrta.state.MyApplication
 import com.spqrta.state.app.action.AppAction
 import com.spqrta.state.app.action.PromptAction
 import com.spqrta.state.app.features.core.AppNotInitialized
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
@@ -79,18 +81,23 @@ object App {
                         LoadStateEffect -> {
                             loadStateUC.flow()
                         }
+
                         is SaveStateEffect -> {
                             saveStateUC.flow(effect.state)
                         }
+
                         is TickEffect -> {
                             tickUC.flow(effect.duration)
                         }
+
                         is ActionEffect -> {
                             { effect.action.asList() }.asFlow()
                         }
+
                         is AddPromptEffect -> {
                             { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
                         }
+
                         PlayNotificationSoundEffect -> {
                             playNotificationSoundUC.flow()
                         }

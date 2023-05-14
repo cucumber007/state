@@ -21,6 +21,7 @@ sealed class Res<T> {
             is Success -> {
                 this.success
             }
+
             is Failure -> {
                 value.also {
                     this.failure.printStackTrace()
@@ -44,14 +45,14 @@ sealed class Res<T> {
     }
 
     fun forceUnwrap(): T {
-        return when(this) {
+        return when (this) {
             is Success -> success
             is Failure -> throw Exception("Unwrap failed", failure)
         }
     }
 
     private fun toAction(castFunction: (T) -> AppAction): AppAction {
-        return when(this) {
+        return when (this) {
             is Success -> castFunction(success)
             is Failure -> AppErrorAction(failure)
         }
@@ -63,7 +64,7 @@ sealed class Res<T> {
 }
 
 fun ResUnit.noAction(): List<AppAction> {
-    return when(this) {
+    return when (this) {
         is Success -> listOf()
         is Failure -> AppErrorAction(failure).asList()
     }
@@ -103,28 +104,9 @@ fun <T> Res<T>.toNullable(): T? {
     }
 }
 
-fun <T: Any?> T?.toResult(): Res<T> {
+fun <T : Any?> T?.toResult(): Res<T> {
     return this?.asSuccess() ?: NullPointerException().asFailure()
 }
-
-sealed class Either<F, S> {
-    fun <NF, NS> map(
-        onSuccess: (S) -> NS,
-        onFailure: (F) -> NF
-    ): Either<NF, NS> {
-        return when (this) {
-            is Right -> Right(onSuccess(this.right))
-            is Left -> Left(onFailure(this.failure))
-        }
-    }
-
-    fun <NS> mapRight(mapFunction: (S) -> NS): Either<F, NS> {
-        return map(onSuccess = mapFunction, onFailure = { it })
-    }
-}
-
-data class Right<F, S>(val right: S) : Either<F, S>()
-data class Left<F, S>(val failure: F) : Either<F, S>()
 
 fun <T> tryRes(code: () -> T): Res<T> {
     return try {
@@ -166,5 +148,3 @@ suspend fun tryResUnitSuspend(code: suspend () -> Unit): ResUnit {
 //        }
 //    }
 //}
-
-
