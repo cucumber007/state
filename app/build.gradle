@@ -14,7 +14,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,3 +75,26 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }
+
+task("releaseDesktop", type: Copy) {
+    // Define the output directory (change this path to your actual Desktop path)
+    def destPath = System.getProperty("user.home") + "/Desktop/"
+
+    // Retrieve version name
+    def versionName = android.defaultConfig.versionName
+
+    // Define the APK's origin and output paths
+    println(buildDir)
+    def apkPath = "${buildDir}/outputs/apk/debug/"
+    def apkName = "app-debug.apk"
+    def newApkName = "State_v${versionName}.apk"
+
+    from(apkPath) {
+        include apkName
+        rename { newApkName }
+    }
+    println(destPath)
+    into destPath
+}
+
+tasks.getByName("releaseDesktop").dependsOn("assembleDebug")
