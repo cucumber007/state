@@ -13,6 +13,8 @@ import com.spqrta.state.app.features.daily.personas.productive.Flipper
 import com.spqrta.state.app.features.daily.timers.Timer
 import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.daily.timers.WorkTimer
+import com.spqrta.state.ui.MainView
+import com.spqrta.state.ui.Portrait
 import com.spqrta.state.util.toSeconds
 import java.time.LocalDateTime
 
@@ -35,17 +37,17 @@ object ProductivePersonaPreview :
 //@Preview
 @Composable
 fun Preview() {
-    MainView(UndefinedPersonaPreview.state, com.spqrta.state.ui.Portrait)
+    MainView(UndefinedPersonaPreview.state, Portrait)
 }
 
 //@Preview
 @Composable
 fun Preview1() {
-    MainView(DefinedPersonaPreview.state, com.spqrta.state.ui.Portrait)
+    MainView(DefinedPersonaPreview.state, Portrait)
 }
 
 @Preview
 @Composable
 fun Preview3() {
-    MainView(ProductivePersonaPreview.state, com.spqrta.state.ui.Portrait)
+    MainView(ProductivePersonaPreview.state, Portrait)
 }

@@ -1,7 +1,7 @@
 package com.spqrta.state.app.view_state
 
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
-import com.spqrta.state.ui.TimerView
+import com.spqrta.state.ui.TimerUiView
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
 import com.spqrta.state.util.optics.OpticGetStrict
@@ -25,12 +25,12 @@ object StubView : ViewState()
 data class ButtonForm(
     val text: String,
     val buttons: List<Button>,
-    val timer: TimerView? = null
+    val timer: TimerUiView? = null
 ) : ViewState()
 
 data class TimeredPromptForm(
     val text: String,
-    val timerView: TimerView
+    val timerView: TimerUiView
 ) : ViewState()
 
 class FlipperView(

@@ -14,7 +14,7 @@
         android:theme="@style/Theme.State"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:screenOrientation="user"
             android:theme="@style/Theme.State">
