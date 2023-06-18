@@ -52,14 +52,15 @@ data class AppReady(
 
         fun reduce(action: AppReadyAction, state: AppReady): Reduced<out AppReady, out AppEffect> {
             return wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
-                when(action) {
+                when (action) {
                     AppReadyAction.ResetDayAction -> {
                         resetDay(oldStats, oldDailyState)
                     }
+
                     is OnResumeAction -> {
                         if (action.datetime.isAfter(
                                 LocalDateTime.of(
-                                    oldDailyState.date,
+                                    oldDailyState.date.plusDays(1),
                                     LocalTime.of(5, 0)
                                 )
                             )

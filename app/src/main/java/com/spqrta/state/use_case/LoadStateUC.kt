@@ -22,11 +22,12 @@ class LoadStateUC(
                 it ?: AppReady.INITIAL
             }
         }.asFlow().map {
-            if (MyApplication.DEBUG_MODE) {
-                MyApplication.DEBUG_STATE
-            } else {
-                it
-            }
+//            if (MyApplication.DEBUG_MODE) {
+//                MyApplication.DEBUG_STATE
+//            } else {
+//                it
+//            }
+            it
         }.map { StateLoadedAction(it).asList() }
     }
 
