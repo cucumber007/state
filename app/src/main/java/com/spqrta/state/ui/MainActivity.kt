@@ -26,6 +26,8 @@ import com.spqrta.state.app.App
 import com.spqrta.state.app.action.AppReadyAction
 import com.spqrta.state.app.action.FlipperAction
 import com.spqrta.state.app.action.OnResumeAction
+import com.spqrta.state.app.features.core.AppNotInitialized
+import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
 import com.spqrta.state.app.features.daily.personas.productive.Hour
@@ -75,22 +77,29 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppView(orientation: Orientation) {
     val state = App.state.collectAsState().value
+    when (state) {
+        AppNotInitialized -> {
+            Text("App not initialized")
+        }
 
-    AppTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
-        ) {
-            when (orientation) {
-                Portrait -> PortraitView(state)
-                Landscape -> LandscapeView(state)
+        is AppReady -> {
+            AppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    when (orientation) {
+                        Portrait -> PortraitView(state)
+                        Landscape -> LandscapeView(state)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun PortraitView(state: AppState) {
+fun PortraitView(state: AppReady) {
     Column(
         Modifier
             .padding(
