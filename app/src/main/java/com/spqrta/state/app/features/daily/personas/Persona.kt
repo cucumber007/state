@@ -1,19 +1,14 @@
 package com.spqrta.state.app.features.daily.personas
 
-import com.spqrta.state.app.ActionEffect
 import com.spqrta.state.app.AppEffect
-import com.spqrta.state.app.PromptsEnabled
 import com.spqrta.state.app.action.PersonaAction
 import com.spqrta.state.app.action.PersonaAction.*
-import com.spqrta.state.app.action.ProductiveAction
-import com.spqrta.state.app.action.ProductiveAction.*
-import com.spqrta.state.app.action.TimerAction
 import com.spqrta.state.app.action.UndefinedPersonaAction
 import com.spqrta.state.app.action.UndefinedPersonaAction.*
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
-import com.spqrta.state.app.features.daily.timers.WorkTimer
+import com.spqrta.state.app.features.daily.personas.productive.Navigation
+import com.spqrta.state.app.features.daily.personas.productive.ToDoList
 import com.spqrta.state.app.state.optics.AppReadyOptics
-import com.spqrta.state.util.IllegalActionException
 import com.spqrta.state.util.optics.asOpticOptional
 import com.spqrta.state.util.optics.plus
 import com.spqrta.state.util.optics.typeGet
@@ -21,7 +16,6 @@ import com.spqrta.state.util.state_machine.Reduced
 import com.spqrta.state.util.state_machine.withEffects
 import com.spqrta.state.util.state_machine.plus
 import com.spqrta.state.util.state_machine.widen
-import com.spqrta.state.util.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -52,6 +46,14 @@ sealed class Persona {
             typeGet(),
             AppReadyOptics.optPersona + optProductive + Productive.optFlipper,
             Flipper::reduce
+        ) + widen(
+            typeGet(),
+            AppReadyOptics.optPersona + optProductive + Productive.optToDoList,
+            ToDoList::reduce
+        ) + widen(
+            typeGet(),
+            AppReadyOptics.optPersona + optProductive + Productive.optNavigation,
+            Navigation::reduce
         )
 
         fun reduce(action: PersonaAction, state: Persona): Reduced<out Persona, out AppEffect> {

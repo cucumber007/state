@@ -7,7 +7,9 @@ import com.spqrta.state.app.features.core.AppNotInitialized
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.daily.personas.*
+import com.spqrta.state.app.features.daily.personas.productive.FlipperScreen
 import com.spqrta.state.app.features.daily.personas.productive.SectionPayload
+import com.spqrta.state.app.features.daily.personas.productive.ToDoListScreen
 import com.spqrta.state.app.state.optics.AppReadyOptics
 import com.spqrta.state.ui.TimerUiView
 import com.spqrta.state.ui.control.Button
@@ -88,8 +90,12 @@ private fun getViewState(state: AppReady): ViewState {
                 if (AppReadyOptics.optIsStorageOk.get(state) == false) {
                     return getStorageView(state, persona)
                 } else {
-                    return getPersonaViewState(state, persona)
+                    return when (persona.navigation) {
+                        FlipperScreen -> getPersonaViewState(state, persona)
+                        ToDoListScreen -> ToDoListView(persona.toDoList)
+                    }
                 }
+
             }
 
             Unstable -> {

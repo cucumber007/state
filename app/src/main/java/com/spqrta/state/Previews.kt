@@ -10,6 +10,8 @@ import com.spqrta.state.app.features.daily.personas.Productive
 import com.spqrta.state.app.features.daily.personas.UndefinedPersona
 import com.spqrta.state.app.features.daily.personas.Work
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
+import com.spqrta.state.app.features.daily.personas.productive.ToDoList
+import com.spqrta.state.app.features.daily.personas.productive.ToDoListScreen
 import com.spqrta.state.app.features.daily.timers.Timer
 import com.spqrta.state.app.features.daily.timers.Timers
 import com.spqrta.state.app.features.daily.timers.WorkTimer
@@ -28,7 +30,9 @@ object ProductivePersonaPreview :
             dailyState = DailyState(
                 persona = Productive(
                     activity = Work(WorkTimer),
-                    flipper = Flipper()
+                    flipper = Flipper(),
+                    toDoList = ToDoList(),
+                    navigation = ToDoListScreen
                 )
             )
         )

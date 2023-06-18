@@ -2,7 +2,6 @@ package com.spqrta.state.app.features.daily.personas.productive
 
 import com.spqrta.state.app.AppEffect
 import com.spqrta.state.app.action.FlipperAction
-import com.spqrta.state.util.Either
 import com.spqrta.state.util.Left
 import com.spqrta.state.util.Right
 import com.spqrta.state.util.collections.replaceIf

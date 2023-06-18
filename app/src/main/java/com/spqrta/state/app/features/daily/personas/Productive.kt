@@ -3,12 +3,18 @@ package com.spqrta.state.app.features.daily.personas
 import com.spqrta.state.app.ActionEffect
 import com.spqrta.state.app.AppEffect
 import com.spqrta.state.app.PromptsEnabled
-import com.spqrta.state.app.action.ProductiveAction
+import com.spqrta.state.app.action.ProductiveActivityAction
+import com.spqrta.state.app.action.ProductiveNavigationAction
 import com.spqrta.state.app.action.TimerAction
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
+import com.spqrta.state.app.features.daily.personas.productive.FlipperScreen
+import com.spqrta.state.app.features.daily.personas.productive.Navigation
+import com.spqrta.state.app.features.daily.personas.productive.ToDoList
+import com.spqrta.state.app.features.daily.personas.productive.ToDoListScreen
 import com.spqrta.state.app.features.daily.timers.WorkTimer
 import com.spqrta.state.util.IllegalActionException
 import com.spqrta.state.util.optics.asOpticOptional
+import com.spqrta.state.util.optics.wrap
 import com.spqrta.state.util.state_machine.Reduced
 import com.spqrta.state.util.state_machine.withEffects
 import com.spqrta.state.util.toSeconds
@@ -17,8 +23,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Productive(
     val promptsEnabled: PromptsEnabled = PromptsEnabled,
+    val navigation: Navigation = ToDoListScreen,
     val flipper: Flipper = Flipper(),
-    val activity: ActivityState = None
+    val toDoList: ToDoList = ToDoList(),
+    val activity: ActivityState = None,
 ) : Persona() {
     companion object {
         val optActivity = ({ state: Productive ->
@@ -33,12 +41,24 @@ data class Productive(
             state.copy(flipper = subState)
         }).asOpticOptional()
 
+        val optToDoList = ({ state: Productive ->
+            state.toDoList
+        } to { state: Productive, subState: ToDoList ->
+            state.copy(toDoList = subState)
+        }).asOpticOptional()
+
+        val optNavigation = ({ state: Productive ->
+            state.navigation
+        } to { state: Productive, subState: Navigation ->
+            state.copy(navigation = subState)
+        }).asOpticOptional()
+
         fun reduce(
-            action: ProductiveAction,
+            action: ProductiveActivityAction,
             state: ActivityState
         ): Reduced<out ActivityState, out AppEffect> {
             return when (action) {
-                is ProductiveAction.ActivityDone -> {
+                is ProductiveActivityAction.ActivityDone -> {
                     if (state::class != action.activity::class) {
                         throw IllegalActionException(action, state)
                     } else {
@@ -60,7 +80,7 @@ data class Productive(
                     }
                 }
 
-                is ProductiveAction.NeedMoreTime -> {
+                is ProductiveActivityAction.NeedMoreTime -> {
                     when (state) {
                         is Work -> {
                             state.withEffects(
@@ -84,7 +104,7 @@ data class Productive(
                     when (state) {
                         is Work -> {
                             if (action.timerId == state.timer) {
-                                reduce(ProductiveAction.ActivityDone(state), state)
+                                reduce(ProductiveActivityAction.ActivityDone(state), state)
                             } else state.withEffects()
                         }
 

@@ -1,6 +1,7 @@
 package com.spqrta.state.app.view_state
 
 import com.spqrta.state.app.features.daily.personas.productive.Flipper
+import com.spqrta.state.app.features.daily.personas.productive.ToDoList
 import com.spqrta.state.ui.TimerUiView
 import com.spqrta.state.ui.control.Button
 import com.spqrta.state.ui.control.Control
@@ -15,6 +16,7 @@ sealed class ViewState {
                     StubView -> listOf()
                     is TimeredPromptForm -> listOf()
                     is FlipperView -> state.controls
+                    is ToDoListView -> listOf()
                 }
             }
         }
@@ -36,4 +38,8 @@ data class TimeredPromptForm(
 class FlipperView(
     val flipper: Flipper,
     val controls: List<Button>
+) : ViewState()
+
+class ToDoListView(
+    val toDoList: ToDoList
 ) : ViewState()

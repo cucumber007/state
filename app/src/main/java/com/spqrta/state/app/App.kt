@@ -101,6 +101,10 @@ object App {
                         PlayNotificationSoundEffect -> {
                             playNotificationSoundUC.flow()
                         }
+
+                        VibrateEffect -> {
+                            vibrateUC.flow()
+                        }
                     }.collect { actions -> actions.forEach(::handleAction) }
                 }
             }
