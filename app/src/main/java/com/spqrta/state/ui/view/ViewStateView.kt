@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.spqrta.state.app.App
 import com.spqrta.state.app.action.ToDoListAction
 import com.spqrta.state.app.features.daily.personas.productive.SectionPayload
@@ -107,7 +110,19 @@ fun ViewStateView(viewState: ViewState) {
                                 }
                         ) {
                             Row {
-                                Text(text = item.title, modifier = Modifier.padding(end = Dp(8f)))
+                                Column {
+                                    Text(
+                                        text = item.title,
+                                        modifier = Modifier.padding(end = Dp(8f))
+                                    )
+                                    Text(
+                                        text = item.reason ?: "",
+                                        fontSize = 14.sp,
+                                        color = Color.Gray,
+                                        modifier = Modifier
+                                            .padding(end = Dp(8f))
+                                    )
+                                }
                                 if (item.checked) {
                                     Image(
                                         imageVector = Icons.Default.Check,
