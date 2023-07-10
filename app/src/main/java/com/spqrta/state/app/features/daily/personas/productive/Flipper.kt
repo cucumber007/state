@@ -11,7 +11,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Flipper(
-    val hours: List<HourImpl> = (11..23).map {
+    val hours: List<HourImpl> = listOf(10).map {
+        FullHour(
+            it,
+            Other(Section0),
+            Other(Section1),
+            Other(Section2),
+            Other(Section3),
+        )
+    } + (11..23).map {
         NonFullHour(it)
     }
 ) {

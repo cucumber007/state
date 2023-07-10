@@ -2,6 +2,7 @@ package com.spqrta.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.spqrta.state.api.DateTime
 import com.spqrta.state.app.features.core.AppReady
 import com.spqrta.state.app.features.core.AppState
 import com.spqrta.state.app.features.daily.DailyState
@@ -26,7 +27,7 @@ object DefinedPersonaPreview : PreviewState(AppReady(DailyState(persona = Depres
 object ProductivePersonaPreview :
     PreviewState(
         AppReady(
-            timers = Timers(mapOf(WorkTimer to Timer(LocalDateTime.now(), 1.toSeconds()))),
+            timers = Timers(mapOf(WorkTimer to Timer(DateTime.dateTimeNow, 1.toSeconds()))),
             dailyState = DailyState(
                 persona = Productive(
                     activity = Work(WorkTimer),

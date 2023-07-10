@@ -3,6 +3,7 @@ package com.spqrta.state.ui.view
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
 import com.spqrta.state.app.App
 import com.spqrta.state.ui.Landscape
 import com.spqrta.state.ui.Orientation
@@ -37,9 +39,10 @@ fun ControlsView(controls: List<Control>, orientation: Orientation) {
                         },
                         modifier = Modifier
                             .padding(
-                                top = Dp(0f),
-                                bottom = Dp(0f)
+                                top = Dp(2f),
+                                bottom = Dp(2f)
                             )
+                            .height(Dp(40f))
                             .align(Alignment.CenterHorizontally).let {
                                 when (orientation) {
                                     Landscape -> it.padding(end = Dp(8f))
@@ -66,10 +69,14 @@ fun ControlsView(controls: List<Control>, orientation: Orientation) {
                             when (orientation) {
                                 Portrait -> Modifier.fillMaxWidth()
                                 Landscape -> Modifier
-                                    .width(Dp(100f))
+                                    .width(Dp(120f))
                             }
                         ) {
-                            Text(textAlign = TextAlign.Center, text = control.text)
+                            Text(
+                                textAlign = TextAlign.Center,
+                                text = control.text,
+                                fontSize = 12.sp
+                            )
                         }
                     }
                 }

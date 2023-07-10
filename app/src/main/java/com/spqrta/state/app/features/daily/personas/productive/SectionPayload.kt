@@ -13,6 +13,9 @@ sealed class SectionPayload(val number: SectionNumber, val letter: String, val n
             is Tabor -> Tabor(number)
             is Fun -> Fun(number)
             is HomeAndLife -> HomeAndLife(number)
+            is Other -> Other(number)
+            is Fiz -> Fiz(number)
+            is Psychology -> Psychology(number)
         }
     }
 
@@ -23,6 +26,9 @@ sealed class SectionPayload(val number: SectionNumber, val letter: String, val n
             Health(Section0),
             Fun(Section0),
             Tabor(Section0),
+            Fiz(Section0),
+            Psychology(Section0),
+            Other(Section0),
         )
     }
 
@@ -38,7 +44,16 @@ class Health(val n: SectionNumber) : SectionPayload(n, "З", "Здоровье")
 class Tabor(val n: SectionNumber) : SectionPayload(n, "Т", "Табор")
 
 @Serializable
-class Fun(val n: SectionNumber) : SectionPayload(n, "Ф", "Фан")
+class Fun(val n: SectionNumber) : SectionPayload(n, "О", "Отдых / Развлечения")
+
+@Serializable
+class Fiz(val n: SectionNumber) : SectionPayload(n, "Ф", "Физуха")
+
+@Serializable
+class Psychology(val n: SectionNumber) : SectionPayload(n, "П", "Психология")
 
 @Serializable
 class HomeAndLife(val n: SectionNumber) : SectionPayload(n, "Б", "Быт")
+
+@Serializable
+class Other(val n: SectionNumber) : SectionPayload(n, "-", "Другое")

@@ -1,5 +1,6 @@
 package com.spqrta.state.app.features.daily
 
+import com.spqrta.state.api.DateTime
 import com.spqrta.state.app.Prompt
 import com.spqrta.state.app.action.PersonaAction
 import com.spqrta.state.app.features.daily.clock_mode.ClockMode
@@ -16,14 +17,14 @@ data class DailyState(
     val prompts: List<Prompt> = listOf(),
     val persona: Persona = UndefinedPersona,
     @Contextual
-    val date: LocalDate = LocalDate.now()
+    val date: LocalDate = DateTime.dateNow
 ) {
     companion object {
         val reducer = ClockMode.reducer +
                 Persona.reducer +
                 Timers.reducer +
                 Prompt.reducer
-        
+
         val INITIAL = DailyState()
     }
 }

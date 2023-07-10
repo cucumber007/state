@@ -63,7 +63,7 @@ fun ViewStateView(viewState: ViewState) {
         is FlipperView -> {
             val flipper = viewState.flipper
             Column {
-                Title(text = "Flipper")
+//                Title(text = "Flipper")
                 Row(
                     Modifier
                         .fillMaxWidth()

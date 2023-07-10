@@ -110,12 +110,12 @@ fun PortraitView(state: AppReady) {
             )
     ) {
         Header(state)
-        Text(
-            text = "State",
-            Modifier.align(Alignment.CenterHorizontally),
-            fontSize = TextUnit(20f, TextUnitType.Sp),
-            fontWeight = FontWeight.Bold
-        )
+//        Text(
+//            text = "State",
+//            Modifier.align(Alignment.CenterHorizontally),
+//            fontSize = TextUnit(20f, TextUnitType.Sp),
+//            fontWeight = FontWeight.Bold
+//        )
         MainView(state, Portrait)
     }
 }
