@@ -25,6 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data android:name="io.sentry.dsn" android:value="https://916e84c5d07d5a18847b4ed83561f440@o469578.ingest.sentry.io/4505852278865920" />
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="false" />
+        <meta-data android:name="io.sentry.attach-screenshot" android:value="false" />
+        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="false" />
     </application>
 
 </manifest>

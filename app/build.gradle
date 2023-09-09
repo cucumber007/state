@@ -4,26 +4,36 @@ plugins {
     id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
     id 'com.google.gms.google-services'
-    id("com.google.firebase.crashlytics")
+    id "io.sentry.android.gradle" version "3.12.0"
 }
 
 android {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
     namespace 'com.spqrta.state'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.spqrta.state"
-        minSdk 26
-        targetSdk 33
+        minSdk 21
+        targetSdk 34
         versionCode 1
-        versionName "0.0.5"
+        versionName "0.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
     }
-
+    signingConfigs {
+        release {
+            storeFile file(getProperty(properties, 'keystorePath'))
+            storePassword getProperty(properties, 'keystorePassword')
+            keyAlias getProperty(properties, 'keyAlias')
+            keyPassword getProperty(properties, 'keyPassword')
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -31,11 +41,15 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    lintOptions {
+        checkReleaseBuilds false
     }
     buildFeatures {
         compose true
@@ -51,16 +65,14 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.4.3'
-
-    implementation platform('com.google.firebase:firebase-bom:32.1.1')
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation "androidx.compose.material:material:$compose_ui_version"
 
 //    def moshi_version = "1.13.0"
 //    kapt "com.squareup.moshi:moshi-kotlin-codegen:${moshi_version}"
@@ -72,7 +84,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.6.3"
     implementation "com.squareup.retrofit2:converter-moshi:2.4.0"
     implementation "com.squareup.retrofit2:converter-scalars:2.6.3"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -83,6 +95,7 @@ dependencies {
 }
 
 task("releaseDesktop", type: Copy) {
+
     // Define the output directory (change this path to your actual Desktop path)
     def destPath = System.getProperty("user.home") + "/Desktop/"
 
@@ -90,17 +103,32 @@ task("releaseDesktop", type: Copy) {
     def versionName = android.defaultConfig.versionName
 
     // Define the APK's origin and output paths
-    println(buildDir)
-    def apkPath = "${buildDir}/outputs/apk/debug/"
-    def apkName = "app-debug.apk"
+//    def apkPath = "${buildDir}/outputs/apk/debug/"
+    def apkPath = "${buildDir}/../release/"
+    def apkName = "app-release.apk"
     def newApkName = "State_v${versionName}.apk"
+
+    println("\nCopying: ${apkPath + apkName}")
+    println("To: ${destPath + newApkName}\n")
 
     from(apkPath) {
         include apkName
         rename { newApkName }
     }
-    println(destPath)
     into destPath
 }
 
-tasks.getByName("releaseDesktop").dependsOn("assembleDebug")
+tasks.getByName("releaseDesktop").dependsOn("assembleRelease")
+
+static def getProperty(Properties properties, String key, String defaultValue = null) {
+    def property = properties.getProperty(key)
+    if (property != null) {
+        return property
+    } else {
+        if (defaultValue == null) {
+            throw new NullPointerException("property \"" + key + "\" not found")
+        } else {
+            return defaultValue
+        }
+    }
+}
