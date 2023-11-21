@@ -36,6 +36,7 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -104,7 +105,7 @@ task("releaseDesktop", type: Copy) {
 
     // Define the APK's origin and output paths
 //    def apkPath = "${buildDir}/outputs/apk/debug/"
-    def apkPath = "${buildDir}/../release/"
+    def apkPath = "${buildDir}/outputs/apk/release/"
     def apkName = "app-release.apk"
     def newApkName = "State_v${versionName}.apk"
 
