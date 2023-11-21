@@ -2,10 +2,13 @@ package com.spqrta.state.ui.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -13,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
@@ -29,58 +33,70 @@ import com.spqrta.state.ui.theme.Teal200
 
 @Composable
 fun ControlsView(controls: List<Control>, orientation: Orientation) {
+    val rows = if (controls.size % 2 == 0) {
+        controls.size / 2
+    } else {
+        controls.size / 2 + 1
+    }
     Column {
-        controls.forEach { control ->
-            when (control) {
-                is Button -> {
-                    Button(
-                        onClick = {
-                            App.handleAction(control.action)
-                        },
-                        modifier = Modifier
-                            .padding(
-                                top = Dp(2f),
-                                bottom = Dp(2f)
-                            )
-                            .height(Dp(40f))
-                            .align(Alignment.CenterHorizontally).let {
-                                when (orientation) {
-                                    Landscape -> it.padding(end = Dp(8f))
-                                    Portrait -> it
-                                }
-                            },
-                        colors = when (control.style) {
-                            Main -> {
-                                ButtonDefaults.buttonColors(
-                                    backgroundColor = Teal200,
-                                    contentColor = Color.Black
-                                )
-                            }
+        for (i in 0 until rows) {
+            Row(
 
-                            Ordinal -> {
-                                ButtonDefaults.buttonColors(
-                                    backgroundColor = Grey,
-                                    contentColor = Color.Black
-                                )
-                            }
-                        }
-                    ) {
-                        Box(
-                            when (orientation) {
-                                Portrait -> Modifier.fillMaxWidth()
-                                Landscape -> Modifier
-                                    .width(Dp(120f))
-                            }
-                        ) {
-                            Text(
-                                textAlign = TextAlign.Center,
-                                text = control.text,
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
+            ) {
+                ControlView(controls[i * 2], orientation)
+                if (i * 2 + 1 < controls.size) {
+                    ControlView(controls[i * 2 + 1], orientation)
                 }
-            } as Any?
+            }
         }
     }
+}
+
+@Composable
+fun ControlView(control: Control, orientation: Orientation) {
+    when (control) {
+        is Button -> {
+            Button(
+                onClick = {
+                    App.handleAction(control.action)
+                },
+                modifier = Modifier
+                    .padding(
+                        top = Dp(2f),
+                        bottom = Dp(2f)
+                    )
+                    .height(Dp(40f)),
+                colors = when (control.style) {
+                    Main -> {
+                        ButtonDefaults.buttonColors(
+                            backgroundColor = Teal200,
+                            contentColor = Color.Black
+                        )
+                    }
+
+                    Ordinal -> {
+                        ButtonDefaults.buttonColors(
+                            backgroundColor = Grey,
+                            contentColor = Color.Black
+                        )
+                    }
+                }
+            ) {
+                Box(
+                    when (orientation) {
+//                        Portrait -> Modifier.fillMaxWidth()
+                        Portrait -> Modifier.width(Dp(100f))
+                        Landscape -> Modifier
+                            .width(Dp(120f))
+                    }
+                ) {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = control.text,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        }
+    } as Any?
 }
