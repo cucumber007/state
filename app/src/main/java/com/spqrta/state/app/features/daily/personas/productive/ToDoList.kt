@@ -13,29 +13,29 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ToDoList(
-    
+
     val items: List<TodoItem> = listOf(
+        TodoItem("💊 Экомед"),
         TodoItem("🪥 Зубы Утро"),
         TodoItem("🥛 Вода кровать"),
         TodoItem("🍜 Запарить еду"),
+        TodoItem("🥬 Растения"),
         TodoItem("💊 Таблы утро"),
         TodoItem("🍳 Завтрак"),
         TodoItem("📳 Проверить работу"),
-        TodoItem("👟 Зарядка базовая"),
+        TodoItem("👟 Зарядка базовая", "Чтобы были норм ощущения, восстановить гомеостаз"),
         TodoItem("💧 Кувшин"),
         TodoItem("🪒 Бритье"),
         TodoItem("🫧 Дегтярное мыло"),
-        TodoItem("🚿 Душ"),
+        TodoItem("🚿 Душ", "Чтобы было ощущение чистоты и бодрости"),
         TodoItem("🧴 Крем"),
         TodoItem("🍽️ Посуда"),
-        TodoItem("Стол"),
-        TodoItem("Кухня"),
-        TodoItem("🧹 Убрать"),
-        TodoItem("🧠 Сорт"),
-        TodoItem("📊 Таски"),
-        TodoItem("💪 Зарядка"),
+        TodoItem("🥘 Кухня Убрать"),
+        TodoItem("🧹 Убрать / пылесос"),
+        TodoItem("🧠 Сорт + Incomed (15 минут)"),
+        TodoItem("📊 Таски (15 минут + cорт)"),
+        TodoItem("💪 Зарядка", "Чтобы расти"),
         TodoItem("🧘‍ Медитация стартовая"),
-        TodoItem("Катя синк"),
         TodoItem("💊 Таблы обед"),
         TodoItem("🍔 Обед"),
         TodoItem("👷‍ Работа"),
@@ -43,7 +43,6 @@ data class ToDoList(
         TodoItem("🥡 Еда Чеклист"),
         TodoItem("🏌️ Fucking walk"),
         TodoItem("💊 Таблы вечер"),
-        TodoItem("Катя синк"),
         TodoItem("🧘‍ Медитация вечер"),
         TodoItem("🪥 Зубы вечер"),
     )
