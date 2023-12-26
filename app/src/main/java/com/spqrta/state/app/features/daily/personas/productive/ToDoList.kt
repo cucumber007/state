@@ -23,6 +23,7 @@ data class ToDoList(
         TodoItem("💊 Таблы утро"),
         TodoItem("🍳 Завтрак"),
         TodoItem("📳 Проверить работу"),
+        TodoItem("📅 Calendar"),
         TodoItem("👟 Зарядка базовая", "Чтобы были норм ощущения, восстановить гомеостаз"),
         TodoItem("💧 Кувшин"),
         TodoItem("🪒 Бритье"),
