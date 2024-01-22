@@ -14,12 +14,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ToDoList(
 
+    @Suppress("SpellCheckingInspection")
     val items: List<TodoItem> = listOf(
         TodoItem("💊 Экомед"),
         TodoItem("🪥 Зубы Утро"),
         TodoItem("🥛 Вода кровать"),
         TodoItem("🍜 Запарить еду"),
+        TodoItem("🪟 Проветривание утро"),
         TodoItem("🥬 Растения"),
+        TodoItem("💧 Увлажнитель утро"),
         TodoItem("💊 Таблы утро"),
         TodoItem("🍳 Завтрак"),
         TodoItem("📳 Проверить работу"),
@@ -43,9 +46,11 @@ data class ToDoList(
         TodoItem("📦 Запасы"),
         TodoItem("🥡 Еда Чеклист"),
         TodoItem("🏌️ Fucking walk"),
+        TodoItem("🪟 Проветривание вечер"),
         TodoItem("💊 Таблы вечер"),
         TodoItem("🧘‍ Медитация вечер"),
         TodoItem("🪥 Зубы вечер"),
+        TodoItem("💧 Увлажнитель вечер"),
     )
 
 ) {

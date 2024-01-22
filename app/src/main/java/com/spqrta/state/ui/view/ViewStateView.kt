@@ -110,7 +110,9 @@ fun ViewStateView(viewState: ViewState) {
                                 }
                         ) {
                             Row {
-                                Column {
+                                Column(
+                                    Modifier.weight(1f)
+                                ) {
                                     Text(
                                         text = item.title,
                                         modifier = Modifier.padding(end = Dp(8f))

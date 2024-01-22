@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.spqrta.state.app.features.daily.personas.productive
 
 import kotlinx.serialization.Serializable
@@ -46,7 +48,7 @@ class Health(val n: SectionNumber) : SectionPayload(n, "З", "Здоровье")
 class Tabor(val n: SectionNumber) : SectionPayload(n, "Т", "Табор")
 
 @Serializable
-class Fun(val n: SectionNumber) : SectionPayload(n, "Р", "Развлечения")
+class Fun(val n: SectionNumber) : SectionPayload(n, "F", "Фан / Развлечения")
 
 @Serializable
 class Rest(val n: SectionNumber) : SectionPayload(n, "О", "Отдых")
