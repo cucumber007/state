@@ -1,14 +1,11 @@
 package com.spqrta.state.common.app.features.core
 
-import com.spqrta.state.common.app.AddPromptEffect
 import com.spqrta.state.common.app.AppEffect
-import com.spqrta.state.common.app.RoutinePrompt
 import com.spqrta.state.common.app.action.AppReadyAction
 import com.spqrta.state.common.app.action.OnResumeAction
 import com.spqrta.state.common.app.features.daily.DailyState
 import com.spqrta.state.common.app.features.daily.clock_mode.ClockMode
 import com.spqrta.state.common.app.features.daily.clock_mode.Update
-import com.spqrta.state.common.app.features.daily.routine.CleanTeeth
 import com.spqrta.state.common.app.features.daily.timers.Timers
 import com.spqrta.state.common.app.features.stats.Stats
 import com.spqrta.state.common.app.features.storage.Storage
@@ -22,8 +19,8 @@ import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
-import java.time.LocalTime
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
 
 sealed class AppState {
     override fun toString(): String = javaClass.simpleName
@@ -44,6 +41,10 @@ data class AppReady(
 
     companion object {
         val INITIAL = AppReady(DailyState.INITIAL)
+        val INITIAL_WATCH = AppReady(
+            dailyState = DailyState.INITIAL_WATCH,
+            resetStateEnabled = true
+        )
 
         val reducer = widen(
             typeGet(),
@@ -53,10 +54,14 @@ data class AppReady(
 
         fun reduce(action: AppReadyAction, state: AppReady): Reduced<out AppReady, out AppEffect> {
             return when (action) {
-                AppReadyAction.ResetDayAction -> {
+                is AppReadyAction.ResetDayAction -> {
                     wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
                         if (state.resetStateEnabled) {
-                            resetDay(oldStats, oldDailyState)
+                            resetDay(
+                                oldStats = oldStats,
+                                newDailyState = action.defaultState,
+                                oldDailyState = oldDailyState
+                            )
                         } else {
                             (oldDailyState to oldStats).withEffects()
                         }
@@ -76,7 +81,11 @@ data class AppReady(
                                 )
                             )
                         ) {
-                            resetDay(oldStats, oldDailyState)
+                            resetDay(
+                                oldStats = oldStats,
+                                newDailyState = action.defaultDailyState,
+                                oldDailyState = oldDailyState
+                            )
                         } else {
                             (oldDailyState to oldStats).withEffects()
                         }
@@ -87,10 +96,11 @@ data class AppReady(
 
         private fun resetDay(
             oldStats: Stats,
-            oldDailyState: DailyState
+            oldDailyState: DailyState,
+            newDailyState: DailyState,
         ): Reduced<Pair<DailyState, Stats>, AppEffect> {
-            return (DailyState.INITIAL to updateStats(oldStats, oldDailyState)).withEffects(
-                AddPromptEffect(RoutinePrompt(CleanTeeth))
+            return (newDailyState to updateStats(oldStats, oldDailyState)).withEffects(
+//                AddPromptEffect(RoutinePrompt(CleanTeeth))
             )
         }
 

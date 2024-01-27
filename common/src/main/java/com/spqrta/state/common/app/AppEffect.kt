@@ -9,7 +9,7 @@ sealed class AppEffect {
 }
 
 data class SaveStateEffect(val state: AppReady) : AppEffect()
-object LoadStateEffect : AppEffect()
+data class LoadStateEffect(val defaultState: AppReady) : AppEffect()
 data class TickEffect(val duration: Seconds) : AppEffect()
 data class ActionEffect(val action: AppAction) : AppEffect()
 data class AddPromptEffect(val prompt: Prompt) : AppEffect()

@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "State"
 include ':app'
-include ':watch_old'
+include ':watch'
 include ':common'

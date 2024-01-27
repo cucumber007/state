@@ -14,10 +14,10 @@ class LoadStateUC(
     private val appScope: AppScope
 ) {
 
-    fun flow(): Flow<List<AppAction>> {
+    fun flow(defaultState: AppReady): Flow<List<AppAction>> {
         return {
-            appScope.preferencesRepository.state.load().withFallback(AppReady.INITIAL).let {
-                it ?: AppReady.INITIAL
+            appScope.preferencesRepository.state.load().withFallback(defaultState).let {
+                it ?: defaultState
             }
         }.asFlow().map {
 //            if (MyApplication.DEBUG_MODE) {
@@ -26,7 +26,12 @@ class LoadStateUC(
 //                it
 //            }
             it
-        }.map { StateLoadedAction(it).asList() }
+        }.map {
+            StateLoadedAction(
+                state = it,
+                defaultDailyState = it.dailyState
+            ).asList()
+        }
     }
 
 }

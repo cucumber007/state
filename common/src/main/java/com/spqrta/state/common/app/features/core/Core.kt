@@ -38,15 +38,19 @@ object Core {
         return when (state) {
             AppNotInitialized -> {
                 when (action) {
-                    InitAppAction -> {
-                        state.withEffects(LoadStateEffect)
+                    is InitAppAction -> {
+                        state.withEffects(LoadStateEffect(action.defaultState))
                     }
 
                     is StateLoadedAction -> {
                         chain(
                             action.state.withEffects()
                         ) {
-                            AppReady.reduce(OnResumeAction(), it)
+                            AppReady.reduce(
+                                OnResumeAction(
+                                    defaultDailyState = action.defaultDailyState
+                                ), it
+                            )
                         }
                     }
 
@@ -61,7 +65,7 @@ object Core {
             is AppReady -> {
                 when (action) {
                     is StateLoadedAction,
-                    InitAppAction -> {
+                    is InitAppAction -> {
                         illegalAction(action, state)
                     }
 

@@ -1,9 +1,9 @@
 package com.spqrta.state.common.app.features.daily.personas.productive
 
 import com.spqrta.state.common.app.AppEffect
-import com.spqrta.state.common.app.PlayNotificationSoundEffect
 import com.spqrta.state.common.app.VibrateEffect
 import com.spqrta.state.common.app.action.ToDoListAction
+import com.spqrta.state.common.util.optics.OpticGetStrict
 import com.spqrta.state.common.util.optics.OpticOptional
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.optics.wrap
@@ -53,7 +53,18 @@ data class ToDoList(
         TodoItem("💧 Увлажнитель вечер"),
     )
 
+
 ) {
+    override fun toString(): String {
+        return optChecked
+            .getStrict(this)
+            .map { it.title }
+            .joinToString(", ")
+            .let {
+                "${javaClass.simpleName}($it)"
+            }
+    }
+
     companion object {
         fun reduce(
             action: ToDoListAction,
@@ -86,6 +97,12 @@ data class ToDoList(
                             }
                         )
                     }).asOpticOptional()
+        }
+
+        val optChecked = object : OpticGetStrict<ToDoList, List<TodoItem>> {
+            override fun getStrict(state: ToDoList): List<TodoItem> {
+                return state.items.filter { it.checked }
+            }
         }
     }
 }

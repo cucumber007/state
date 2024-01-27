@@ -2,7 +2,7 @@ package com.spqrta.state.common.app.action
 
 import com.spqrta.state.common.app.features.daily.timers.TimerId
 import com.spqrta.state.common.util.TimeValue
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 sealed interface TimerAction : AppAction {
     sealed class Action : TimerAction

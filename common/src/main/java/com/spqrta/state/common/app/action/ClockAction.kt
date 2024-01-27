@@ -1,6 +1,7 @@
 package com.spqrta.state.common.app.action
 
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
+
 
 sealed interface ClockAction : AppAction {
     sealed class Action : ClockAction

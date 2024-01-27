@@ -22,8 +22,8 @@ import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.toMinutes
 import com.spqrta.state.common.util.toSeconds
 import kotlinx.serialization.Serializable
-import java.time.Duration
-import java.time.LocalDateTime
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 
 @Serializable
 data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
