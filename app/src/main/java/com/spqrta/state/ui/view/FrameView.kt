@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import com.spqrta.state.app.view_state.ViewState
+import com.spqrta.state.common.ui.view_state.ViewState
 import com.spqrta.state.ui.Landscape
 import com.spqrta.state.ui.Orientation
 import com.spqrta.state.ui.Portrait

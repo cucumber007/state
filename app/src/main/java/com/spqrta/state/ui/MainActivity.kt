@@ -8,47 +8,26 @@ import android.view.Surface
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
-import com.spqrta.state.app.App
-import com.spqrta.state.app.action.AppReadyAction
-import com.spqrta.state.app.action.FlipperAction
-import com.spqrta.state.app.action.OnResumeAction
-import com.spqrta.state.app.features.core.AppNotInitialized
-import com.spqrta.state.app.features.core.AppReady
-import com.spqrta.state.app.features.core.AppState
-import com.spqrta.state.app.features.daily.personas.productive.Flipper
-import com.spqrta.state.app.features.daily.personas.productive.Hour
-import com.spqrta.state.app.features.daily.personas.productive.SectionPayload
-import com.spqrta.state.app.state.*
-import com.spqrta.state.app.state.optics.AppStateOptics
-import com.spqrta.state.app.view_state.ButtonForm
-import com.spqrta.state.app.view_state.FlipperView
-import com.spqrta.state.app.view_state.StubView
-import com.spqrta.state.app.view_state.TimeredPromptForm
-import com.spqrta.state.app.view_state.ViewState
-import com.spqrta.state.ui.control.Button
-import com.spqrta.state.ui.control.Control
-import com.spqrta.state.ui.control.Main
-import com.spqrta.state.ui.control.Ordinal
+import com.spqrta.state.common.app.action.OnResumeAction
+import com.spqrta.state.common.app.features.core.AppNotInitialized
+import com.spqrta.state.common.app.features.core.AppReady
+import com.spqrta.state.common.app.features.core.AppState
+import com.spqrta.state.common.app.state.optics.AppStateOptics
 import com.spqrta.state.ui.theme.AppTheme
-import com.spqrta.state.ui.theme.Grey
-import com.spqrta.state.ui.theme.Teal200
 import com.spqrta.state.ui.view.FrameView
 import com.spqrta.state.ui.view.Header
-import com.spqrta.state.ui.view.HourSection
 
 
 class MainActivity : ComponentActivity() {
@@ -70,13 +49,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        App.handleAction(OnResumeAction())
+        com.spqrta.state.common.app.App.handleAction(OnResumeAction())
     }
 }
 
 @Composable
 fun AppView(orientation: Orientation) {
-    val state = App.state.collectAsState().value
+    val state = com.spqrta.state.common.app.App.state.collectAsState().value
     when (state) {
         AppNotInitialized -> {
             Text("App not initialized")

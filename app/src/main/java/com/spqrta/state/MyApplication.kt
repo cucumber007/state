@@ -1,25 +1,22 @@
 package com.spqrta.state
 
 import android.app.Application
-import com.spqrta.state.app.App
-import com.spqrta.state.app.action.InitAppAction
-import com.spqrta.state.app.features.core.AppNotInitialized
-import com.spqrta.state.app.features.core.AppReady
-import com.spqrta.state.app.features.core.AppState
-import com.spqrta.state.external.preferences.PreferencesRepository
-import com.squareup.moshi.Moshi
+import com.spqrta.state.common.AppScope
+import com.spqrta.state.common.app.action.InitAppAction
+import com.spqrta.state.common.app.features.core.AppReady
+import com.spqrta.state.common.external.preferences.PreferencesRepository
 
 class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        App.inject(
+        com.spqrta.state.common.app.App.inject(
             AppScope(
                 appContext = this,
-                preferencesRepository = PreferencesRepository(Moshi.Builder().build(), this)
+                preferencesRepository = PreferencesRepository(this)
             )
         )
-        App.handleAction(InitAppAction)
+        com.spqrta.state.common.app.App.handleAction(InitAppAction)
     }
 
 

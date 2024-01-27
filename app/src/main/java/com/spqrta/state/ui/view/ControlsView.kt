@@ -20,14 +20,14 @@ import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
-import com.spqrta.state.app.App
+import com.spqrta.state.common.app.App
 import com.spqrta.state.ui.Landscape
 import com.spqrta.state.ui.Orientation
 import com.spqrta.state.ui.Portrait
-import com.spqrta.state.ui.control.Button
-import com.spqrta.state.ui.control.Control
-import com.spqrta.state.ui.control.Main
-import com.spqrta.state.ui.control.Ordinal
+import com.spqrta.state.common.ui.view.control.Button
+import com.spqrta.state.common.ui.view.control.Control
+import com.spqrta.state.common.ui.view.control.Main
+import com.spqrta.state.common.ui.view.control.Ordinal
 import com.spqrta.state.ui.theme.Grey
 import com.spqrta.state.ui.theme.Teal200
 
@@ -58,7 +58,7 @@ fun ControlView(control: Control, orientation: Orientation) {
         is Button -> {
             Button(
                 onClick = {
-                    App.handleAction(control.action)
+                    com.spqrta.state.common.app.App.handleAction(control.action)
                 },
                 modifier = Modifier
                     .padding(

@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.spqrta.state.app.App
-import com.spqrta.state.app.action.FlipperAction
-import com.spqrta.state.app.features.daily.personas.productive.Hour
-import com.spqrta.state.app.features.daily.personas.productive.SectionPayload
+import com.spqrta.state.common.app.App
+import com.spqrta.state.common.app.action.FlipperAction
+import com.spqrta.state.common.app.features.daily.personas.productive.Hour
+import com.spqrta.state.common.app.features.daily.personas.productive.SectionPayload
 
 @Composable
 fun HourSection(hour: Hour, section: SectionPayload?) {
@@ -20,7 +20,12 @@ fun HourSection(hour: Hour, section: SectionPayload?) {
             Text("--")
         } else {
             Text(section.letter, Modifier.clickable {
-                App.handleAction(FlipperAction.Delete(hour.id, section.number))
+                com.spqrta.state.common.app.App.handleAction(
+                    FlipperAction.Delete(
+                        hour.id,
+                        section.number
+                    )
+                )
             })
         }
     }

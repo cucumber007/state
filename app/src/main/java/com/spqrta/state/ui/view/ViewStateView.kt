@@ -1,17 +1,14 @@
 package com.spqrta.state.ui.view
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -19,21 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.spqrta.state.app.App
-import com.spqrta.state.app.action.ToDoListAction
-import com.spqrta.state.app.features.daily.personas.productive.SectionPayload
-import com.spqrta.state.app.view_state.ButtonForm
-import com.spqrta.state.app.view_state.FlipperView
-import com.spqrta.state.app.view_state.StubView
-import com.spqrta.state.app.view_state.TimeredPromptForm
-import com.spqrta.state.app.view_state.ToDoListView
-import com.spqrta.state.app.view_state.ViewState
+import com.spqrta.state.common.app.action.ToDoListAction
+import com.spqrta.state.common.app.features.daily.personas.productive.SectionPayload
+import com.spqrta.state.common.ui.view_state.ButtonForm
+import com.spqrta.state.common.ui.view_state.FlipperView
+import com.spqrta.state.common.ui.view_state.StubView
+import com.spqrta.state.common.ui.view_state.TimeredPromptForm
+import com.spqrta.state.common.ui.view_state.ToDoListView
+import com.spqrta.state.common.ui.view_state.ViewState
 
 @Composable
 fun ViewStateView(viewState: ViewState) {
@@ -41,9 +33,10 @@ fun ViewStateView(viewState: ViewState) {
         is ButtonForm -> {
             Column {
                 Title(text = viewState.text)
-                if (viewState.timer != null) {
+                val timerView = viewState.timer
+                if (timerView != null) {
                     Box(Modifier.fillMaxWidth()) {
-                        TimerView(view = viewState.timer)
+                        TimerView(view = timerView)
                     }
                 }
             }
@@ -102,7 +95,7 @@ fun ViewStateView(viewState: ViewState) {
                                 .pointerInput(Unit) {
                                     detectTapGestures(
                                         onTap = {
-                                            App.handleAction(
+                                            com.spqrta.state.common.app.App.handleAction(
                                                 ToDoListAction.OnPress(item.title)
                                             )
                                         }

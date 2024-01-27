@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import com.spqrta.state.ui.TimerUiView
+import com.spqrta.state.common.ui.view.TimerUiView
 
 @Composable
 fun TimerView(view: TimerUiView) {

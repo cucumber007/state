@@ -14,19 +14,17 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.app.App
-import com.spqrta.state.app.action.AppReadyAction
-import com.spqrta.state.app.action.ProductiveNavigationAction
-import com.spqrta.state.app.features.core.AppReady
-import com.spqrta.state.app.features.daily.personas.Productive
-import com.spqrta.state.app.features.daily.personas.productive.FlipperScreen
+import com.spqrta.state.common.app.action.AppReadyAction
+import com.spqrta.state.common.app.action.ProductiveNavigationAction
+import com.spqrta.state.common.app.features.core.AppReady
+import com.spqrta.state.common.app.features.daily.personas.Productive
+import com.spqrta.state.common.app.features.daily.personas.productive.FlipperScreen
 
 @Composable
 fun Header(state: AppReady) {
@@ -49,7 +47,9 @@ fun Header(state: AppReady) {
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = {
-                                    App.handleAction(ProductiveNavigationAction.OpenTodoListClicked)
+                                    com.spqrta.state.common.app.App.handleAction(
+                                        ProductiveNavigationAction.OpenTodoListClicked
+                                    )
                                 }
                             )
                         }
@@ -67,10 +67,10 @@ fun Header(state: AppReady) {
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                App.handleAction(AppReadyAction.ResetDayAction)
+                                com.spqrta.state.common.app.App.handleAction(AppReadyAction.ResetDayAction)
                             },
                             onLongPress = {
-                                App.handleAction(
+                                com.spqrta.state.common.app.App.handleAction(
                                     AppReadyAction.FlipResetStateEnabledAction
                                 )
                             }
