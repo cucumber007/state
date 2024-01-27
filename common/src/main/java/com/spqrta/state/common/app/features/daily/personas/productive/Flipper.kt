@@ -79,6 +79,8 @@ data class Flipper(
         }
     }
 
+    override fun toString(): String = javaClass.simpleName
+
     companion object {
         fun reduce(action: FlipperAction, state: Flipper): Reduced<out Flipper, out AppEffect> {
             return when (action) {

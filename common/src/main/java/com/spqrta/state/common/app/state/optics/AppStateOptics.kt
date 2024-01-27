@@ -3,8 +3,11 @@ package com.spqrta.state.common.app.state.optics
 import com.spqrta.state.common.app.features.core.AppNotInitialized
 import com.spqrta.state.common.app.features.core.AppReady
 import com.spqrta.state.common.app.features.core.AppState
+import com.spqrta.state.common.app.features.daily.DailyState
+import com.spqrta.state.common.app.features.daily.personas.productive.ToDoList
 import com.spqrta.state.common.ui.view_state.ViewState
 import com.spqrta.state.common.ui.view_state.getViewState
+import com.spqrta.state.common.util.optics.OpticGet
 import com.spqrta.state.common.util.optics.OpticGetStrict
 import com.spqrta.state.common.util.optics.OpticOptional
 
@@ -25,6 +28,14 @@ object AppStateOptics {
     val optViewState = object : OpticGetStrict<AppState, ViewState> {
         override fun getStrict(state: AppState): ViewState {
             return getViewState(state)
+        }
+    }
+
+    val optTodoList = object : OpticGet<AppState, ToDoList> {
+        override fun get(state: AppState): ToDoList? {
+            return optReady.get(state)?.dailyState?.let {
+                DailyState.optTodoList.get(it)
+            }
         }
     }
 }

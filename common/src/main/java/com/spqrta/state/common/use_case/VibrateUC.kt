@@ -1,5 +1,6 @@
 package com.spqrta.state.common.use_case
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
@@ -15,6 +16,7 @@ class VibrateUC(
     private val playNotificationSoundUC: PlayNotificationSoundUC
 ) {
 
+    @SuppressLint("MissingPermission")
     fun flow(): Flow<List<AppAction>> {
         return getSystemService(context, Vibrator::class.java)
             ?.let { vibrator ->
@@ -24,7 +26,7 @@ class VibrateUC(
                 val duration = 250
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     {
-                        val amplitude = 255
+                        val amplitude = 1
                         val effect = VibrationEffect.createOneShot(duration.toLong(), amplitude)
                         vibrator.vibrate(effect)
                         listOf<AppAction>()
