@@ -1,7 +1,6 @@
 package com.spqrta.state.common.app.features.daily.personas.productive
 
 import com.spqrta.state.common.app.AppEffect
-import com.spqrta.state.common.app.PlayNotificationSoundEffect
 import com.spqrta.state.common.app.VibrateEffect
 import com.spqrta.state.common.app.action.ToDoListAction
 import com.spqrta.state.common.util.optics.OpticOptional
@@ -21,12 +20,13 @@ data class ToDoList(
         TodoItem("🥛 Вода кровать"),
         TodoItem("🍜 Запарить еду"),
         TodoItem("🪟 Проветривание утро"),
-        TodoItem("🥬 Растения"),
+        TodoItem("🥬 Растения утро"),
         TodoItem("💧 Увлажнитель утро"),
         TodoItem("💊 Таблы утро"),
         TodoItem("🍳 Завтрак"),
         TodoItem("📳 Проверить работу"),
         TodoItem("📅 Calendar"),
+        TodoItem("🧘‍ Медитация утро", "не забудь про цель медитации"),
         TodoItem("👟 Зарядка базовая", "Чтобы были норм ощущения, восстановить гомеостаз"),
         TodoItem("💧 Кувшин"),
         TodoItem("🪒 Бритье"),
@@ -48,7 +48,8 @@ data class ToDoList(
         TodoItem("🏌️ Fucking walk"),
         TodoItem("🪟 Проветривание вечер"),
         TodoItem("💊 Таблы вечер"),
-        TodoItem("🧘‍ Медитация вечер"),
+        TodoItem("🥬 Растения вечер"),
+        TodoItem("🧘‍ Медитация вечер", "не забудь про цель медитации"),
         TodoItem("🪥 Зубы вечер"),
         TodoItem("💧 Увлажнитель вечер"),
     )
