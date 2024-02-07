@@ -95,4 +95,12 @@ class MainActivity : AppCompatActivity(), AmbientModeSupport.AmbientCallbackProv
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    fun scrollViewPager() {
+        viewPager?.let { viewPager ->
+            if (viewPager.currentItem < viewPager.adapter!!.itemCount - 1) {
+                viewPager.currentItem = viewPager.currentItem + 1
+            }
+        }
+    }
+
 }

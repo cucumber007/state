@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.spqrta.state.common.app.action.AppReadyAction
 import com.spqrta.state.common.app.action.ToDoListAction
 import com.spqrta.state.common.app.features.daily.DailyState
+import com.spqrta.state.common.app.features.daily.personas.productive.ToDoList
 import com.spqrta.state.common.app.state.optics.AppStateOptics
 import kotlinx.coroutines.launch
 
@@ -41,10 +42,7 @@ class ToDoFragment : Fragment() {
         val textView = view.findViewById<TextView>(R.id.textView)
         val tvPageNumber = view.findViewById<TextView>(R.id.tvPageNumber)
         val imageView = view.findViewById<View>(R.id.imageView)
-        val todoItem = AppStateOptics
-            .optTodoList
-            .get(WatchApplication.app.state.value)!!
-            .items[todoItemPosition!!]
+        val todoItem = getState()
         textView.text = todoItem.title
         val currentPage = (todoItemPosition!! + 1)
         val totalPages = AppStateOptics
@@ -61,6 +59,9 @@ class ToDoFragment : Fragment() {
             WatchApplication.app.handleAction(
                 ToDoListAction.OnPress(todoItem.title)
             )
+            if (!getState().checked) {
+                scrollViewPager()
+            }
         }
         view.setOnLongClickListener {
             WatchApplication.app.handleAction(
@@ -89,6 +90,18 @@ class ToDoFragment : Fragment() {
             }
         }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun getState() = WatchApplication.app.state.value
+        .let {
+            AppStateOptics.optTodoList.get(it)!!
+        }
+        .let {
+            ToDoList.optItem(todoItemPosition!!).get(it)!!
+        }
+
+    private fun scrollViewPager() {
+        (requireActivity() as MainActivity).scrollViewPager()
     }
 
     companion object {

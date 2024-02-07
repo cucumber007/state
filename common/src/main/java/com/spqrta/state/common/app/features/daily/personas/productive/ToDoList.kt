@@ -3,6 +3,7 @@ package com.spqrta.state.common.app.features.daily.personas.productive
 import com.spqrta.state.common.app.AppEffect
 import com.spqrta.state.common.app.VibrateEffect
 import com.spqrta.state.common.app.action.ToDoListAction
+import com.spqrta.state.common.util.optics.OpticGet
 import com.spqrta.state.common.util.optics.OpticGetStrict
 import com.spqrta.state.common.util.optics.OpticOptional
 import com.spqrta.state.common.util.optics.asOpticOptional
@@ -99,6 +100,14 @@ data class ToDoList(
                             }
                         )
                     }).asOpticOptional()
+        }
+
+        fun optItem(position: Int): OpticGet<ToDoList, TodoItem> {
+            return object : OpticGet<ToDoList, TodoItem> {
+                override fun get(state: ToDoList): TodoItem {
+                    return state.items[position]
+                }
+            }
         }
 
         val optChecked = object : OpticGetStrict<ToDoList, List<TodoItem>> {
