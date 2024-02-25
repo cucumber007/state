@@ -1,26 +1,25 @@
 package com.spqrta.state.watch
 
 import android.annotation.SuppressLint
+import android.app.Fragment
+import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.spqrta.state.common.app.action.AppReadyAction
 import com.spqrta.state.common.app.action.ToDoListAction
 import com.spqrta.state.common.app.features.daily.DailyState
-import com.spqrta.state.common.app.features.daily.personas.productive.ToDoList
+import com.spqrta.state.common.app.features.daily.personas.productive.TodoItem
 import com.spqrta.state.common.app.state.optics.AppStateOptics
 import kotlinx.coroutines.launch
 
 private const val ARG_TODO_ITEM_POSITION = "todo_item_position"
 
-class ToDoFragment : Fragment() {
+class ToDoFragment : Fragment(R.layout.fragment_to_do) {
     private var todoItemPosition: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,13 +27,6 @@ class ToDoFragment : Fragment() {
         arguments?.let {
             todoItemPosition = it.getInt(ARG_TODO_ITEM_POSITION, -1)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_to_do, container, false)
     }
 
     @SuppressLint("SetTextI18n")
@@ -74,14 +66,14 @@ class ToDoFragment : Fragment() {
             ).show()
             true
         }
+        tvPageNumber.setOnLongClickListener {
+            mainActivity().toggleShowChecked()
+            true
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                WatchApplication.app.state.collect { value ->
-                    val todoItem = AppStateOptics
-                        .optTodoList
-                        .get(WatchApplication.app.state.value)!!
-                        .items[todoItemPosition!!]
-                    if (todoItem.checked) {
+                mainActivity().localToDoItemsState.collect { value ->
+                    if (getState().checked) {
                         imageView.visibility = View.VISIBLE
                     } else {
                         imageView.visibility = View.GONE
@@ -92,17 +84,21 @@ class ToDoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun getState() = WatchApplication.app.state.value
+    private fun getState() = mainActivity()
+        .localToDoItemsState.value
         .let {
-            AppStateOptics.optTodoList.get(it)!!
-        }
-        .let {
-            ToDoList.optItem(todoItemPosition!!).get(it)!!
+            if (it.size <= todoItemPosition!!) {
+                TodoItem("NO DATA")
+            } else {
+                it[todoItemPosition!!]
+            }
         }
 
     private fun scrollViewPager() {
-        (requireActivity() as MainActivity).scrollViewPager()
+        mainActivity().scrollViewPager()
     }
+
+    private fun mainActivity() = requireActivity() as MainActivity
 
     companion object {
         @JvmStatic

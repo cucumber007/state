@@ -11,7 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import androidx.wear.ambient.AmbientModeSupport
+import com.spqrta.state.common.app.features.daily.personas.productive.ToDoList
+import com.spqrta.state.common.app.features.daily.personas.productive.TodoItem
 import com.spqrta.state.common.app.state.optics.AppStateOptics
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -20,6 +23,8 @@ class MainActivity : AppCompatActivity(), AmbientModeSupport.AmbientCallbackProv
     private var viewPager: ViewPager2? = null
     private var scrollSavedState: Float = 0f
     private lateinit var ambientController: AmbientModeSupport.AmbientController
+    private var showChecked = true
+    val localToDoItemsState = MutableStateFlow(listOf<TodoItem>())
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +40,13 @@ class MainActivity : AppCompatActivity(), AmbientModeSupport.AmbientCallbackProv
                     val todoListState = AppStateOptics.optTodoList.get(value)
                     if (todoListState != lastTodoListState) {
                         lastTodoListState = todoListState
-                        pagerAdapter.notifyDataSetChanged()
+                        updateLocalState()
                     }
+                }
+            }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                localToDoItemsState.collect {
+                    pagerAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -101,6 +111,31 @@ class MainActivity : AppCompatActivity(), AmbientModeSupport.AmbientCallbackProv
                 viewPager.currentItem = viewPager.currentItem + 1
             }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun toggleShowChecked() {
+        showChecked = !showChecked
+        updateLocalState()
+    }
+
+    private fun updateLocalState() {
+        lifecycleScope.launch {
+            localToDoItemsState.emit(
+                if (showChecked) {
+                    getToDoList()!!.items
+                } else {
+                    ToDoList.optUnchecked.get(getToDoList()!!)!!
+                }
+            )
+        }
+    }
+
+    private fun getToDoList(): ToDoList? {
+        return WatchApplication.app.state.value
+            .let {
+                AppStateOptics.optTodoList.get(it)
+            }
     }
 
 }
