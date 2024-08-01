@@ -7,6 +7,7 @@ import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
 import com.spqrta.state.common.logic.features.daily.clock_mode.Update
 import com.spqrta.state.common.logic.features.daily.routine.CleanTeeth
 import com.spqrta.state.common.logic.features.daily.timers.Timers
+import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.common.logic.features.global.AddPromptEffect
 import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.AppGlobalState
@@ -35,6 +36,7 @@ object AppNotInitialized : AppState()
 data class AppReady(
     @Contextual val timers: Timers = Timers(),
     val clockMode: ClockMode = Update,
+    val frameState: FrameState = FrameState.INITIAL,
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
     val stats: Stats = Stats(),

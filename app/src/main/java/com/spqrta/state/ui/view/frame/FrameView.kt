@@ -1,4 +1,4 @@
-package com.spqrta.state.ui.view
+package com.spqrta.state.ui.view.frame
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,8 @@ import com.spqrta.state.common.ui.view_state.ViewState
 import com.spqrta.state.ui.Landscape
 import com.spqrta.state.ui.Orientation
 import com.spqrta.state.ui.Portrait
+import com.spqrta.state.ui.view.ControlsView
+import com.spqrta.state.ui.view.ViewStateView
 
 @Composable
 fun FrameView(viewState: ViewState, orientation: Orientation) {

@@ -1,4 +1,4 @@
-package com.spqrta.state.ui.main
+package com.spqrta.state.ui.view.main
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme

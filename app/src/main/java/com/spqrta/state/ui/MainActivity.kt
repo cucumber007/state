@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalUnitApi::class, ExperimentalMaterialApi::class, ExperimentalUnitApi::class)
 @file:Suppress("USELESS_CAST")
 
-package com.spqrta.state.ui.main
+package com.spqrta.state.ui
 
 import android.os.Bundle
 import android.view.Surface
@@ -11,8 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.spqrta.state.common.logic.action.OnResumeAction
-import com.spqrta.state.ui.Landscape
-import com.spqrta.state.ui.Portrait
+import com.spqrta.state.ui.view.main.AppView
 
 
 class MainActivity : ComponentActivity() {
