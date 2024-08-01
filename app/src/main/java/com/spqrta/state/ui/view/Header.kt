@@ -2,29 +2,16 @@
 
 package com.spqrta.state.ui.view
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.dp
 import com.spqrta.state.common.logic.AppReady
-import com.spqrta.state.common.logic.action.AppReadyAction
-import com.spqrta.state.common.logic.action.ProductiveNavigationAction
-import com.spqrta.state.common.logic.features.daily.personas.Productive
-import com.spqrta.state.common.logic.features.daily.personas.productive.FlipperScreen
+import com.spqrta.state.common.ui.view_state.StubView
 
 @Composable
 fun Header(state: AppReady) {
@@ -34,49 +21,7 @@ fun Header(state: AppReady) {
                 .fillMaxWidth()
                 .padding(bottom = Dp(8f))
         ) {
-            val persona = state.dailyState.persona
-            if (persona is Productive) {
-                Image(
-                    imageVector = if (persona.navigation is FlipperScreen) {
-                        Icons.Outlined.CheckCircle
-                    } else {
-                        Icons.Default.ArrowBack
-                    },
-                    contentDescription = null,
-                    modifier = Modifier
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = {
-                                    com.spqrta.state.common.logic.App.handleAction(
-                                        ProductiveNavigationAction.OpenTodoListClicked
-                                    )
-                                }
-                            )
-                        }
-                )
-            }
-            Image(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = null,
-                modifier = if (state.resetStateEnabled) {
-                    Modifier.background(Color.Red)
-                } else {
-                    Modifier
-                }
-                    .padding(start = 16.dp)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                com.spqrta.state.common.logic.App.handleAction(AppReadyAction.ResetDayAction)
-                            },
-                            onLongPress = {
-                                com.spqrta.state.common.logic.App.handleAction(
-                                    AppReadyAction.FlipResetStateEnabledAction
-                                )
-                            }
-                        )
-                    }
-            )
+            StubView
         }
     }
 }

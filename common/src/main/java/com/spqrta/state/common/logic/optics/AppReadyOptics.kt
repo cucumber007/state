@@ -53,12 +53,12 @@ object AppReadyOptics {
     }
 
     val optDailyState = object : OpticOptional<AppReady, DailyState> {
-        override fun get(state: AppReady): DailyState {
-            return state.dailyState
+        override fun get(state: AppReady): DailyState? {
+            return null
         }
 
         override fun set(state: AppReady, subState: DailyState): AppReady {
-            return state.copy(dailyState = subState)
+            return state
         }
     }
 

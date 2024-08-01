@@ -33,7 +33,6 @@ object AppNotInitialized : AppState()
 
 @Serializable
 data class AppReady(
-    val dailyState: DailyState,
     @Contextual val timers: Timers = Timers(),
     val clockMode: ClockMode = Update,
     val globalState: AppGlobalState = AppGlobalState(),
@@ -43,7 +42,7 @@ data class AppReady(
 ) : AppState() {
 
     companion object {
-        val INITIAL = AppReady(DailyState.INITIAL)
+        val INITIAL = AppReady()
 
         val reducer = widen(
             typeGet(),
