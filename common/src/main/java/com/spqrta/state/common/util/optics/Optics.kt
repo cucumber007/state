@@ -23,6 +23,8 @@ interface OpticGetStrict<S : Any, Sub> : OpticGet<S, Sub> {
     override fun get(state: S): Sub? = getStrict(state)
 }
 
+interface OpticStrict<S : Any, Sub : Any> : OpticGetStrict<S, Sub>, OpticSet<S, Sub>
+
 interface Optic<S : Any, Sub : Any> : OpticOptional<S, Sub>, OpticGetStrict<S, Sub>
 
 

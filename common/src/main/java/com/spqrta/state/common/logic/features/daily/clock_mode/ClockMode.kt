@@ -19,6 +19,8 @@ sealed class ClockMode {
     override fun toString(): String = javaClass.simpleName
 
     companion object {
+        val INITIAL: ClockMode = Second
+
         val reducer = widen(
             typeGet(),
             AppReadyOptics.optClockMode,
@@ -69,5 +71,5 @@ object Second : ClockMode() {
 
 @Serializable
 object Update : ClockMode() {
-    val timeout: Seconds = 5.toSeconds()
+    val timeout: Seconds = 1.toSeconds()
 }

@@ -46,7 +46,7 @@ object AppGlobalReducer {
                         chain(
                             action.state.withEffects()
                         ) {
-                            AppReady.reduce(OnResumeAction(), it)
+                            AppReady.reducer(OnResumeAction(), it)
                         }
                     }
 

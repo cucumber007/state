@@ -40,6 +40,10 @@ private fun getViewState(state: AppReady): ViewState {
                     )
                 )
             }
+
+            else -> {
+                throw IllegalStateException("Unknown prompt type")
+            }
         }
     } else {
         StubView

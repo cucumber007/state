@@ -7,6 +7,7 @@ import com.spqrta.state.common.ui.view_state.ViewState
 import com.spqrta.state.common.ui.view_state.getViewState
 import com.spqrta.state.common.util.optics.OpticGetStrict
 import com.spqrta.state.common.util.optics.OpticOptional
+import com.spqrta.state.common.util.optics.plus
 
 object AppStateOptics {
     val optReady = object : OpticOptional<AppState, AppReady> {
@@ -21,6 +22,8 @@ object AppStateOptics {
             return subState
         }
     }
+
+    val optAlarmsState = optReady.plus(AppReady.optAlarmsState)
 
     val optViewState = object : OpticGetStrict<AppState, ViewState> {
         override fun getStrict(state: AppState): ViewState {

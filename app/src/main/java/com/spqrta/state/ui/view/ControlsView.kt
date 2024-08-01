@@ -15,13 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
-import com.spqrta.state.ui.Landscape
-import com.spqrta.state.ui.Orientation
-import com.spqrta.state.ui.Portrait
 import com.spqrta.state.common.ui.view.control.Button
 import com.spqrta.state.common.ui.view.control.Control
 import com.spqrta.state.common.ui.view.control.Main
 import com.spqrta.state.common.ui.view.control.Ordinal
+import com.spqrta.state.ui.Landscape
+import com.spqrta.state.ui.Orientation
+import com.spqrta.state.ui.Portrait
 import com.spqrta.state.ui.theme.Grey
 import com.spqrta.state.ui.theme.Teal200
 
@@ -47,7 +47,7 @@ fun ControlsView(controls: List<Control>, orientation: Orientation) {
 }
 
 @Composable
-fun ControlView(control: Control, orientation: Orientation) {
+fun ControlView(control: Control, orientation: Orientation = Portrait) {
     when (control) {
         is Button -> {
             Button(

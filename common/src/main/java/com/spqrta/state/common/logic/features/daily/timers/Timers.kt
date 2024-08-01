@@ -6,7 +6,6 @@ import com.spqrta.state.common.logic.action.TimerAction.ProlongTimerAction
 import com.spqrta.state.common.logic.action.TimerAction.StartTimer
 import com.spqrta.state.common.logic.action.TimerAction.TimerEnded
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
-import com.spqrta.state.common.logic.features.daily.clock_mode.None
 import com.spqrta.state.common.logic.features.daily.clock_mode.Update
 import com.spqrta.state.common.logic.features.global.ActionEffect
 import com.spqrta.state.common.logic.features.global.AppEffect
@@ -55,7 +54,7 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
                 is ClockAction.TickAction -> {
                     val (newTimers, endedTimers) = updateTimersAndGetEnded(action, oldTimers)
                     val newClockMode = if (newTimers.isEmpty()) {
-                        None
+                        ClockMode.INITIAL
                     } else {
                         oldClockMode
                     }
