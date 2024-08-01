@@ -2,7 +2,7 @@
 
 package com.spqrta.state.common.util.optics
 
-import com.spqrta.state.common.app.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.withEffects
 

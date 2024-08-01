@@ -2,7 +2,7 @@ package com.spqrta.state.common.external.preferences
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.spqrta.state.common.app.features.core.AppReady
+import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.util.Res
 import com.spqrta.state.common.util.asSuccess
 import kotlinx.serialization.encodeToString

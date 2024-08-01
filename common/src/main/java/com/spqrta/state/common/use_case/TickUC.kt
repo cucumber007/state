@@ -1,8 +1,8 @@
 package com.spqrta.state.common.use_case
 
 import com.spqrta.state.common.AppScope
-import com.spqrta.state.common.app.action.AppAction
-import com.spqrta.state.common.app.action.ClockAction
+import com.spqrta.state.common.logic.action.AppAction
+import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.util.Seconds
 import com.spqrta.state.common.util.collections.asList
 import kotlinx.coroutines.delay

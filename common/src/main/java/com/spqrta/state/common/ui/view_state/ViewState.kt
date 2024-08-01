@@ -1,7 +1,7 @@
 package com.spqrta.state.common.ui.view_state
 
-import com.spqrta.state.common.app.features.daily.personas.productive.Flipper
-import com.spqrta.state.common.app.features.daily.personas.productive.ToDoList
+import com.spqrta.state.common.logic.features.daily.personas.productive.Flipper
+import com.spqrta.state.common.logic.features.daily.personas.productive.ToDoList
 import com.spqrta.state.common.ui.view.TimerUiView
 import com.spqrta.state.common.ui.view.control.Button
 import com.spqrta.state.common.ui.view.control.Control

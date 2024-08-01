@@ -3,7 +3,7 @@ package com.spqrta.state.ui.view
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import com.spqrta.state.common.app.features.daily.personas.productive.Hour
+import com.spqrta.state.common.logic.features.daily.personas.productive.Hour
 
 @Composable
 fun FlipperHour(hour: Hour) {

@@ -1,8 +1,8 @@
 package com.spqrta.state.common.use_case
 
 import com.spqrta.state.common.AppScope
-import com.spqrta.state.common.app.action.AppAction
-import com.spqrta.state.common.app.features.core.AppReady
+import com.spqrta.state.common.logic.AppReady
+import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.util.noAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

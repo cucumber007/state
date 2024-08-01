@@ -20,11 +20,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.app.action.AppReadyAction
-import com.spqrta.state.common.app.action.ProductiveNavigationAction
-import com.spqrta.state.common.app.features.core.AppReady
-import com.spqrta.state.common.app.features.daily.personas.Productive
-import com.spqrta.state.common.app.features.daily.personas.productive.FlipperScreen
+import com.spqrta.state.common.logic.AppReady
+import com.spqrta.state.common.logic.action.AppReadyAction
+import com.spqrta.state.common.logic.action.ProductiveNavigationAction
+import com.spqrta.state.common.logic.features.daily.personas.Productive
+import com.spqrta.state.common.logic.features.daily.personas.productive.FlipperScreen
 
 @Composable
 fun Header(state: AppReady) {
@@ -47,7 +47,7 @@ fun Header(state: AppReady) {
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onTap = {
-                                    com.spqrta.state.common.app.App.handleAction(
+                                    com.spqrta.state.common.logic.App.handleAction(
                                         ProductiveNavigationAction.OpenTodoListClicked
                                     )
                                 }
@@ -67,10 +67,10 @@ fun Header(state: AppReady) {
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                com.spqrta.state.common.app.App.handleAction(AppReadyAction.ResetDayAction)
+                                com.spqrta.state.common.logic.App.handleAction(AppReadyAction.ResetDayAction)
                             },
                             onLongPress = {
-                                com.spqrta.state.common.app.App.handleAction(
+                                com.spqrta.state.common.logic.App.handleAction(
                                     AppReadyAction.FlipResetStateEnabledAction
                                 )
                             }

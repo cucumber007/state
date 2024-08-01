@@ -2,7 +2,7 @@ package com.spqrta.state.common.use_case
 
 import android.content.Context
 import android.media.RingtoneManager
-import com.spqrta.state.common.app.action.AppAction
+import com.spqrta.state.common.logic.action.AppAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

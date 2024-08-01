@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
-import com.spqrta.state.common.app.action.ToDoListAction
-import com.spqrta.state.common.app.features.daily.personas.productive.SectionPayload
+import com.spqrta.state.common.logic.action.ToDoListAction
+import com.spqrta.state.common.logic.features.daily.personas.productive.SectionPayload
 import com.spqrta.state.common.ui.view_state.ButtonForm
 import com.spqrta.state.common.ui.view_state.FlipperView
 import com.spqrta.state.common.ui.view_state.StubView
@@ -95,7 +95,7 @@ fun ViewStateView(viewState: ViewState) {
                                 .pointerInput(Unit) {
                                     detectTapGestures(
                                         onTap = {
-                                            com.spqrta.state.common.app.App.handleAction(
+                                            com.spqrta.state.common.logic.App.handleAction(
                                                 ToDoListAction.OnPress(item.title)
                                             )
                                         }

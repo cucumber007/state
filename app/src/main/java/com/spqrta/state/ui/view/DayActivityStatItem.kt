@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.app.features.daily.personas.productive.Flipper
-import com.spqrta.state.common.app.features.daily.personas.productive.SectionPayload
+import com.spqrta.state.common.logic.features.daily.personas.productive.Flipper
+import com.spqrta.state.common.logic.features.daily.personas.productive.SectionPayload
 
 @Composable
 fun DayActivityStatItem(item: SectionPayload, flipper: Flipper) {

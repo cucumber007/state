@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat.getSystemService
-import com.spqrta.state.common.app.action.AppAction
+import com.spqrta.state.common.logic.action.AppAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 
