@@ -11,6 +11,6 @@ sealed class FrameState {
     object TabAlarms : FrameState()
 
     companion object {
-        val INITIAL = TabAlarms
+        val INITIAL = TabGtd2
     }
 }

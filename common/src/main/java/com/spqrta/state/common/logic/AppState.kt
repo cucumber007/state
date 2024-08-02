@@ -11,6 +11,7 @@ import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.common.logic.features.global.AddPromptEffect
 import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.AppGlobalState
+import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.logic.features.storage.Storage
 import com.spqrta.state.common.logic.optics.AppReadyOptics.optDailyState
@@ -40,6 +41,7 @@ data class AppReady(
     val alarmsState: AlarmsState = AlarmsState(),
     val clockMode: ClockMode = ClockMode.INITIAL,
     val frameState: FrameState = FrameState.INITIAL,
+    val gtd2State: Gtd2State = Gtd2State.INITIAL,
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
     val stats: Stats = Stats(),

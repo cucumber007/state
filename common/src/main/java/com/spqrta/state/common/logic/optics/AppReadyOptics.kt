@@ -13,6 +13,7 @@ import com.spqrta.state.common.logic.features.daily.personas.Unstable
 import com.spqrta.state.common.logic.features.daily.timers.Timer
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
 import com.spqrta.state.common.logic.features.daily.timers.Timers
+import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.logic.features.storage.Storage
 import com.spqrta.state.common.util.optics.Optic
@@ -24,6 +25,16 @@ import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.withGet
 
 object AppReadyOptics {
+    val optGtd2State: OpticOptional<AppReady, Gtd2State> =
+        ({ state: AppReady ->
+            state.gtd2State
+        } to { state: AppReady, subState: Gtd2State ->
+            state.copy(
+                gtd2State = subState
+            )
+        }).asOptic()
+
+
     val optTimers = object : OpticOptional<AppReady, Map<TimerId, Timer>> {
         override fun get(state: AppReady): Map<TimerId, Timer> {
             return state.timers.timers
