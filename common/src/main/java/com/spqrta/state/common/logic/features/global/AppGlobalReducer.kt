@@ -34,7 +34,7 @@ object AppGlobalReducer {
     private fun reduce(
         action: AppGlobalAction,
         state: AppState
-    ): Reduced<out AppState, out AppEffectLegacy> {
+    ): Reduced<out AppState, out AppEffect> {
         return when (state) {
             AppNotInitialized -> {
                 when (action) {
@@ -80,7 +80,7 @@ object AppGlobalReducer {
     private fun reduceSaveState(
         action: AppAction,
         state: AppReady
-    ): Reduced<out AppReady, out AppEffectLegacy> {
+    ): Reduced<out AppReady, out AppEffect> {
         return state.withEffects(
             SaveStateEffect(state)
         )

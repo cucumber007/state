@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.daily.personas.productive
 
 import com.spqrta.state.common.logic.action.ToDoListAction
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.VibrateEffect
 import com.spqrta.state.common.util.optics.OpticOptional
 import com.spqrta.state.common.util.optics.asOpticOptional
@@ -59,7 +59,7 @@ data class ToDoList(
         fun reduce(
             action: ToDoListAction,
             state: ToDoList
-        ): Reduced<out ToDoList, out AppEffectLegacy> {
+        ): Reduced<out ToDoList, out AppEffect> {
             return when (action) {
                 is ToDoListAction.OnPress -> {
                     wrap(state, optItem(action.title)) { item ->

@@ -3,7 +3,7 @@ package com.spqrta.state.common.logic.features.daily.clock_mode
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.ClockAction.TickAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.TickEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.Seconds
@@ -31,7 +31,7 @@ sealed class ClockMode {
         private fun reduce(
             action: ClockAction,
             clockMode: ClockMode
-        ): Reduced<out ClockMode, out AppEffectLegacy> {
+        ): Reduced<out ClockMode, out AppEffect> {
             return when (action) {
                 is TickAction -> {
                     when (clockMode) {

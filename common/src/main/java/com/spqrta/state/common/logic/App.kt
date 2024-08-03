@@ -7,10 +7,11 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.features.global.ActionEffect
 import com.spqrta.state.common.logic.features.global.AddPromptEffect
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.LoadStateEffect
 import com.spqrta.state.common.logic.features.global.PlayNotificationSoundEffect
 import com.spqrta.state.common.logic.features.global.SaveStateEffect
+import com.spqrta.state.common.logic.features.global.ShowToastEffect
 import com.spqrta.state.common.logic.features.global.TickEffect
 import com.spqrta.state.common.logic.features.global.VibrateEffect
 import com.spqrta.state.common.use_case.UseCases
@@ -35,7 +36,7 @@ object App {
     )
     private val effectsScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    private val reducer: Reducer<AppAction, AppState, AppEffectLegacy> = APP_REDUCER
+    private val reducer: Reducer<AppAction, AppState, AppEffect> = APP_REDUCER
 
     private val stateMachine = StateMachine(
         javaClass.simpleName,
@@ -54,13 +55,13 @@ object App {
         stateMachine.handleAction(action)
     }
 
-    fun runEffect(effect: AppEffectLegacy) {
+    fun runEffect(effect: AppEffect) {
         effectsScope.launch {
             applyEffects(setOf(effect))
         }
     }
 
-    private fun applyEffects(effects: Set<AppEffectLegacy>) {
+    private fun applyEffects(effects: Set<AppEffect>) {
         effects.forEach { effect ->
             effectsScope.launch {
                 with(useCases) {
@@ -91,6 +92,10 @@ object App {
 
                         VibrateEffect -> {
                             vibrateUC.flow()
+                        }
+
+                        is ShowToastEffect -> {
+                            showToastUC.flow(effect.message)
                         }
                     }.collect { actions -> actions.forEach(App::handleAction) }
                 }

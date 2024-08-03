@@ -9,7 +9,7 @@ import com.spqrta.state.common.logic.features.daily.routine.CleanTeeth
 import com.spqrta.state.common.logic.features.daily.timers.Timers
 import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.common.logic.features.global.AddPromptEffect
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.AppGlobalState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.Stats
@@ -60,7 +60,7 @@ data class AppReady(
         private fun reduce(
             action: AppReadyAction,
             state: AppReady
-        ): Reduced<out AppReady, out AppEffectLegacy> {
+        ): Reduced<out AppReady, out AppEffect> {
             return when (action) {
                 AppReadyAction.ResetDayAction -> {
                     wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
@@ -97,7 +97,7 @@ data class AppReady(
         private fun resetDay(
             oldStats: Stats,
             oldDailyState: DailyState
-        ): Reduced<Pair<DailyState, Stats>, AppEffectLegacy> {
+        ): Reduced<Pair<DailyState, Stats>, AppEffect> {
             return (DailyState.INITIAL to updateStats(oldStats, oldDailyState)).withEffects(
                 AddPromptEffect(RoutinePrompt(CleanTeeth))
             )

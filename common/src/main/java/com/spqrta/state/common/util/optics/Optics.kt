@@ -2,7 +2,7 @@
 
 package com.spqrta.state.common.util.optics
 
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.withEffects
 
@@ -47,9 +47,9 @@ fun <T, S : Any, T1, T2> withSubState(
 fun <S : Any, T1> withSubState(
     state: S,
     optic1: OpticGet<S, T1>,
-    onNull: Reduced<out S, out AppEffectLegacy> = state.withEffects(),
-    getResult: (T1) -> Reduced<out S, out AppEffectLegacy>
-): Reduced<out S, out AppEffectLegacy> {
+    onNull: Reduced<out S, out AppEffect> = state.withEffects(),
+    getResult: (T1) -> Reduced<out S, out AppEffect>
+): Reduced<out S, out AppEffect> {
     val t1 = optic1.get(state)
     return if (t1 != null) {
         getResult.invoke(t1)
@@ -62,9 +62,9 @@ fun <S : Any, T1, T2> resultWithSubState(
     state: S,
     optic1: OpticGet<S, T1>,
     optic2: OpticGet<S, T2>,
-    onNull: Reduced<S, out AppEffectLegacy> = state.withEffects(),
-    getResult: (T1, T2) -> Reduced<S, out AppEffectLegacy>
-): Reduced<S, out AppEffectLegacy> {
+    onNull: Reduced<S, out AppEffect> = state.withEffects(),
+    getResult: (T1, T2) -> Reduced<S, out AppEffect>
+): Reduced<S, out AppEffect> {
     val t1 = optic1.get(state)
     val t2 = optic2.get(state)
     return if (t1 != null && t2 != null) {

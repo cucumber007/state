@@ -5,6 +5,8 @@ import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.external.preferences.PreferencesRepository
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.InitAppAction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 class MyApplication : Application() {
 
@@ -13,7 +15,8 @@ class MyApplication : Application() {
         com.spqrta.state.common.logic.App.inject(
             AppScope(
                 appContext = this,
-                preferencesRepository = PreferencesRepository(this)
+                preferencesRepository = PreferencesRepository(this),
+                mainThreadScope = CoroutineScope(Dispatchers.Main)
             )
         )
         com.spqrta.state.common.logic.App.handleAction(InitAppAction)

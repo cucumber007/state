@@ -2,7 +2,7 @@ package com.spqrta.state.common.logic.features.alarms
 
 import com.spqrta.state.common.logic.action.AlarmAction
 import com.spqrta.state.common.logic.action.ClockAction
-import com.spqrta.state.common.logic.features.global.AppEffectLegacy
+import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
@@ -18,7 +18,7 @@ object Alarms {
         Alarms::reduce,
     )
 
-    fun reduce(action: AlarmAction, state: AlarmsState): Reduced<AlarmsState, AppEffectLegacy> {
+    fun reduce(action: AlarmAction, state: AlarmsState): Reduced<AlarmsState, AppEffect> {
         return when (action) {
             is AlarmAction.CreateAlarm -> {
                 val newId = if (state.alarms.isNotEmpty()) {
