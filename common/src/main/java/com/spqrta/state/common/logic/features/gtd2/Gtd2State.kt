@@ -8,9 +8,13 @@ data class Gtd2State(
     val taskTree: Queue
 ) {
     companion object {
-        val INITIAL_TASK_TREE = Queue(
+        private val INITIAL_TASK_TREE = Queue(
             "MainQueue",
-            listOf()
+            listOf(
+                Routine(
+                    task = Task("Time Control routine")
+                ),
+            )
         )
 
         val INITIAL = Gtd2State(

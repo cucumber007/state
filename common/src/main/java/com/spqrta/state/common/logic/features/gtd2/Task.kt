@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2
 import kotlinx.serialization.Serializable
 
 @Serializable
-class Task(
-    val status: TaskStatus,
-)
+data class Task(
+    override val name: String,
+    val status: TaskStatus = TaskStatus.Active,
+) : Element

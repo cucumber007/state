@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class TaskStatus {
+    override fun toString(): String = javaClass.simpleName
+
     object Active : TaskStatus()
     object Inactive : TaskStatus()
     object Done : TaskStatus()
