@@ -18,6 +18,13 @@ data class Gtd2State(
                 Routine(
                     task = Task("Time Control routine")
                 ),
+                Routine(
+                    task = Task("Calendar Control routine")
+                ),
+                Routine(
+                    task = Task("Commute Preparation routine"),
+                    active = false
+                )
             )
         )
 
