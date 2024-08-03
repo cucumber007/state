@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.action
 
-import com.spqrta.state.common.logic.features.gtd2.Task
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 
 sealed interface Gtd2Action : AppAction {
     sealed class Action : Gtd2Action {
@@ -8,4 +8,6 @@ sealed interface Gtd2Action : AppAction {
     }
 
     data class OnTaskClickAction(val task: Task) : Action()
+
+    data class OnTaskLongClickAction(val task: Task) : Action()
 }

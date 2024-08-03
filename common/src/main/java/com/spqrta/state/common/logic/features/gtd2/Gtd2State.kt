@@ -1,11 +1,15 @@
 package com.spqrta.state.common.logic.features.gtd2
 
+import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Routine
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Gtd2State(
     val metaState: MetaState,
-    val taskTree: Queue
+    val taskTree: Element
 ) {
     companion object {
         private val INITIAL_TASK_TREE = Queue(

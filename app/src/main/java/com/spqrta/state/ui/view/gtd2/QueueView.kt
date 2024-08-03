@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.logic.features.gtd2.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Queue
 
 @Composable
 fun QueueView(queue: Queue) {

@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class FrameState {
+    override fun toString(): String = javaClass.simpleName
+
     @Serializable
     object TabGtd2 : FrameState()
 

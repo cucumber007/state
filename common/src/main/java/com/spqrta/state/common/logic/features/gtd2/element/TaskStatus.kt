@@ -1,4 +1,4 @@
-package com.spqrta.state.common.logic.features.gtd2
+package com.spqrta.state.common.logic.features.gtd2.element
 
 import kotlinx.serialization.Serializable
 
@@ -6,7 +6,12 @@ import kotlinx.serialization.Serializable
 sealed class TaskStatus {
     override fun toString(): String = javaClass.simpleName
 
+    @Serializable
     object Active : TaskStatus()
+
+    @Serializable
     object Inactive : TaskStatus()
+
+    @Serializable
     object Done : TaskStatus()
 }

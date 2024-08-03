@@ -2,7 +2,6 @@ package com.spqrta.state.common.logic.features.gtd2
 
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.features.global.AppEffect
-import com.spqrta.state.common.logic.features.global.ShowToastEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.plus
@@ -25,9 +24,15 @@ object Gtd2 {
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is Gtd2Action.OnTaskClickAction -> {
-                state.withEffects(
-                    ShowToastEffect("Task clicked: ${action.task.name}")
-                )
+                state.copy(
+                    taskTree = state.taskTree.withTaskClicked(action.task)
+                ).withEffects()
+            }
+
+            is Gtd2Action.OnTaskLongClickAction -> {
+                state.copy(
+                    taskTree = state.taskTree.withTaskLongClicked(action.task)
+                ).withEffects()
             }
         }
     }
