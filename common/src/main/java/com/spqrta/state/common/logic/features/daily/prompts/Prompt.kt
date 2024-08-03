@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic
 
-import com.spqrta.state.common.logic.features.daily.routine.Routine
+import com.spqrta.state.common.logic.features.daily.routine.RoutineLegacy
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.optics.typeGet
@@ -23,4 +23,4 @@ sealed class Prompt(val priority: Int = 0) {
 data class TimeredPrompt(val timerId: TimerId) : Prompt()
 
 @Serializable
-data class RoutinePrompt(val routine: Routine) : Prompt()
+data class RoutinePrompt(val routine: RoutineLegacy) : Prompt()

@@ -6,5 +6,5 @@ import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 
 @Composable
 fun Gtd2View(state: Gtd2State) {
-    Text(text = "Gtd2View")
+    Text(text = state.toString())
 }
