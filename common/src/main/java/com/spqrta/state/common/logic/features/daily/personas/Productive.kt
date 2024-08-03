@@ -9,7 +9,7 @@ import com.spqrta.state.common.logic.features.daily.personas.productive.ToDoList
 import com.spqrta.state.common.logic.features.daily.personas.productive.ToDoListScreen
 import com.spqrta.state.common.logic.features.daily.timers.WorkTimer
 import com.spqrta.state.common.logic.features.global.ActionEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.util.IllegalActionException
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.state_machine.Reduced
@@ -53,7 +53,7 @@ data class Productive(
         fun reduce(
             action: ProductiveActivityAction,
             state: ActivityState
-        ): Reduced<out ActivityState, out AppEffect> {
+        ): Reduced<out ActivityState, out AppEffectLegacy> {
             return when (action) {
                 is ProductiveActivityAction.ActivityDone -> {
                     if (state::class != action.activity::class) {

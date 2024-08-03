@@ -4,7 +4,7 @@ import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.action.TimerAction
 import com.spqrta.state.common.logic.features.daily.timers.PromptTimer
 import com.spqrta.state.common.logic.features.global.ActionEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.util.collections.asSet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.effectIf
@@ -18,7 +18,7 @@ object PromptsEnabled {
     fun reduce(
         action: PromptAction,
         oldPrompts: List<Prompt>
-    ): Reduced<List<Prompt>, out AppEffect> {
+    ): Reduced<List<Prompt>, out AppEffectLegacy> {
         return when (action) {
             is PromptAction.AddPrompt -> {
                 val prompt = action.prompt

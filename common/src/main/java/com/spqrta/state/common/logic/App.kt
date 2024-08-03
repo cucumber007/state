@@ -7,7 +7,7 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.features.global.ActionEffect
 import com.spqrta.state.common.logic.features.global.AddPromptEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.logic.features.global.LoadStateEffect
 import com.spqrta.state.common.logic.features.global.PlayNotificationSoundEffect
 import com.spqrta.state.common.logic.features.global.SaveStateEffect
@@ -35,7 +35,7 @@ object App {
     )
     private val effectsScope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-    private val reducer: Reducer<AppAction, AppState, AppEffect> = APP_REDUCER
+    private val reducer: Reducer<AppAction, AppState, AppEffectLegacy> = APP_REDUCER
 
     private val stateMachine = StateMachine(
         javaClass.simpleName,
@@ -54,13 +54,13 @@ object App {
         stateMachine.handleAction(action)
     }
 
-    fun runEffect(effect: AppEffect) {
+    fun runEffect(effect: AppEffectLegacy) {
         effectsScope.launch {
             applyEffects(setOf(effect))
         }
     }
 
-    private fun applyEffects(effects: Set<AppEffect>) {
+    private fun applyEffects(effects: Set<AppEffectLegacy>) {
         effects.forEach { effect ->
             effectsScope.launch {
                 with(useCases) {

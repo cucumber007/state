@@ -8,7 +8,7 @@ import com.spqrta.state.common.logic.action.TimerAction.TimerEnded
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
 import com.spqrta.state.common.logic.features.daily.clock_mode.Update
 import com.spqrta.state.common.logic.features.global.ActionEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.logic.features.global.TickEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.Seconds
@@ -36,7 +36,7 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
         private fun reduce(
             action: TimerAction,
             state: Pair<Map<TimerId, Timer>, ClockMode>
-        ): Reduced<Pair<Map<TimerId, Timer>, ClockMode>, out AppEffect> {
+        ): Reduced<Pair<Map<TimerId, Timer>, ClockMode>, out AppEffectLegacy> {
             val oldTimers = state.first
             val oldClockMode = state.second
             return when (action) {

@@ -7,7 +7,7 @@ import com.spqrta.state.common.logic.action.UndefinedPersonaAction.DefinePersona
 import com.spqrta.state.common.logic.features.daily.personas.productive.Flipper
 import com.spqrta.state.common.logic.features.daily.personas.productive.Navigation
 import com.spqrta.state.common.logic.features.daily.personas.productive.ToDoList
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.optics.plus
@@ -56,7 +56,10 @@ sealed class Persona {
             Navigation::reduce
         )
 
-        fun reduce(action: PersonaAction, state: Persona): Reduced<out Persona, out AppEffect> {
+        fun reduce(
+            action: PersonaAction,
+            state: Persona
+        ): Reduced<out Persona, out AppEffectLegacy> {
             return when (action) {
                 GetBackAction -> {
                     UndefinedPersona.withEffects()
@@ -74,7 +77,7 @@ object UndefinedPersona : Persona() {
     fun reduce(
         action: UndefinedPersonaAction,
         state: Persona
-    ): Reduced<out Persona, out AppEffect> {
+    ): Reduced<out Persona, out AppEffectLegacy> {
         return when (action) {
             is DefinePersonaAction -> {
                 action.persona.withEffects()

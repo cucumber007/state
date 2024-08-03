@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.daily.personas.productive
 
 import com.spqrta.state.common.logic.action.FlipperAction
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.features.global.AppEffectLegacy
 import com.spqrta.state.common.util.Left
 import com.spqrta.state.common.util.Right
 import com.spqrta.state.common.util.collections.replaceIf
@@ -80,7 +80,10 @@ data class Flipper(
     }
 
     companion object {
-        fun reduce(action: FlipperAction, state: Flipper): Reduced<out Flipper, out AppEffect> {
+        fun reduce(
+            action: FlipperAction,
+            state: Flipper
+        ): Reduced<out Flipper, out AppEffectLegacy> {
             return when (action) {
                 is FlipperAction.SetNext -> {
                     state.withNext(action.sectionPayload).withEffects()
