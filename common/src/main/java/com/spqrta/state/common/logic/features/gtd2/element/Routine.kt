@@ -10,11 +10,11 @@ data class Routine(
     val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
     override val name: String = task.name,
 ) : Element {
-    override fun withTaskClicked(task: Task): Element {
-        return task.withTaskClicked(task)
+    override fun withTaskClicked(clickedTask: Task): Element {
+        return task.withTaskClicked(clickedTask)
     }
 
-    override fun withTaskLongClicked(task: Task): Element {
-        return task.withTaskLongClicked(task)
+    override fun withTaskLongClicked(clickedTask: Task): Element {
+        return task.withTaskLongClicked(clickedTask)
     }
 }

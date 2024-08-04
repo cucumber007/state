@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 sealed interface Element {
     val name: String
 
-    fun withTaskClicked(task: Task): Element
-    fun withTaskLongClicked(task: Task): Element
+    fun withTaskClicked(clickedTask: Task): Element
+    fun withTaskLongClicked(clickedTask: Task): Element
 }
 

@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2
 
+import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
@@ -33,6 +34,10 @@ object Gtd2 {
                 state.copy(
                     taskTree = state.taskTree.withTaskLongClicked(action.task)
                 ).withEffects()
+            }
+
+            is AppReadyAction.ResetDayAction -> {
+                Gtd2State.INITIAL.withEffects()
             }
         }
     }

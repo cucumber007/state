@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.spqrta.state.common.logic.AppReady
-import com.spqrta.state.common.ui.view_state.StubView
+import com.spqrta.state.ui.view.debug.DebugView
 
 @Composable
 fun Header(state: AppReady) {
@@ -21,7 +21,7 @@ fun Header(state: AppReady) {
                 .fillMaxWidth()
                 .padding(bottom = Dp(8f))
         ) {
-            StubView
+            DebugView(appState = state)
         }
     }
 }

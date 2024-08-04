@@ -7,8 +7,8 @@ data class Task(
     override val name: String,
     val status: TaskStatus = TaskStatus.Active,
 ) : Element {
-    override fun withTaskClicked(task: Task): Element {
-        return if (this == task) {
+    override fun withTaskClicked(clickedTask: Task): Element {
+        return if (this == clickedTask) {
             copy(
                 status = when (status) {
                     TaskStatus.Active -> TaskStatus.Done
@@ -21,8 +21,8 @@ data class Task(
         }
     }
 
-    override fun withTaskLongClicked(task: Task): Element {
-        return if (this == task) {
+    override fun withTaskLongClicked(clickedTask: Task): Element {
+        return if (this == clickedTask) {
             copy(
                 status = when (status) {
                     TaskStatus.Active -> TaskStatus.Inactive

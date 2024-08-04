@@ -7,15 +7,15 @@ data class Queue(
     override val name: String,
     val tasks: List<Element>,
 ) : Element {
-    override fun withTaskClicked(task: Task): Element {
+    override fun withTaskClicked(clickedTask: Task): Element {
         return copy(tasks = tasks.map {
-            it.withTaskClicked(task)
+            it.withTaskClicked(clickedTask)
         })
     }
 
-    override fun withTaskLongClicked(task: Task): Element {
+    override fun withTaskLongClicked(clickedTask: Task): Element {
         return copy(tasks = tasks.map {
-            it.withTaskLongClicked(task)
+            it.withTaskLongClicked(clickedTask)
         })
     }
 }
