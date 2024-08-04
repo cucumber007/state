@@ -4,18 +4,42 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Task(
+    override val active: Boolean = true,
     override val name: String,
-    val status: TaskStatus = TaskStatus.Active,
+    val done: Boolean = false,
 ) : Element {
+
+    constructor(name: String, taskStatus: TaskStatus = TaskStatus.Active) : this(
+        taskStatus != TaskStatus.Inactive,
+        name,
+        taskStatus == TaskStatus.Done
+    )
+
+    val status: TaskStatus
+        get() {
+            return when {
+                !active -> TaskStatus.Inactive
+                done -> TaskStatus.Done
+                else -> TaskStatus.Active
+            }
+        }
+
+    fun withStatus(status: TaskStatus): Task {
+        return when (status) {
+            TaskStatus.Active -> copy(active = true, done = false)
+            TaskStatus.Done -> copy(active = true, done = true)
+            TaskStatus.Inactive -> copy(active = false, done = false)
+        }
+    }
+
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return if (this == clickedTask) {
-            copy(
-                status = when (status) {
-                    TaskStatus.Active -> TaskStatus.Done
-                    TaskStatus.Done -> TaskStatus.Done
-                    TaskStatus.Inactive -> TaskStatus.Inactive
-                }
-            )
+            when (status) {
+                TaskStatus.Active -> withStatus(TaskStatus.Done)
+                TaskStatus.Done -> withStatus(TaskStatus.Done)
+                TaskStatus.Inactive -> withStatus(TaskStatus.Inactive)
+            }
         } else {
             this
         }
@@ -23,13 +47,11 @@ data class Task(
 
     override fun withTaskLongClicked(clickedTask: Task): Element {
         return if (this == clickedTask) {
-            copy(
-                status = when (status) {
-                    TaskStatus.Active -> TaskStatus.Inactive
-                    TaskStatus.Done -> TaskStatus.Active
-                    TaskStatus.Inactive -> TaskStatus.Active
-                }
-            )
+            when (status) {
+                TaskStatus.Active -> withStatus(TaskStatus.Inactive)
+                TaskStatus.Done -> withStatus(TaskStatus.Active)
+                TaskStatus.Inactive -> withStatus(TaskStatus.Active)
+            }
         } else {
             this
         }

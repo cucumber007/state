@@ -16,15 +16,28 @@ data class Gtd2State(
             "MainQueue",
             listOf(
                 Routine(
-                    task = Task("Time Control routine")
+                    task = Task("Time Control")
                 ),
                 Routine(
-                    task = Task("Calendar Control routine")
+                    task = Task("Calendar Control")
                 ),
-                Routine(
-                    task = Task("Commute Preparation routine"),
-                    active = false
-                )
+                Queue(
+                    name = "Planned queue",
+                    elements = listOf(
+                        Queue(
+                            name = "Force majeure",
+                            elements = listOf(),
+                        ),
+                        Routine(
+                            task = Task("Commute Preparation"),
+                            active = false
+                        ),
+                        Routine(
+                            task = Task("Planned Commute"),
+                            active = false
+                        ),
+                    )
+                ),
             )
         )
 

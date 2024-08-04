@@ -7,6 +7,8 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 @Composable
 fun RoutineView(routine: Routine) {
     Column {
-        ElementView(element = routine.task)
+        ElementView(
+            element = routine.normalizedTask
+        )
     }
 }

@@ -5,16 +5,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Queue(
     override val name: String,
-    val tasks: List<Element>,
+    val elements: List<Element>,
+    override val active: Boolean = true,
 ) : Element {
     override fun withTaskClicked(clickedTask: Task): Element {
-        return copy(tasks = tasks.map {
+        return copy(elements = elements.map {
             it.withTaskClicked(clickedTask)
         })
     }
 
     override fun withTaskLongClicked(clickedTask: Task): Element {
-        return copy(tasks = tasks.map {
+        return copy(elements = elements.map {
             it.withTaskLongClicked(clickedTask)
         })
     }

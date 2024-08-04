@@ -25,9 +25,10 @@ object Gtd2 {
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is Gtd2Action.OnTaskClickAction -> {
-                state.copy(
+                val newState = state.copy(
                     taskTree = state.taskTree.withTaskClicked(action.task)
-                ).withEffects()
+                )
+                newState.withEffects()
             }
 
             is Gtd2Action.OnTaskLongClickAction -> {

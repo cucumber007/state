@@ -15,7 +15,7 @@ fun QueueView(queue: Queue) {
         Text(text = queue.name)
         Box(modifier = Modifier.padding(start = 16.dp)) {
             Column {
-                for (task in queue.tasks) {
+                for (task in queue.elements) {
                     ElementView(task)
                 }
             }
