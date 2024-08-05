@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Queue(
     override val name: String,
     val elements: List<Element>,
-    override val active: Boolean = true,
+    override val active: Boolean = elements.isNotEmpty(),
 ) : Element {
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(elements = elements.map {
