@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

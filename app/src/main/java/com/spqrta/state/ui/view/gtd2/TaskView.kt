@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.spqrta.state.common.logic.App
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.logic.features.gtd2.element.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 
 @Composable
 fun TaskView(task: Task) {

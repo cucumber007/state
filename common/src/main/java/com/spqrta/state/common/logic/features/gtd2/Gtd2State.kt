@@ -1,10 +1,11 @@
 package com.spqrta.state.common.logic.features.gtd2
 
 import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.logic.features.gtd2.element.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,6 +57,10 @@ data class Gtd2State(
                                     elements = listOf()
                                 )
                             ),
+                        ),
+                        Flipper(
+                            name = "Main",
+                            scheduledElements = listOf(),
                         ),
                     )
                 ),

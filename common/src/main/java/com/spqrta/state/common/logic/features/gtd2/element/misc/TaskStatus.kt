@@ -1,4 +1,4 @@
-package com.spqrta.state.common.logic.features.gtd2.element
+package com.spqrta.state.common.logic.features.gtd2.element.misc
 
 import kotlinx.serialization.Serializable
 
