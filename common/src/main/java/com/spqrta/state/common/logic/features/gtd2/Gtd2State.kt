@@ -71,19 +71,21 @@ data class Gtd2State(
                                                 element = Queue(
                                                     name = "Base Morning",
                                                     elements = listOf(
-                                                        Routine(
-                                                            element = Task("Зубы"),
-                                                        ),
-                                                        Routine(
-                                                            element = Task("Кровать"),
-                                                        ),
-                                                        Routine(
-                                                            element = Task("Запар еду"),
-                                                        ),
-                                                        Routine(
-                                                            element = Task("Таблы ут"),
-                                                        ),
+                                                        Task("Зубы"),
+                                                        Task("Кровать"),
+                                                        Task("Запар еду"),
+                                                        Task("Таблы ут"),
                                                     ),
+                                                ),
+                                            ),
+                                            Routine(
+                                                element = Task("Clean Bothering"),
+                                                active = false
+                                            ),
+                                            Routine(
+                                                element = Queue(
+                                                    name = "RoutineFlow App",
+                                                    elements = listOf()
                                                 ),
                                             ),
                                         )
