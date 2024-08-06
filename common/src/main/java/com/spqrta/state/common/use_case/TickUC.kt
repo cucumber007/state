@@ -3,8 +3,8 @@ package com.spqrta.state.common.use_case
 import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
-import com.spqrta.state.common.util.Seconds
 import com.spqrta.state.common.util.collections.asList
+import com.spqrta.state.common.util.time.Seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

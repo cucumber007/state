@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.action
 
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
-import com.spqrta.state.common.util.TimeValue
+import com.spqrta.state.common.util.time.TimeValue
 import java.time.LocalDateTime
 
 sealed interface TimerAction : AppAction {

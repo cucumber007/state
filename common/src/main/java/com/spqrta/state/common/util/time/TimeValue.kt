@@ -1,4 +1,4 @@
-package com.spqrta.state.common.util
+package com.spqrta.state.common.util.time
 
 import kotlinx.serialization.Serializable
 import kotlin.math.abs

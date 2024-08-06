@@ -7,6 +7,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.util.time.toMinutes
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
@@ -60,6 +61,10 @@ data class Gtd2State(
                                 )
                             ),
                         ),
+                        Queue(
+                            name = "Urgent Personal Tasks",
+                            elements = listOf(),
+                        ),
                         Flipper(
                             name = "Main",
                             scheduledElements = listOf(
@@ -92,12 +97,38 @@ data class Gtd2State(
                                     ),
                                     time = LocalTime.of(18, 0)
                                 ),
+                                FlipperSchedule.TimePeriod(
+                                    duration = 15.toMinutes(),
+                                    element = Routine(
+                                        element = Task("Personal Task")
+                                    ),
+                                ),
                                 FlipperSchedule.TimeLeftPortion(
                                     element = Flipper(
-                                        name = "Main",
-                                        scheduledElements = listOf()
+                                        name = "Default",
+                                        scheduledElements = listOf(
+                                            FlipperSchedule.TimePeriod(
+                                                duration = 60.toMinutes(),
+                                                element = Flipper(
+                                                    name = "Work",
+                                                    scheduledElements = listOf()
+                                                ),
+                                            ),
+                                            FlipperSchedule.TimePeriod(
+                                                duration = 15.toMinutes(),
+                                                element = Routine(
+                                                    element = Task("Fiz")
+                                                ),
+                                            ),
+                                        )
                                     ),
                                     portion = 1f
+                                ),
+                                FlipperSchedule.TimePeriod(
+                                    duration = 60.toMinutes(),
+                                    element = Routine(
+                                        element = Task("Rest")
+                                    ),
                                 ),
                             ),
                         ),

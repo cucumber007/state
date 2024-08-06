@@ -1,4 +1,4 @@
-package com.spqrta.state.common.util
+package com.spqrta.state.common.util.time
 
 object TimeValueFormatter {
     fun formatTimeValue(timeValue: TimeValue): String {

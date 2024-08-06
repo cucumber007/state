@@ -24,6 +24,12 @@ data class Flipper(
                         clickedTask
                     )
                 )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withTaskClicked(
+                        clickedTask
+                    )
+                )
             }
         })
     }
@@ -38,6 +44,12 @@ data class Flipper(
                 )
 
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withTaskLongClicked(
+                        clickedTask
+                    )
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
                     element = it.element.withTaskLongClicked(
                         clickedTask
                     )

@@ -6,12 +6,12 @@ import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.TickEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
-import com.spqrta.state.common.util.Seconds
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
-import com.spqrta.state.common.util.toSeconds
+import com.spqrta.state.common.util.time.Seconds
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -14,7 +14,7 @@ import com.spqrta.state.common.util.IllegalActionException
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.withEffects
-import com.spqrta.state.common.util.toSeconds
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element.misc
 
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.util.serialization.LocalTimeSerializer
+import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
@@ -10,6 +11,12 @@ import java.time.LocalTime
 sealed class FlipperSchedule(
     open val element: Element
 ) {
+
+    @Serializable
+    data class TimePeriod(
+        @SerialName("element_TimePeriod") override val element: Element,
+        val duration: TimeValue,
+    ) : FlipperSchedule(element)
 
     @Serializable
     data class UntilTime(

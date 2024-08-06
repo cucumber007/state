@@ -3,7 +3,7 @@ package com.spqrta.state.common.logic.features.global
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.Prompt
 import com.spqrta.state.common.logic.action.AppAction
-import com.spqrta.state.common.util.Seconds
+import com.spqrta.state.common.util.time.Seconds
 
 sealed interface AppEffect
 data class SaveStateEffect(val state: AppReady) : AppEffect

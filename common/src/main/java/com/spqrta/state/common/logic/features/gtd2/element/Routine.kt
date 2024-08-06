@@ -13,6 +13,10 @@ data class Routine(
     override val name: String = element.name,
 ) : Element {
 
+    constructor(name: String) : this(
+        Task(name)
+    )
+
     val innerElement = element.withStatus(if (!active) false else element.active)
 
     override fun withTaskClicked(clickedTask: Task): Element {
