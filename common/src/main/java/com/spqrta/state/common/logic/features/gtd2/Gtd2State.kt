@@ -5,8 +5,10 @@ import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import kotlinx.serialization.Serializable
+import java.time.LocalTime
 
 @Serializable
 data class Gtd2State(
@@ -18,10 +20,10 @@ data class Gtd2State(
             "MainQueue",
             listOf(
                 Routine(
-                    task = Task("Time Control")
+                    element = Task("Time Control")
                 ),
                 Routine(
-                    task = Task("Calendar Control")
+                    element = Task("Calendar Control")
                 ),
                 Queue(
                     name = "Planned queue",
@@ -31,25 +33,25 @@ data class Gtd2State(
                             elements = listOf(),
                         ),
                         Routine(
-                            task = Task("Commute Preparation"),
+                            element = Task("Commute Preparation"),
                             active = false
                         ),
                         Routine(
-                            task = Task("Planned Commute"),
+                            element = Task("Planned Commute"),
                             active = false
                         ),
                         Queue(
                             name = "Work Planned",
                             elements = listOf(
                                 Routine(
-                                    task = Task("Slack Check"),
+                                    element = Task("Slack Check"),
                                 ),
                                 Task(
                                     name = "Call",
                                     taskStatus = TaskStatus.Inactive
                                 ),
                                 Routine(
-                                    task = Task("Daily Call"),
+                                    element = Task("Daily Call"),
                                     active = false
                                 ),
                                 Queue(
@@ -60,7 +62,42 @@ data class Gtd2State(
                         ),
                         Flipper(
                             name = "Main",
-                            scheduledElements = listOf(),
+                            scheduledElements = listOf(
+                                FlipperSchedule.UntilTime(
+                                    element = Queue(
+                                        name = "Routines",
+                                        elements = listOf(
+                                            Routine(
+                                                element = Queue(
+                                                    name = "Base Morning",
+                                                    elements = listOf(
+                                                        Routine(
+                                                            element = Task("Зубы"),
+                                                        ),
+                                                        Routine(
+                                                            element = Task("Кровать"),
+                                                        ),
+                                                        Routine(
+                                                            element = Task("Запар еду"),
+                                                        ),
+                                                        Routine(
+                                                            element = Task("Таблы ут"),
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                        )
+                                    ),
+                                    time = LocalTime.of(18, 0)
+                                ),
+                                FlipperSchedule.TimeLeftPortion(
+                                    element = Flipper(
+                                        name = "Main",
+                                        scheduledElements = listOf()
+                                    ),
+                                    portion = 1f
+                                ),
+                            ),
                         ),
                     )
                 ),

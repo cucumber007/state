@@ -20,4 +20,8 @@ data class Queue(
             it.withTaskLongClicked(clickedTask)
         })
     }
+
+    override fun withStatus(active: Boolean): Element {
+        return copy(active = active)
+    }
 }

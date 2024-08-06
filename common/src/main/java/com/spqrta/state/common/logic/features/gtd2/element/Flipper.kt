@@ -1,7 +1,9 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Flipper(
     override val name: String,
     val scheduledElements: List<FlipperSchedule>,
@@ -42,5 +44,9 @@ data class Flipper(
                 )
             }
         })
+    }
+
+    override fun withStatus(active: Boolean): Element {
+        return copy(active = active)
     }
 }

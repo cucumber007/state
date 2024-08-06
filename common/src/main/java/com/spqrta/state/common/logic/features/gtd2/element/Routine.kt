@@ -1,32 +1,29 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.RoutineTrigger
-import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
 data class Routine(
-    private val task: Task,
-    override val displayName: String = "${task.name} Routine",
+    private val element: Element,
+    override val displayName: String = "${element.name} Routine",
     override val active: Boolean = true,
     val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
-    override val name: String = task.name,
+    override val name: String = element.name,
 ) : Element {
 
-    val normalizedTask = task.withStatus(
-        if (!active) {
-            TaskStatus.Inactive
-        } else {
-            task.status
-        }
-    )
+    val innerElement = element.withStatus(if (!active) false else element.active)
 
     override fun withTaskClicked(clickedTask: Task): Element {
-        return normalizedTask.withTaskClicked(clickedTask)
+        return innerElement.withTaskClicked(clickedTask)
     }
 
     override fun withTaskLongClicked(clickedTask: Task): Element {
-        return normalizedTask.withTaskLongClicked(clickedTask)
+        return innerElement.withTaskLongClicked(clickedTask)
+    }
+
+    override fun withStatus(active: Boolean): Element {
+        return copy(active = active)
     }
 }

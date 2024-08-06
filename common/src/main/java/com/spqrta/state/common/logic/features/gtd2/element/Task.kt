@@ -34,6 +34,9 @@ data class Task(
         }
     }
 
+    override fun withStatus(active: Boolean): Element {
+        return copy(active = active)
+    }
 
     override fun withTaskClicked(clickedTask: Task): Element {
         return if (this == clickedTask) {

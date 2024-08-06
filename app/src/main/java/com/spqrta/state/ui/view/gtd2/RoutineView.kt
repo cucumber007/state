@@ -8,7 +8,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 fun RoutineView(routine: Routine) {
     Column {
         ElementView(
-            element = routine.normalizedTask
+            element = routine.innerElement
         )
     }
 }

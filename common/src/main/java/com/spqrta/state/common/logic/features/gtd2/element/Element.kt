@@ -10,5 +10,7 @@ sealed interface Element {
 
     fun withTaskClicked(clickedTask: Task): Element
     fun withTaskLongClicked(clickedTask: Task): Element
+
+    fun withStatus(active: Boolean): Element
 }
 
