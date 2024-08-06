@@ -15,7 +15,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Queue
 fun QueueView(queue: Queue) {
     Column {
         if (queue.active) {
-            Text(text = queue.name)
+            Text(text = queue.displayName)
             Box(modifier = Modifier.padding(start = 16.dp)) {
                 Column {
                     for (task in queue.elements) {
@@ -24,7 +24,7 @@ fun QueueView(queue: Queue) {
                 }
             }
         } else {
-            Text(text = queue.name, style = TextStyle(color = Color.Gray))
+            Text(text = queue.displayName, style = TextStyle(color = Color.Gray))
         }
     }
 }

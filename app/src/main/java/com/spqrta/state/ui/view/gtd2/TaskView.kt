@@ -19,7 +19,7 @@ fun TaskView(task: Task) {
     val taskState = rememberUpdatedState(task)
 
     Text(
-        text = taskState.value.name,
+        text = taskState.value.displayName,
         modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(
                 onTap = {

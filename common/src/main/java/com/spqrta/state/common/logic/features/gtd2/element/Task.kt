@@ -8,6 +8,7 @@ data class Task(
     override val active: Boolean = true,
     override val name: String,
     val done: Boolean = false,
+    override val displayName: String = name,
 ) : Element {
 
     constructor(name: String, taskStatus: TaskStatus = TaskStatus.Active) : this(

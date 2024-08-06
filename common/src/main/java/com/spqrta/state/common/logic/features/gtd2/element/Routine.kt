@@ -7,8 +7,9 @@ import java.time.LocalDate
 
 @Serializable
 data class Routine(
-    override val active: Boolean = true,
     private val task: Task,
+    override val displayName: String = "${task.name} Routine",
+    override val active: Boolean = true,
     val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
     override val name: String = task.name,
 ) : Element {

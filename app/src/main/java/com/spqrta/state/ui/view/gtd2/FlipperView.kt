@@ -9,8 +9,8 @@ import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 @Composable
 fun FlipperView(flipper: Flipper) {
     if (flipper.active) {
-        Text(text = flipper.name)
+        Text(text = flipper.displayName)
     } else {
-        Text(text = flipper.name, style = TextStyle(color = Color.Gray))
+        Text(text = flipper.displayName, style = TextStyle(color = Color.Gray))
     }
 }

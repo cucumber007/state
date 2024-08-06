@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Element {
     val name: String
+    val displayName: String
     val active: Boolean
 
     fun withTaskClicked(clickedTask: Task): Element

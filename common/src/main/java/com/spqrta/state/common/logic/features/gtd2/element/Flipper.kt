@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 data class Flipper(
     override val name: String,
     val scheduledElements: List<FlipperSchedule>,
+    override val displayName: String = "$name Flipper",
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
     override fun withTaskClicked(clickedTask: Task): Element {
