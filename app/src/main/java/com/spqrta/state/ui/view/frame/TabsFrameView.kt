@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.ui.view.alarms.AlarmsView
 import com.spqrta.state.ui.view.gtd2.Gtd2View
+import com.spqrta.state.ui.view.stats.StatsView
 
 @Composable
 fun TabsFrameView(appState: AppReady) {
@@ -12,5 +13,6 @@ fun TabsFrameView(appState: AppReady) {
     when (frameState) {
         FrameState.TabGtd2 -> Gtd2View(state = appState.gtd2State)
         FrameState.TabAlarms -> AlarmsView(state = appState.alarmsState)
+        FrameState.TabStats -> StatsView(state = appState)
     }
 }

@@ -12,7 +12,10 @@ sealed class FrameState {
     @Serializable
     object TabAlarms : FrameState()
 
+    @Serializable
+    object TabStats : FrameState()
+
     companion object {
-        val INITIAL = TabGtd2
+        val INITIAL = TabStats
     }
 }

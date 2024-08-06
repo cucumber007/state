@@ -12,7 +12,7 @@ import com.spqrta.state.common.logic.features.global.AddPromptEffect
 import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.AppGlobalState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
-import com.spqrta.state.common.logic.features.stats.Stats
+import com.spqrta.state.common.logic.features.stats.StatsState
 import com.spqrta.state.common.logic.features.storage.Storage
 import com.spqrta.state.common.logic.optics.AppReadyOptics.optDailyState
 import com.spqrta.state.common.logic.optics.AppReadyOptics.optStats
@@ -29,6 +29,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+@Serializable
 sealed class AppState {
     override fun toString(): String = javaClass.simpleName
 }
@@ -44,7 +45,7 @@ data class AppReady(
     val gtd2State: Gtd2State = Gtd2State.INITIAL,
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
-    val stats: Stats = Stats(),
+    val stats: StatsState = StatsState(),
     val storage: Storage = Storage(),
 ) : AppState() {
 
@@ -95,15 +96,15 @@ data class AppReady(
         }
 
         private fun resetDay(
-            oldStats: Stats,
+            oldStats: StatsState,
             oldDailyState: DailyState
-        ): Reduced<Pair<DailyState, Stats>, AppEffect> {
+        ): Reduced<Pair<DailyState, StatsState>, AppEffect> {
             return (DailyState.INITIAL to updateStats(oldStats, oldDailyState)).withEffects(
                 AddPromptEffect(RoutinePrompt(CleanTeeth))
             )
         }
 
-        private fun updateStats(oldStats: Stats, oldDay: DailyState): Stats {
+        private fun updateStats(oldStats: StatsState, oldDay: DailyState): StatsState {
             return oldStats
         }
 

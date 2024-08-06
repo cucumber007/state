@@ -14,7 +14,7 @@ import com.spqrta.state.common.logic.features.daily.timers.Timer
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
 import com.spqrta.state.common.logic.features.daily.timers.Timers
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
-import com.spqrta.state.common.logic.features.stats.Stats
+import com.spqrta.state.common.logic.features.stats.StatsState
 import com.spqrta.state.common.logic.features.storage.Storage
 import com.spqrta.state.common.util.optics.Optic
 import com.spqrta.state.common.util.optics.OpticOptional
@@ -44,12 +44,12 @@ object AppReadyOptics {
             return state.copy(timers = Timers(subState))
         }
     }
-    val optStats = object : OpticOptional<AppReady, Stats> {
-        override fun get(state: AppReady): Stats {
+    val optStats = object : OpticOptional<AppReady, StatsState> {
+        override fun get(state: AppReady): StatsState {
             return state.stats
         }
 
-        override fun set(state: AppReady, subState: Stats): AppReady {
+        override fun set(state: AppReady, subState: StatsState): AppReady {
             return state.copy(stats = subState)
         }
     }
