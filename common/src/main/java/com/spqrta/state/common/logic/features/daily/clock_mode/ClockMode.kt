@@ -3,8 +3,8 @@ package com.spqrta.state.common.logic.features.daily.clock_mode
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.ClockAction.TickAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
-import com.spqrta.state.common.logic.features.global.AppEffect
-import com.spqrta.state.common.logic.features.global.TickEffect
+import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.TickEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced

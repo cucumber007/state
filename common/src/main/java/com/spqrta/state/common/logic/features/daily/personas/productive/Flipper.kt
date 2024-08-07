@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.daily.personas.productive
 
 import com.spqrta.state.common.logic.action.FlipperAction
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.util.Left
 import com.spqrta.state.common.util.Right
 import com.spqrta.state.common.util.collections.replaceIf

@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.storage
 
 import com.spqrta.state.common.logic.action.StorageAction
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.optics.asOpticGet
 import com.spqrta.state.common.util.optics.typeGet

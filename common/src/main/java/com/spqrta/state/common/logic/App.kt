@@ -5,15 +5,16 @@ package com.spqrta.state.common.logic
 import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.PromptAction
-import com.spqrta.state.common.logic.features.global.ActionEffect
-import com.spqrta.state.common.logic.features.global.AddPromptEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
-import com.spqrta.state.common.logic.features.global.LoadStateEffect
-import com.spqrta.state.common.logic.features.global.PlayNotificationSoundEffect
-import com.spqrta.state.common.logic.features.global.SaveStateEffect
-import com.spqrta.state.common.logic.features.global.ShowToastEffect
-import com.spqrta.state.common.logic.features.global.TickEffect
-import com.spqrta.state.common.logic.features.global.VibrateEffect
+import com.spqrta.state.common.logic.effect.ActionEffect
+import com.spqrta.state.common.logic.effect.AddPromptEffect
+import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.LoadStateEffect
+import com.spqrta.state.common.logic.effect.PlayNotificationSoundEffect
+import com.spqrta.state.common.logic.effect.SaveStateEffect
+import com.spqrta.state.common.logic.effect.ShowToastEffect
+import com.spqrta.state.common.logic.effect.TickEffect
+import com.spqrta.state.common.logic.effect.UpdateStatsEffect
+import com.spqrta.state.common.logic.effect.VibrateEffect
 import com.spqrta.state.common.use_case.UseCases
 import com.spqrta.state.common.util.collections.asList
 import com.spqrta.state.common.util.optics.OpticGet
@@ -66,18 +67,6 @@ object App {
             effectsScope.launch {
                 with(useCases) {
                     when (effect) {
-                        LoadStateEffect -> {
-                            loadStateUC.flow()
-                        }
-
-                        is SaveStateEffect -> {
-                            saveStateUC.flow(effect.state)
-                        }
-
-                        is TickEffect -> {
-                            tickUC.flow(effect.duration)
-                        }
-
                         is ActionEffect -> {
                             { effect.action.asList() }.asFlow()
                         }
@@ -86,16 +75,32 @@ object App {
                             { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
                         }
 
-                        PlayNotificationSoundEffect -> {
+                        is LoadStateEffect -> {
+                            loadStateUC.flow()
+                        }
+
+                        is PlayNotificationSoundEffect -> {
                             playNotificationSoundUC.flow()
                         }
 
-                        VibrateEffect -> {
-                            vibrateUC.flow()
+                        is SaveStateEffect -> {
+                            saveStateUC.flow(effect.state)
                         }
 
                         is ShowToastEffect -> {
                             showToastUC.flow(effect.message)
+                        }
+
+                        is TickEffect -> {
+                            tickUC.flow(effect.duration)
+                        }
+
+                        is VibrateEffect -> {
+                            vibrateUC.flow()
+                        }
+
+                        is UpdateStatsEffect -> {
+                            updateStatsUC.flow()
                         }
                     }.collect { actions -> actions.forEach(App::handleAction) }
                 }

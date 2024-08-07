@@ -2,7 +2,8 @@ package com.spqrta.state.common.logic.features.gtd2
 
 import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.Gtd2Action
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.plus
@@ -23,7 +24,7 @@ object Gtd2 {
         action: Gtd2Action,
         state: Gtd2State
     ): Reduced<out Gtd2State, out AppEffect> {
-        return when (action) {
+        val result: Reduced<out Gtd2State, out AppEffect> = when (action) {
             is Gtd2Action.OnTaskClickAction -> {
                 val newState = state.copy(
                     taskTree = state.taskTree.withTaskClicked(action.task)
@@ -41,5 +42,20 @@ object Gtd2 {
                 Gtd2State.INITIAL.withEffects()
             }
         }
+        return result.flatMapState {
+            it.newState.copy(
+                stats = reduceStats(
+                    oldState = state,
+                    newState = it.newState
+                )
+            )
+        }
+    }
+
+    private fun reduceStats(
+        oldState: Gtd2State,
+        newState: Gtd2State
+    ): Gtd2Stats {
+        return oldState.stats.copy(a = oldState.stats.a + 1)
     }
 }

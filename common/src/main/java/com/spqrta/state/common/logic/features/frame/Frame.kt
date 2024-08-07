@@ -4,8 +4,8 @@ import com.spqrta.state.common.logic.AppNotInitialized
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.AppState
 import com.spqrta.state.common.logic.action.AppAction
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.alarms.Alarms
-import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.util.state_machine.Reduced

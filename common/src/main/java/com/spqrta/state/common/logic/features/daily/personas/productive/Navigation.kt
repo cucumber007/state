@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.daily.personas.productive
 
 import com.spqrta.state.common.logic.action.ProductiveNavigationAction
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.withEffects
 import kotlinx.serialization.Serializable

@@ -4,10 +4,10 @@ import com.spqrta.state.common.logic.action.PersonaAction
 import com.spqrta.state.common.logic.action.PersonaAction.GetBackAction
 import com.spqrta.state.common.logic.action.UndefinedPersonaAction
 import com.spqrta.state.common.logic.action.UndefinedPersonaAction.DefinePersonaAction
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.daily.personas.productive.Flipper
 import com.spqrta.state.common.logic.features.daily.personas.productive.Navigation
 import com.spqrta.state.common.logic.features.daily.personas.productive.ToDoList
-import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.optics.plus

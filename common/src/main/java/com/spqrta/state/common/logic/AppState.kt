@@ -2,14 +2,14 @@ package com.spqrta.state.common.logic
 
 import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.OnResumeAction
+import com.spqrta.state.common.logic.effect.AddPromptEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.alarms.AlarmsState
 import com.spqrta.state.common.logic.features.daily.DailyState
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
 import com.spqrta.state.common.logic.features.daily.routine.CleanTeeth
 import com.spqrta.state.common.logic.features.daily.timers.Timers
 import com.spqrta.state.common.logic.features.frame.FrameState
-import com.spqrta.state.common.logic.features.global.AddPromptEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.logic.features.global.AppGlobalState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.StatsState
@@ -45,7 +45,7 @@ data class AppReady(
     val gtd2State: Gtd2State = Gtd2State.INITIAL,
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
-    val stats: StatsState = StatsState(),
+    val statsState: StatsState = StatsState.INITIAL,
     val storage: Storage = Storage(),
 ) : AppState() {
 

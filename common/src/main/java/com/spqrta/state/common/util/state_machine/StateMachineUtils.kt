@@ -1,6 +1,6 @@
 package com.spqrta.state.common.util.state_machine
 
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.util.IllegalActionException
 
 

@@ -46,11 +46,11 @@ object AppReadyOptics {
     }
     val optStats = object : OpticOptional<AppReady, StatsState> {
         override fun get(state: AppReady): StatsState {
-            return state.stats
+            return state.statsState
         }
 
         override fun set(state: AppReady, subState: StatsState): AppReady {
-            return state.copy(stats = subState)
+            return state.copy(statsState = subState)
         }
     }
     val optClockMode = object : OpticOptional<AppReady, ClockMode> {

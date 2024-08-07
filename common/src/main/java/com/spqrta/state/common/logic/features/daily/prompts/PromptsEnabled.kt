@@ -2,9 +2,9 @@ package com.spqrta.state.common.logic
 
 import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.action.TimerAction
+import com.spqrta.state.common.logic.effect.ActionEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.daily.timers.PromptTimer
-import com.spqrta.state.common.logic.features.global.ActionEffect
-import com.spqrta.state.common.logic.features.global.AppEffect
 import com.spqrta.state.common.util.collections.asSet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.effectIf

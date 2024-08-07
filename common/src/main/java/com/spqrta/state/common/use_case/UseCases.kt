@@ -11,4 +11,5 @@ class UseCases(
     val playNotificationSoundUC = PlayNotificationSoundUC(appScope.appContext)
     val vibrateUC = VibrateUC(appScope.appContext, playNotificationSoundUC)
     val showToastUC = ShowToastUC(appScope)
+    val updateStatsUC = UpdateStatsUC()
 }

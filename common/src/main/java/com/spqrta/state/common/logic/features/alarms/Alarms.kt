@@ -2,7 +2,7 @@ package com.spqrta.state.common.logic.features.alarms
 
 import com.spqrta.state.common.logic.action.AlarmAction
 import com.spqrta.state.common.logic.action.ClockAction
-import com.spqrta.state.common.logic.features.global.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced

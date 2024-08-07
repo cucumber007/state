@@ -7,6 +7,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.util.time.toMinutes
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
@@ -14,7 +15,8 @@ import java.time.LocalTime
 @Serializable
 data class Gtd2State(
     val metaState: MetaState,
-    val taskTree: Element
+    val taskTree: Element,
+    val stats: Gtd2Stats = Gtd2Stats()
 ) {
     companion object {
         private val INITIAL_TASK_TREE = Queue(

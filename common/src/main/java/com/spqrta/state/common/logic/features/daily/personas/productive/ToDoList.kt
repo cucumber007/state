@@ -1,8 +1,8 @@
 package com.spqrta.state.common.logic.features.daily.personas.productive
 
 import com.spqrta.state.common.logic.action.ToDoListAction
-import com.spqrta.state.common.logic.features.global.AppEffect
-import com.spqrta.state.common.logic.features.global.VibrateEffect
+import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.VibrateEffect
 import com.spqrta.state.common.util.optics.OpticOptional
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.optics.wrap
