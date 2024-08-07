@@ -16,7 +16,7 @@ import java.time.LocalTime
 data class Gtd2State(
     val metaState: MetaState,
     val taskTree: Element,
-    val stats: Gtd2Stats = Gtd2Stats()
+    val stats: Gtd2Stats = Gtd2Stats.INITIAL
 ) {
     companion object {
         private val INITIAL_TASK_TREE = Queue(

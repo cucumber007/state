@@ -30,6 +30,7 @@ open class Seconds(private val value: Long) : TimeValue(value) {
 
 class PositiveSeconds(seconds: Long) : Seconds(abs(seconds)) {
     constructor(timeValue: TimeValue) : this(timeValue.totalSeconds)
+    constructor(seconds: Int) : this(seconds.toLong())
 }
 
 fun Long.toSeconds() = Seconds(this)
