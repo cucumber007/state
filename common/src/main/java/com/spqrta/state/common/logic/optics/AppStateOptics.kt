@@ -7,9 +7,16 @@ import com.spqrta.state.common.ui.view_state.ViewState
 import com.spqrta.state.common.ui.view_state.getViewState
 import com.spqrta.state.common.util.optics.OpticGetStrict
 import com.spqrta.state.common.util.optics.OpticOptional
+import com.spqrta.state.common.util.optics.asOptic
 import com.spqrta.state.common.util.optics.plus
 
 object AppStateOptics {
+    val optSelf = ({ state: AppState ->
+        state
+    } to { _: AppState, subState: AppState ->
+        subState
+    }).asOptic()
+
     val optReady = object : OpticOptional<AppState, AppReady> {
         override fun get(state: AppState): AppReady? {
             return when (state) {

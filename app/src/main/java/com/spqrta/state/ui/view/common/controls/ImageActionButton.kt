@@ -17,7 +17,7 @@ import com.spqrta.state.common.logic.action.AppAction
 fun ImageActionButton(
     imageVector: ImageVector,
     action: AppAction,
-    longPressAction: AppAction?,
+    longPressAction: AppAction? = null,
     backgroundColor: Color? = null
 ) {
     Image(
