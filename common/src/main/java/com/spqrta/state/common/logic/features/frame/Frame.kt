@@ -7,6 +7,7 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.FrameTabsAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.alarms.Alarms
+import com.spqrta.state.common.logic.features.dynalist.Dynalist
 import com.spqrta.state.common.logic.features.gtd2.Gtd2
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.logic.optics.AppReadyOptics
@@ -35,6 +36,7 @@ object Frame {
                 FrameState.TabAlarms -> Alarms.reducer(action, state)
                 FrameState.TabGtd2 -> Gtd2.reducer(action, state)
                 FrameState.TabStats -> Stats.reducer(action, state)
+                FrameState.TabDynalist -> Dynalist.reducer(action, state)
             }
         }
     }
