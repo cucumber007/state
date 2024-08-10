@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TinderState(
-    val prompts: List<String>,
+    val prompts: List<TinderPrompt>,
 ) {
     companion object {
         val INITIAL = TinderState(

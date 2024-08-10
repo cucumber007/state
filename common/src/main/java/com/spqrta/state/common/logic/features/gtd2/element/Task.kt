@@ -2,7 +2,6 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
-import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,8 +28,16 @@ data class Task(
             }
         }
 
-    override fun estimate(): TimeValue {
-        return estimate ?: 0.toSeconds()
+    override fun estimate(): TimeValue? {
+        return estimate
+    }
+
+    override fun nonEstimated(): List<Element> {
+        return if (estimate == null && status == TaskStatus.Active) {
+            listOf(this)
+        } else {
+            listOf()
+        }
     }
 
     fun withStatus(status: TaskStatus): Task {

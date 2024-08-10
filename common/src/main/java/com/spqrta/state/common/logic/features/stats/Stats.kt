@@ -14,6 +14,7 @@ import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.time.PositiveSeconds
 import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toSeconds
 import java.time.LocalTime
 
 object Stats {
@@ -48,7 +49,7 @@ object Stats {
     ): Gtd2Stats {
         return oldState.stats.copy(
             timeLeft = calculateTimeLeft(),
-            estimate = newState.taskTree.estimate()
+            estimate = newState.taskTree.estimate() ?: 0.toSeconds()
         )
     }
 

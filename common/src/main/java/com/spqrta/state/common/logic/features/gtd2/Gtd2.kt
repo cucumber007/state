@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.StatsAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.plus
@@ -21,16 +22,15 @@ object Gtd2 {
         ::reduce,
     )
 
-    private fun reduce(
+    fun reduce(
         action: Gtd2Action,
         state: Gtd2State
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is Gtd2Action.OnTaskClickAction -> {
-                val newState = state.copy(
-                    taskTree = state.taskTree.withTaskClicked(action.task)
-                )
-                newState.withEffects<Gtd2State, AppEffect>()
+                state.copy(
+                    taskTree = state.taskTree.withTaskClicked(action.task),
+                ).withEffects<Gtd2State, AppEffect>()
             }
 
             is Gtd2Action.OnTaskLongClickAction -> {
@@ -48,6 +48,10 @@ object Gtd2 {
                     newState = it.newState,
                     oldState = state
                 )
+            )
+        }.flatMapState {
+            it.newState.copy(
+                tinderState = Tinder.getTinderState(it.newState)
             )
         }
     }

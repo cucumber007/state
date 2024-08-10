@@ -20,7 +20,15 @@ data class Routine(
 
     val innerElement = element.withStatus(if (!active) false else element.active)
 
-    override fun estimate(): TimeValue {
+    override fun nonEstimated(): List<Element> {
+        return if (innerElement.estimate() == null) {
+            listOf(this)
+        } else {
+            listOf()
+        }
+    }
+
+    override fun estimate(): TimeValue? {
         return innerElement.estimate()
     }
 

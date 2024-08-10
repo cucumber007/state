@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
+import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.util.time.toMinutes
 import kotlinx.serialization.Serializable
@@ -147,6 +148,8 @@ data class Gtd2State(
             ),
             taskTree = INITIAL_TASK_TREE,
             TinderState.INITIAL,
-        )
+        ).let {
+            it.copy(tinderState = Tinder.getTinderState(it))
+        }
     }
 }

@@ -12,10 +12,17 @@ data class Queue(
     override val active: Boolean = elements.isNotEmpty(),
 ) : Element {
 
-    override fun estimate(): TimeValue {
+    @Suppress("RedundantNullableReturnType")
+    override fun estimate(): TimeValue? {
         return elements.sumOf {
-            it.estimate().seconds
+            it.estimate()?.seconds ?: 0
         }.toSeconds()
+    }
+
+    override fun nonEstimated(): List<Element> {
+        return elements.map {
+            it.nonEstimated()
+        }.flatten()
     }
 
     override fun withTaskClicked(clickedTask: Task): Element {

@@ -6,5 +6,9 @@ import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 
 @Composable
 fun TinderView(state: TinderState) {
-    Text(state.toString())
+    state.prompts.firstOrNull()?.let {
+        TinderPromptView(it)
+    } ?: Text("All is done")
+
+
 }

@@ -13,8 +13,13 @@ data class Flipper(
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
 
-    override fun estimate(): TimeValue {
+    @Suppress("RedundantNullableReturnType")
+    override fun estimate(): TimeValue? {
         return 0.toSeconds()
+    }
+
+    override fun nonEstimated(): List<Element> {
+        return scheduledElements.map { it.element.nonEstimated() }.flatten()
     }
 
     override fun withTaskClicked(clickedTask: Task): Element {
