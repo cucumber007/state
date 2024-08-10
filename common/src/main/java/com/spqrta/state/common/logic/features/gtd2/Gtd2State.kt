@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
+import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.util.time.toMinutes
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
@@ -16,6 +17,7 @@ import java.time.LocalTime
 data class Gtd2State(
     val metaState: MetaState,
     val taskTree: Element,
+    val tinderState: TinderState,
     val stats: Gtd2Stats = Gtd2Stats.INITIAL
 ) {
     companion object {
@@ -143,7 +145,8 @@ data class Gtd2State(
             MetaState(
                 workdayStarted = false,
             ),
-            taskTree = INITIAL_TASK_TREE
+            taskTree = INITIAL_TASK_TREE,
+            TinderState.INITIAL,
         )
     }
 }

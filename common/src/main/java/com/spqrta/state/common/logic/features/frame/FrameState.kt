@@ -18,7 +18,10 @@ sealed class FrameState {
     @Serializable
     object TabDynalist : FrameState()
 
+    @Serializable
+    object TabTinder : FrameState()
+
     companion object {
-        val INITIAL = TabDynalist
+        val INITIAL = TabTinder
     }
 }

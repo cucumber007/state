@@ -9,6 +9,7 @@ import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.alarms.Alarms
 import com.spqrta.state.common.logic.features.dynalist.Dynalist
 import com.spqrta.state.common.logic.features.gtd2.Gtd2
+import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
@@ -36,7 +37,8 @@ object Frame {
                 FrameState.TabAlarms -> Alarms.reducer(action, state)
                 FrameState.TabGtd2 -> Gtd2.reducer(action, state)
                 FrameState.TabStats -> Stats.reducer(action, state)
-                FrameState.TabDynalist -> Dynalist.reducer(action, state)
+                FrameState.TabDynalist -> Dynalist.viewReducer(action, state)
+                FrameState.TabTinder -> Tinder.reducer(action, state)
             }
         }
     }

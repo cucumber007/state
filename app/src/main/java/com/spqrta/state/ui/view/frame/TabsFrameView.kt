@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
@@ -20,6 +21,7 @@ import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import com.spqrta.state.ui.view.dynalist.DynalistView
 import com.spqrta.state.ui.view.gtd2.Gtd2View
 import com.spqrta.state.ui.view.stats.StatsView
+import com.spqrta.state.ui.view.tinder.TinderView
 
 @Composable
 fun TabsFrameView(appState: AppReady) {
@@ -42,6 +44,10 @@ fun TabsFrameView(appState: AppReady) {
                 imageVector = Icons.Default.Home,
                 action = FrameTabsAction.OnTabClicked(FrameState.TabDynalist),
             )
+            ImageActionButton(
+                imageVector = Icons.Default.ArrowForward,
+                action = FrameTabsAction.OnTabClicked(FrameState.TabTinder),
+            )
         }
         Box(Modifier.padding(top = 16.dp)) {
             when (frameState) {
@@ -49,6 +55,7 @@ fun TabsFrameView(appState: AppReady) {
                 FrameState.TabAlarms -> AlarmsView(state = appState.alarmsState)
                 FrameState.TabStats -> StatsView(state = appState.gtd2State.stats)
                 FrameState.TabDynalist -> DynalistView(state = appState.dynalistState)
+                FrameState.TabTinder -> TinderView(state = appState.gtd2State.tinderState)
             }
         }
     }

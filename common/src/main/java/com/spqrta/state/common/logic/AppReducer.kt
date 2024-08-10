@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic
 
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
+import com.spqrta.state.common.logic.features.dynalist.Dynalist
 import com.spqrta.state.common.logic.features.frame.Frame
 import com.spqrta.state.common.logic.features.global.AppGlobalReducer
 import com.spqrta.state.common.logic.features.storage.Storage
@@ -22,4 +23,4 @@ val APP_REDUCER = AppGlobalReducer.reducer + Frame.reducer + widen(
     identityGet(),
     AppStateOptics.optReady,
     AppReady.reducer
-) + AppGlobalReducer.saveStateReducer
+) + Dynalist.reducer + AppGlobalReducer.saveStateReducer

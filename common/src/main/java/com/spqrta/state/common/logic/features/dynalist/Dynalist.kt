@@ -2,6 +2,8 @@ package com.spqrta.state.common.logic.features.dynalist
 
 import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.state.common.BuildConfig
+import com.spqrta.state.common.logic.AppState
+import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.effect.AppEffect
@@ -16,6 +18,7 @@ import com.spqrta.state.common.util.Success
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
+import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.time.toSeconds
@@ -25,7 +28,7 @@ object Dynalist {
     const val DYNALIST_API_KEY = BuildConfig.DYNALIST_API_KEY
 
     const val TODO_DOCUMENT_ID = "omSjo4KOvqr1J4kNlysdo9In"
-//    const val TODO_DOCUMENT_ID = "fj8owT2lQyd7nikhyRSJE1GK"
+    //    const val TODO_DOCUMENT_ID = "fj8owT2lQyd7nikhyRSJE1GK"
 
     const val TASKS_NODE_ID = "kjHpmZQSU7Hukgy_l1QrRLib"
 
@@ -37,6 +40,10 @@ object Dynalist {
         AppStateOptics.optReady + AppReadyOptics.optDynalistState,
         ::reduce
     )
+
+    val viewReducer: Reducer<AppAction, AppState, AppEffect> = { action, state ->
+        state.withEffects()
+    }
 
     private fun reduce(
         action: DynalistAction,
