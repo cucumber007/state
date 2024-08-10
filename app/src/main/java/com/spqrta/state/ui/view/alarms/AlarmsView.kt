@@ -47,6 +47,4 @@ fun AlarmsView(state: AlarmsState) {
             )
         )
     }
-
-
 }

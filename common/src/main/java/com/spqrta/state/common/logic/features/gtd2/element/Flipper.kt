@@ -22,6 +22,62 @@ data class Flipper(
         return scheduledElements.map { it.element.nonEstimated() }.flatten()
     }
 
+    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withElement(
+                        name,
+                        action
+                    )
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withElement(
+                        name,
+                        action
+                    )
+                )
+
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.withElement(
+                        name,
+                        action
+                    )
+                )
+            }
+        })
+    }
+
+    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+        return copy(
+            scheduledElements = scheduledElements.map {
+                when (it) {
+                    is FlipperSchedule.TimeLeftPortion -> it.copy(
+                        element = it.element.withEstimate(
+                            name,
+                            estimate
+                        )
+                    )
+
+                    is FlipperSchedule.TimePeriod -> it.copy(
+                        element = it.element.withEstimate(
+                            name,
+                            estimate
+                        )
+                    )
+
+                    is FlipperSchedule.UntilTime -> it.copy(
+                        element = it.element.withEstimate(
+                            name,
+                            estimate
+                        )
+                    )
+                }
+            }
+        )
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {

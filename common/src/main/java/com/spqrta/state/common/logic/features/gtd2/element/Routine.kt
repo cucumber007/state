@@ -36,6 +36,18 @@ data class Routine(
         return innerElement.withTaskClicked(clickedTask)
     }
 
+    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+        return if (name == this.name) {
+            action(this)
+        } else {
+            innerElement.withElement(name, action)
+        }
+    }
+
+    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+        return copy(element = element.withEstimate(name, estimate))
+    }
+
     override fun withTaskLongClicked(clickedTask: Task): Element {
         return innerElement.withTaskLongClicked(clickedTask)
     }

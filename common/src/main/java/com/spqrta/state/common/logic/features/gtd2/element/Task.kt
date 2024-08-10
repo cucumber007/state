@@ -40,6 +40,22 @@ data class Task(
         }
     }
 
+    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+        return if (name == this.name) {
+            action(this)
+        } else {
+            this
+        }
+    }
+
+    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+        return if (name == this.name) {
+            copy(estimate = estimate)
+        } else {
+            this
+        }
+    }
+
     fun withStatus(status: TaskStatus): Task {
         return when (status) {
             TaskStatus.Active -> copy(active = true, done = false)

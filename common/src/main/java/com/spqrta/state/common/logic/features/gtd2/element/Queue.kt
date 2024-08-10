@@ -25,6 +25,18 @@ data class Queue(
         }.flatten()
     }
 
+    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+        return copy(elements = elements.map {
+            it.withElement(name, action)
+        })
+    }
+
+    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+        return copy(elements = elements.map {
+            it.withEstimate(name, estimate)
+        })
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(elements = elements.map {
             it.withTaskClicked(clickedTask)

@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2
 
+import com.spqrta.state.common.environments.tasks_database.DatabaseTask
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
@@ -18,6 +19,7 @@ import java.time.LocalTime
 data class Gtd2State(
     val metaState: MetaState,
     val taskTree: Element,
+    val tasksDatabase: Map<String, DatabaseTask>,
     val tinderState: TinderState,
     val stats: Gtd2Stats = Gtd2Stats.INITIAL
 ) {
@@ -147,7 +149,8 @@ data class Gtd2State(
                 workdayStarted = false,
             ),
             taskTree = INITIAL_TASK_TREE,
-            TinderState.INITIAL,
+            tinderState = TinderState.INITIAL,
+            tasksDatabase = mapOf()
         ).let {
             it.copy(tinderState = Tinder.getTinderState(it))
         }
