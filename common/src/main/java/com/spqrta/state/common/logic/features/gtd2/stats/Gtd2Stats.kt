@@ -5,11 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Gtd2Stats(
-    val timeLeft: TimeValue
+    val timeLeft: TimeValue,
+    val estimate: TimeValue,
 ) {
     companion object {
         val INITIAL = Gtd2Stats(
-            timeLeft = TimeValue(0)
+            timeLeft = TimeValue(0),
+            estimate = TimeValue(0),
         )
     }
 }

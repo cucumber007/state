@@ -22,6 +22,6 @@ sealed class FrameState {
     object TabTinder : FrameState()
 
     companion object {
-        val INITIAL = TabTinder
+        val INITIAL = TabStats
     }
 }

@@ -1,6 +1,8 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
+import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,6 +12,11 @@ data class Flipper(
     override val displayName: String = "$name Flipper",
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
+
+    override fun estimate(): TimeValue {
+        return 0.toSeconds()
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {

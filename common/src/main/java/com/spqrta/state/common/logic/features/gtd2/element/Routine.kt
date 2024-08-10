@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.RoutineTrigger
+import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
@@ -18,6 +19,10 @@ data class Routine(
     )
 
     val innerElement = element.withStatus(if (!active) false else element.active)
+
+    override fun estimate(): TimeValue {
+        return innerElement.estimate()
+    }
 
     override fun withTaskClicked(clickedTask: Task): Element {
         return innerElement.withTaskClicked(clickedTask)

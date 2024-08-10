@@ -47,7 +47,8 @@ object Stats {
         newState: Gtd2State
     ): Gtd2Stats {
         return oldState.stats.copy(
-            timeLeft = calculateTimeLeft()
+            timeLeft = calculateTimeLeft(),
+            estimate = newState.taskTree.estimate()
         )
     }
 

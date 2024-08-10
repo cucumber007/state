@@ -1,20 +1,23 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Task(
     override val active: Boolean = true,
     override val name: String,
+    val estimate: TimeValue? = null,
     val done: Boolean = false,
     override val displayName: String = name,
 ) : Element {
 
     constructor(name: String, taskStatus: TaskStatus = TaskStatus.Active) : this(
-        taskStatus != TaskStatus.Inactive,
-        name,
-        taskStatus == TaskStatus.Done
+        active = taskStatus != TaskStatus.Inactive,
+        name = name,
+        done = taskStatus == TaskStatus.Done
     )
 
     val status: TaskStatus
@@ -25,6 +28,10 @@ data class Task(
                 else -> TaskStatus.Active
             }
         }
+
+    override fun estimate(): TimeValue {
+        return estimate ?: 0.toSeconds()
+    }
 
     fun withStatus(status: TaskStatus): Task {
         return when (status) {
