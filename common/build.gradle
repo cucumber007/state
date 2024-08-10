@@ -5,6 +5,9 @@ plugins {
 }
 
 android {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
     namespace 'com.spqrta.state.common'
     compileSdk 34
 
@@ -13,8 +16,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        def dynalistApiKey = properties.getProperty('dynalistApiKey')
+        buildConfigField "String", "DYNALIST_API_KEY", "\"$dynalistApiKey\""
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -32,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation project(':dynalist')
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'

@@ -13,6 +13,7 @@ import com.spqrta.state.common.logic.features.daily.personas.Unstable
 import com.spqrta.state.common.logic.features.daily.timers.Timer
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
 import com.spqrta.state.common.logic.features.daily.timers.Timers
+import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.StatsState
@@ -26,6 +27,14 @@ import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.withGet
 
 object AppReadyOptics {
+    val optDynalistState: OpticOptional<AppReady, DynalistState> = ({ state: AppReady ->
+        state.dynalistState
+    } to { state: AppReady, subState: DynalistState ->
+        state.copy(
+            dynalistState = subState
+        )
+    }).asOptic()
+
     val optFrameState: OpticOptional<AppReady, FrameState> = ({ state: AppReady ->
         state.frameState
     } to { state: AppReady, subState: FrameState ->

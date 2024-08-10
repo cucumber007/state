@@ -1,13 +1,22 @@
 package com.spqrta.dynalist.model
 
-import com.google.gson.annotations.SerializedName
-import com.spqrta.dynalyst.utility.pure.nullIfEmpty
-
-class DynalistNode(
-    val id: String,
-    @SerializedName("note")
-    val _note: String?
+data class DynalistNode(
+    val children: List<DynalistNode>,
+    val title: String
 ) {
-    val note: String?
-        get() = _note.nullIfEmpty()
+    companion object {
+        fun create(
+            doc: DynalistDocumentRemote,
+            dynalistNodeRemote: DynalistNodeRemote
+        ): DynalistNode {
+            return DynalistNode(
+                children = dynalistNodeRemote.children?.map { id ->
+                    doc.nodes.first { it.id == id }.let {
+                        create(doc, it)
+                    }
+                } ?: listOf(),
+                title = dynalistNodeRemote.content
+            )
+        }
+    }
 }

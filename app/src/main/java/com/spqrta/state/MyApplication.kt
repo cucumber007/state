@@ -1,8 +1,10 @@
 package com.spqrta.state
 
 import android.app.Application
+import com.spqrta.dynalist.DynalistApiClient
 import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.external.preferences.PreferencesRepository
+import com.spqrta.state.common.logic.App
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.InitAppAction
 import kotlinx.coroutines.CoroutineScope
@@ -12,14 +14,15 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        com.spqrta.state.common.logic.App.inject(
+        App.inject(
             AppScope(
                 appContext = this,
+                dynalistApi = DynalistApiClient.api,
                 preferencesRepository = PreferencesRepository(this),
                 mainThreadScope = CoroutineScope(Dispatchers.Main)
             )
         )
-        com.spqrta.state.common.logic.App.handleAction(InitAppAction)
+        App.handleAction(InitAppAction)
     }
 
 

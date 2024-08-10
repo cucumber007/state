@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AddPromptEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.LoadDynalistEffect
 import com.spqrta.state.common.logic.effect.LoadStateEffect
 import com.spqrta.state.common.logic.effect.PlayNotificationSoundEffect
 import com.spqrta.state.common.logic.effect.SaveStateEffect
@@ -73,6 +74,10 @@ object App {
 
                         is AddPromptEffect -> {
                             { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
+                        }
+
+                        is LoadDynalistEffect -> {
+                            loadDynalistUC.flow()
                         }
 
                         is LoadStateEffect -> {

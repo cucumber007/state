@@ -1,17 +1,17 @@
 package com.spqrta.dynalist
 
 import com.spqrta.dynalist.model.Delete
-import com.spqrta.dynalist.model.DynalistNode
+import com.spqrta.dynalist.model.DynalistDocumentRemote
+import com.spqrta.dynalist.model.DynalistNodeRemote
 import com.spqrta.dynalist.model.Edit
 import com.spqrta.dynalist.model.EditBody
-import com.spqrta.dynalist.model.GetBody
-import com.spqrta.dynalist.model.GetResponse
+import com.spqrta.dynalist.model.GetDocumentBody
 import com.spqrta.dynalist.model.Insert
 
 @Suppress("IfThenToElvis")
 class DynalistDatabase(
-    val apiKey: String,
-    val documentId: String,
+    private val apiKey: String,
+    private val documentId: String,
 ) {
     private val api by lazy { DynalistApiClient.api }
     private lateinit var dataNodeId: String
@@ -109,16 +109,16 @@ class DynalistDatabase(
         }
     }
 
-    suspend fun getData(): DynalistNode {
+    suspend fun getData(): DynalistNodeRemote {
         check(initialized) { "db is not initialized" }
         return getChildren(documentId).nodes.first {
             it.id == dataNodeId
         }
     }
 
-    private suspend fun getChildren(fileId: String): GetResponse {
+    private suspend fun getChildren(fileId: String): DynalistDocumentRemote {
         return api.getDoc(
-            GetBody(
+            GetDocumentBody(
                 file_id = fileId,
                 token = apiKey
             )

@@ -48,7 +48,7 @@ fun TabsFrameView(appState: AppReady) {
                 FrameState.TabGtd2 -> Gtd2View(state = appState.gtd2State)
                 FrameState.TabAlarms -> AlarmsView(state = appState.alarmsState)
                 FrameState.TabStats -> StatsView(state = appState.gtd2State.stats)
-                FrameState.TabDynalist -> DynalistView()
+                FrameState.TabDynalist -> DynalistView(state = appState.dynalistState)
             }
         }
     }
