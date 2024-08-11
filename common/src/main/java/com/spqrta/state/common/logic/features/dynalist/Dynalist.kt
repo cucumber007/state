@@ -21,7 +21,7 @@ import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
-import com.spqrta.state.common.util.time.toSeconds
+import com.spqrta.state.common.util.time.toMinutes
 import java.time.LocalDateTime
 
 object Dynalist {
@@ -33,7 +33,7 @@ object Dynalist {
     const val TASKS_NODE_ID = "kjHpmZQSU7Hukgy_l1QrRLib"
 
     //    const val TASKS_NODE_ID = "TkPa2KwGiYEaOTbU2vGKuEM4"
-    private val UPDATE_TIMEOUT = 1.toSeconds()
+    private val UPDATE_TIMEOUT = 100.toMinutes()
 
     val reducer = widen(
         typeGet(),

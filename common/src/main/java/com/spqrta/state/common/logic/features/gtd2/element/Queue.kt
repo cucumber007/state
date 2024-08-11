@@ -14,9 +14,14 @@ data class Queue(
 
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
-        return elements.sumOf {
-            it.estimate()?.seconds ?: 0
-        }.toSeconds()
+//        Log.i("kek", ">>>> ${this.displayName} estimate")
+        val sum = elements.sumOf {
+            val estimate = it.estimate()
+//            Log.i("kek", "< ${it.displayName} ${estimate}")
+            estimate?.totalSeconds ?: 0
+        }
+//        Log.i("kek", "<<<< ${this.displayName} estimated: $sum")
+        return sum.toSeconds()
     }
 
     override fun nonEstimated(): List<Element> {

@@ -3,16 +3,16 @@ package com.spqrta.state.common.util.time
 object TimeValueFormatter {
     fun formatTimeValue(timeValue: TimeValue): String {
         return PositiveSeconds(timeValue).let { positiveSeconds ->
-            if (positiveSeconds.hours > 0) {
+            if (positiveSeconds.justHours > 0) {
                 listOf(
-                    formatTwoDigit(positiveSeconds.hours),
-                    formatTwoDigit(positiveSeconds.minutes),
-                    formatTwoDigit(positiveSeconds.seconds)
+                    formatTwoDigit(positiveSeconds.justHours),
+                    formatTwoDigit(positiveSeconds.justMinutes),
+                    formatTwoDigit(positiveSeconds.justSeconds)
                 ).joinToString(":")
             } else {
                 listOf(
-                    formatTwoDigit(positiveSeconds.minutes),
-                    formatTwoDigit(positiveSeconds.seconds)
+                    formatTwoDigit(positiveSeconds.justMinutes),
+                    formatTwoDigit(positiveSeconds.justSeconds)
                 ).joinToString(":")
             }
         }

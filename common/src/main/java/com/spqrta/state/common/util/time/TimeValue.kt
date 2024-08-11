@@ -5,13 +5,13 @@ import kotlin.math.abs
 
 @Serializable
 open class TimeValue(val totalSeconds: Long) {
-    val seconds: Int = (totalSeconds % SECONDS_IN_MINUTE).toInt()
-    val minutes: Int = ((totalSeconds - seconds) / SECONDS_IN_MINUTE)
+    val justSeconds: Int = (totalSeconds % SECONDS_IN_MINUTE).toInt()
+    val justMinutes: Int = ((totalSeconds - justSeconds) / SECONDS_IN_MINUTE)
         .let { totalMinutesLeft ->
             (totalMinutesLeft % MINUTES_IN_HOUR).toInt()
         }
-    val hours: Int =
-        (totalSeconds - minutes * SECONDS_IN_MINUTE - seconds).let { secondsLeft ->
+    val justHours: Int =
+        (totalSeconds - justMinutes * SECONDS_IN_MINUTE - justSeconds).let { secondsLeft ->
             secondsLeft / (MINUTES_IN_HOUR * SECONDS_IN_MINUTE)
         }.toInt()
 

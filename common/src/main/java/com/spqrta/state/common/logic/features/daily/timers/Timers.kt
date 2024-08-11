@@ -88,7 +88,7 @@ data class Timers(val timers: Map<TimerId, Timer> = mapOf()) {
                     )
                 }?.let {
                     newTimers[key] = it
-                    if (it.left.seconds <= 0) {
+                    if (it.left.totalSeconds <= 0) {
                         ended.add(key)
                     }
                 }
