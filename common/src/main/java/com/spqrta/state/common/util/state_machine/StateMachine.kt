@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StateMachine<A, S, E>(
+open class StateMachine<A, S, E>(
     private val tag: String,
     initialState: S,
     private val scope: CoroutineScope,
@@ -26,14 +26,20 @@ class StateMachine<A, S, E>(
                 _state.value = it.newState
                 val effects = stateChangeEffects.invoke(it.newState) + it.effects
                 applyEffects(effects)
-                log(format(action, it.newState, effects))
+                if (shouldLog(action, it.newState, effects)) {
+                    log(format(action, it.newState, effects))
+                }
             }
         }
     }
 
-    private fun format(action: A, newState: S, effects: Set<E>): String {
+    protected open fun shouldLog(action: A, state: S, effects: Set<E>): Boolean {
+        return true
+    }
+
+    protected open fun format(action: A, newState: S, effects: Set<E>): String {
         val msg = StringBuilder()
-        msg.appendLine(tag)
+//        msg.appendLine(tag)
         msg.appendLine("v $action")
         msg.appendLine("= $newState")
         msg.appendLine("effects: [")
@@ -44,8 +50,8 @@ class StateMachine<A, S, E>(
         return msg.toString()
     }
 
-    private fun log(txt: String) {
-        Log.v(javaClass.simpleName, txt)
+    protected open fun log(txt: String) {
+        Log.v(tag, txt)
     }
 }
 

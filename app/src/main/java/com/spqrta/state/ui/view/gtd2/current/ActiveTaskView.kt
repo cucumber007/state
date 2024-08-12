@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.logic.action.CurrentAction
+import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
@@ -84,7 +84,7 @@ fun TimerPausedView(activeTask: TimeredTask) {
             Box(Modifier.align(Alignment.CenterEnd)) {
                 ImageActionButton(
                     imageVector = Icons.Default.PlayArrow,
-                    action = CurrentAction.OnTimerStart,
+                    action = CurrentViewAction.OnTimerStart,
                     size = timeHeight
                 )
             }
@@ -109,7 +109,7 @@ fun TimerRunningView(activeTask: TimeredTask) {
             Box(Modifier.align(Alignment.CenterEnd)) {
                 ImageActionButton(
                     imageVector = Icons.Default.KeyboardArrowDown,
-                    action = CurrentAction.OnTimerPause,
+                    action = CurrentViewAction.OnTimerPause,
                     size = timeHeight
                 )
             }
@@ -123,10 +123,12 @@ fun RowScope.CountdownView(remainingTime: TimeValue) {
         modifier = Modifier
             .align(Alignment.CenterVertically)
             .padding(bottom = 2.dp),
-        color = if(remainingTime.totalSeconds > 0) Color.Black else Color.Red,
-        text = if(remainingTime.totalSeconds > 0) {
+        color = if (remainingTime.totalSeconds > 0) Color.Black else Color.Red,
+        text = if (remainingTime.totalSeconds > 0) {
             TimeValueFormatter.formatTimeValue(remainingTime)
-        } else { "-${TimeValueFormatter.formatTimeValue(remainingTime)}" },
+        } else {
+            "-${TimeValueFormatter.formatTimeValue(remainingTime)}"
+        },
         fontSize = FontSize.BASE
     )
 }

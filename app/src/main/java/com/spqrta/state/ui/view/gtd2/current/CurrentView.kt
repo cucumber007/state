@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.logic.action.CurrentAction
+import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
@@ -32,7 +32,7 @@ fun CurrentView(state: Gtd2State) {
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     activeElement.activeTasks.forEach {
-                        ActionButton(action = CurrentAction.OnSubElementClick(it)) {
+                        ActionButton(action = CurrentViewAction.OnSubElementClick(it)) {
                             Text(
                                 text = it.displayName,
                                 fontSize = FontSize.BASE,
@@ -57,14 +57,14 @@ fun CurrentView(state: Gtd2State) {
                         activeElement.tasksToShow.forEach {
                             if (it.name == activeTask.task.name) {
                                 ActionButton(
-                                    longPressAction = CurrentAction.OnSubElementLongClick(it)
+                                    longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                 ) {
                                     ActiveTaskView(activeTask)
                                 }
                             } else {
                                 ActionButton(
-                                    action = CurrentAction.OnSubElementClick(it),
-                                    longPressAction = CurrentAction.OnSubElementLongClick(it)
+                                    action = CurrentViewAction.OnSubElementClick(it),
+                                    longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                 ) {
                                     Text(
                                         text = it.displayName,
@@ -97,7 +97,7 @@ fun CurrentView(state: Gtd2State) {
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 state.taskTree.queues().forEach {
-                    ActionButton(action = CurrentAction.OnElementClick(it)) {
+                    ActionButton(action = CurrentViewAction.OnElementClick(it)) {
                         Text(
                             text = it.displayName,
                             fontSize = FontSize.BASE,

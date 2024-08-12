@@ -36,7 +36,7 @@ object Frame {
             AppNotInitialized -> state.withEffects()
             is AppReady -> when (state.frameState) {
                 FrameState.TabAlarms -> Alarms.reducer(action, state)
-                FrameState.TabCurrent -> Current.reducer(action, state)
+                FrameState.TabCurrent -> Current.viewReducer(action, state)
                 FrameState.TabDynalist -> Dynalist.viewReducer(action, state)
                 FrameState.TabGtd2 -> Gtd2.viewReducer(action, state)
                 FrameState.TabStats -> Stats.reducer(action, state)

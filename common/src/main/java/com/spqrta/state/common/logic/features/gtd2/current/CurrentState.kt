@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CurrentState(
-    val activeElement: ActiveElement? = null
+    val activeElement: ActiveElement?
 ) {
     companion object {
-        val INITIAL = CurrentState()
+        val INITIAL = CurrentState(null)
 
         val optActiveElement = ({ state: CurrentState ->
             state.activeElement

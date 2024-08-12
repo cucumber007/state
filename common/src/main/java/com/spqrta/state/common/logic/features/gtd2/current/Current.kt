@@ -2,7 +2,9 @@ package com.spqrta.state.common.logic.features.gtd2.current
 
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
+import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.action.Gtd2Action
+import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
@@ -31,18 +33,24 @@ object Current {
         ::reduce,
     )
 
-    private fun reduce(
-        action: CurrentAction,
+    val viewReducer = widen(
+        typeGet(),
+        AppStateOptics.optReady + AppReadyOptics.optGtd2State,
+        ::reduceView,
+    )
+
+    private fun reduceView(
+        action: CurrentViewAction,
         state: Gtd2State
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (val activeElement = state.currentState.activeElement) {
             is ActiveElement.ActiveQueue -> {
                 when (action) {
-                    is CurrentAction.OnElementClick -> {
+                    is CurrentViewAction.OnElementClick -> {
                         illegalAction(action, state)
                     }
 
-                    is CurrentAction.OnSubElementClick -> {
+                    is CurrentViewAction.OnSubElementClick -> {
                         if (action.element.status == TaskStatus.Active) {
                             optActiveTask.set(
                                 state,
@@ -55,7 +63,7 @@ object Current {
                         }
                     }
 
-                    is CurrentAction.OnTimerPause -> {
+                    is CurrentViewAction.OnTimerPause -> {
                         optTimeredState.get(state)?.let { oldTimerState ->
                             optTimeredState.set(
                                 state,
@@ -64,7 +72,7 @@ object Current {
                         } ?: illegalAction(action, state)
                     }
 
-                    is CurrentAction.OnTimerStart -> {
+                    is CurrentViewAction.OnTimerStart -> {
                         optTimeredState.get(state)?.let { oldTimerState ->
                             optTimeredState.set(
                                 state,
@@ -76,9 +84,9 @@ object Current {
                         } ?: illegalAction(action, state)
                     }
 
-                    is CurrentAction.OnTimerReset -> {
-                        reduce(
-                            CurrentAction.OnTimerStart,
+                    is CurrentViewAction.OnTimerReset -> {
+                        reduceView(
+                            CurrentViewAction.OnTimerStart,
                             state
                         )
                     }
@@ -104,7 +112,7 @@ object Current {
                         }
                     }
 
-                    is CurrentAction.OnSubElementLongClick -> {
+                    is CurrentViewAction.OnSubElementLongClick -> {
                         state.withEffects(ActionEffect(Gtd2Action.ToggleTask(action.element)))
                     }
 
@@ -132,7 +140,7 @@ object Current {
             // no ActiveElement
             null -> {
                 when (action) {
-                    is CurrentAction.OnElementClick -> {
+                    is CurrentViewAction.OnElementClick -> {
                         state.copy(
                             currentState = state.currentState.copy(
                                 activeElement = ActiveElement.ActiveQueue(
@@ -148,12 +156,51 @@ object Current {
                         state.withEffects()
                     }
 
-                    is CurrentAction.OnSubElementClick,
-                    is CurrentAction.OnSubElementLongClick,
-                    CurrentAction.OnTimerPause,
-                    CurrentAction.OnTimerReset,
-                    CurrentAction.OnTimerStart -> {
+                    is CurrentViewAction.OnSubElementClick,
+                    is CurrentViewAction.OnSubElementLongClick,
+                    CurrentViewAction.OnTimerPause,
+                    CurrentViewAction.OnTimerReset,
+                    CurrentViewAction.OnTimerStart -> {
                         illegalAction(action, state)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun reduce(
+        action: CurrentAction,
+        state: Gtd2State
+    ): Reduced<out Gtd2State, out AppEffect> {
+        return when (action) {
+            is StateLoadedAction -> {
+                when (state.currentState.activeElement) {
+                    is ActiveElement.ActiveQueue -> {
+                        state.withEffects()
+                    }
+
+                    null -> {
+                        val newActiveElement = state.taskTree.queues().let { queues ->
+                            if (queues.size == 1) {
+                                queues.first().let { queue ->
+                                    ActiveElement.ActiveQueue(
+                                        queue, queue.tasks().firstOrNull()?.let {
+                                            TimeredTask(
+                                                it,
+                                                TimeredState.Paused()
+                                            )
+                                        }
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        }
+                        if (newActiveElement != null) {
+                            optActiveElement.set(state, newActiveElement).withEffects()
+                        } else {
+                            state.withEffects()
+                        }
                     }
                 }
             }

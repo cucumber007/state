@@ -4,6 +4,7 @@ package com.spqrta.state.common.logic
 
 import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.logic.action.AppAction
+import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AddPromptEffect
@@ -40,13 +41,24 @@ object App {
 
     private val reducer: Reducer<AppAction, AppState, AppEffect> = APP_REDUCER
 
-    private val stateMachine = StateMachine(
-        javaClass.simpleName,
+    private val stateMachine = object : StateMachine<AppAction, AppState, AppEffect>(
+        "StateMachine",
         AppNotInitialized,
         actionsScope,
         reducer,
         this::applyEffects
-    )
+    ) {
+        override fun shouldLog(
+            action: AppAction,
+            state: AppState,
+            effects: Set<AppEffect>
+        ): Boolean {
+            return when (action) {
+                is ClockAction.TickAction -> false
+                else -> true
+            }
+        }
+    }
     val state = stateMachine.state
 
     fun inject(appScope: AppScope) {
