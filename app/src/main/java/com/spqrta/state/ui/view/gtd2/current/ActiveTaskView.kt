@@ -3,6 +3,7 @@ package com.spqrta.state.ui.view.gtd2.current
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.TimeValueFormatter
 import com.spqrta.state.common.util.time.toMinutes
 import com.spqrta.state.ui.theme.FontSize
@@ -74,13 +76,7 @@ fun TimerPausedView(activeTask: TimeredTask) {
         Row(
             modifier = Modifier.fillMaxHeight()
         ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(bottom = 2.dp),
-                text = TimeValueFormatter.formatTimeValue(activeTask.remainingTime),
-                fontSize = FontSize.BASE
-            )
+            CountdownView(activeTask.remainingTime)
         }
         Box(
             Modifier.fillMaxWidth()
@@ -105,13 +101,7 @@ fun TimerRunningView(activeTask: TimeredTask) {
         Row(
             modifier = Modifier.fillMaxHeight()
         ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(bottom = 2.dp),
-                text = TimeValueFormatter.formatTimeValue(activeTask.remainingTime),
-                fontSize = FontSize.BASE
-            )
+            CountdownView(activeTask.remainingTime)
         }
         Box(
             Modifier.fillMaxWidth()
@@ -127,6 +117,20 @@ fun TimerRunningView(activeTask: TimeredTask) {
     }
 }
 
+@Composable
+fun RowScope.CountdownView(remainingTime: TimeValue) {
+    Text(
+        modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .padding(bottom = 2.dp),
+        color = if(remainingTime.totalSeconds > 0) Color.Black else Color.Red,
+        text = if(remainingTime.totalSeconds > 0) {
+            TimeValueFormatter.formatTimeValue(remainingTime)
+        } else { "-${TimeValueFormatter.formatTimeValue(remainingTime)}" },
+        fontSize = FontSize.BASE
+    )
+}
+
 @Preview
 @Composable
 fun ActiveTaskViewPreview() {
@@ -137,7 +141,7 @@ fun ActiveTaskViewPreview() {
                 estimate = 10.toMinutes(),
             ),
             timerState = TimeredState.Running(
-                passed = 4.toMinutes(),
+                passed = 15.toMinutes(),
                 updatedAt = LocalTime.now()
             )
         )
