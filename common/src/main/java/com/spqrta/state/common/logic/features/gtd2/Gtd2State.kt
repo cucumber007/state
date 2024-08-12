@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2
 
 import com.spqrta.state.common.environments.tasks_database.DatabaseTask
+import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Gtd2State(
+    val currentState: CurrentState,
     val metaState: MetaState,
     val taskTree: Element,
     val tasksDatabase: Map<String, DatabaseTask>,
@@ -60,12 +62,13 @@ data class Gtd2State(
         )
 
         val INITIAL = Gtd2State(
-            MetaState(
+            currentState = CurrentState.INITIAL,
+            metaState = MetaState(
                 workdayStarted = false,
             ),
             taskTree = INITIAL_TASK_TREE,
+            tasksDatabase = mapOf(),
             tinderState = TinderState.INITIAL,
-            tasksDatabase = mapOf()
         ).let {
             it.copy(tinderState = Tinder.getTinderState(it))
         }

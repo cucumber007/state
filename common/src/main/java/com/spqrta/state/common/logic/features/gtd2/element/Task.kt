@@ -46,6 +46,10 @@ data class Task(
         }
     }
 
+    override fun queues(): List<Queue> {
+        return listOf()
+    }
+
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
         return if (name == this.name) {
             action(this)

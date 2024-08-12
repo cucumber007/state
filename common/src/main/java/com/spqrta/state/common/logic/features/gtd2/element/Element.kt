@@ -10,6 +10,8 @@ sealed interface Element {
     val active: Boolean
     fun estimate(): TimeValue?
     fun nonEstimated(): List<Element>
+
+    fun queues(): List<Queue>
     fun withElement(name: String, action: (element: Element) -> Element): Element
 
     fun withEstimate(name: String, estimate: TimeValue?): Element

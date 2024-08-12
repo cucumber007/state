@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.ui.view.alarms.AlarmsView
 import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import com.spqrta.state.ui.view.dynalist.DynalistView
+import com.spqrta.state.ui.view.gtd2.CurrentView
 import com.spqrta.state.ui.view.gtd2.Gtd2View
 import com.spqrta.state.ui.view.stats.StatsView
 import com.spqrta.state.ui.view.tinder.TinderView
@@ -39,15 +41,17 @@ fun TabsFrameView(appState: AppReady) {
                 .weight(1f)
         ) {
             when (frameState) {
-                FrameState.TabGtd2 -> Gtd2View(state = appState.gtd2State)
-                FrameState.TabAlarms -> AlarmsView(state = appState.alarmsState)
-                FrameState.TabStats -> StatsView(state = appState.gtd2State.stats)
-                FrameState.TabDynalist -> DynalistView(state = appState.dynalistState)
-                FrameState.TabTinder -> TinderView(state = appState.gtd2State.tinderState)
+                FrameState.TabGtd2 -> Gtd2View(appState.gtd2State)
+                FrameState.TabAlarms -> AlarmsView(appState.alarmsState)
+                FrameState.TabStats -> StatsView(appState.gtd2State.stats)
+                FrameState.TabDynalist -> DynalistView(appState.dynalistState)
+                FrameState.TabTinder -> TinderView(appState.gtd2State.tinderState)
+                FrameState.TabCurrent -> CurrentView(appState.gtd2State)
             }
         }
         Tabs(
             listOf(
+                FrameState.TabCurrent to Icons.Default.PlayArrow,
                 FrameState.TabGtd2 to Icons.Default.AccountBox,
                 FrameState.TabStats to Icons.Default.Info,
                 FrameState.TabAlarms to Icons.Default.Notifications,

@@ -32,6 +32,10 @@ data class Routine(
         return innerElement.estimate()
     }
 
+    override fun queues(): List<Queue> {
+        return innerElement.queues()
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return if (innerElement.active) {
             this.copy(

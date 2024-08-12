@@ -30,6 +30,12 @@ data class Queue(
         }.flatten()
     }
 
+    override fun queues(): List<Queue> {
+        return listOf(this) + elements.map {
+            it.queues()
+        }.flatten()
+    }
+
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
         return copy(elements = elements.map {
             it.withElement(name, action)
