@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 
 @Composable
-fun FlipperView(flipper: Flipper) {
+fun FlipperView(flipper: Flipper, displayName: String? = null) {
     if (flipper.active) {
         Column {
             Text(text = flipper.displayName)

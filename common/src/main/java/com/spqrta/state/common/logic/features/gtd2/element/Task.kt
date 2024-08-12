@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toMinutes
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,11 @@ data class Task(
         active = taskStatus != TaskStatus.Inactive,
         name = name,
         done = taskStatus == TaskStatus.Done
+    )
+
+    constructor(name: String, minutes: Int) : this(
+        name = name,
+        estimate = minutes.toMinutes()
     )
 
     val status: TaskStatus

@@ -15,7 +15,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 
 @Composable
-fun TaskView(task: Task) {
+fun TaskView(task: Task, displayName: String? = null) {
     val taskState = rememberUpdatedState(task)
 
     Text(

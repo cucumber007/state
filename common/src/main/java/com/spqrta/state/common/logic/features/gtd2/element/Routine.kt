@@ -33,7 +33,13 @@ data class Routine(
     }
 
     override fun withTaskClicked(clickedTask: Task): Element {
-        return innerElement.withTaskClicked(clickedTask)
+        return if (innerElement.active) {
+            this.copy(
+                element = element.withTaskClicked(clickedTask)
+            )
+        } else {
+            this
+        }
     }
 
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
@@ -49,7 +55,13 @@ data class Routine(
     }
 
     override fun withTaskLongClicked(clickedTask: Task): Element {
-        return innerElement.withTaskLongClicked(clickedTask)
+        return if (innerElement.active) {
+            this.copy(
+                element = element.withTaskLongClicked(clickedTask)
+            )
+        } else {
+            this
+        }
     }
 
     override fun withStatus(active: Boolean): Element {

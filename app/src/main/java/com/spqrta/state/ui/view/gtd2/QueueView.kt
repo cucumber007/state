@@ -12,10 +12,10 @@ import androidx.compose.ui.unit.dp
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 
 @Composable
-fun QueueView(queue: Queue) {
+fun QueueView(queue: Queue, displayName: String? = null) {
     Column {
         if (queue.active) {
-            Text(text = queue.displayName)
+            Text(text = displayName ?: queue.displayName)
             Box(modifier = Modifier.padding(start = 16.dp)) {
                 Column {
                     for (task in queue.elements) {

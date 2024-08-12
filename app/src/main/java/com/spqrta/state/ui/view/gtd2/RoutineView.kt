@@ -5,10 +5,11 @@ import androidx.compose.runtime.Composable
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 
 @Composable
-fun RoutineView(routine: Routine) {
+fun RoutineView(routine: Routine, displayName: String? = null) {
     Column {
         ElementView(
-            element = routine.innerElement
+            element = routine.innerElement,
+            displayName = displayName ?: routine.displayName,
         )
     }
 }
