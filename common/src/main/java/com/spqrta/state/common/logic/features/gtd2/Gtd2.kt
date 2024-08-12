@@ -68,9 +68,9 @@ object Gtd2 {
         state: Gtd2State
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
-            is Gtd2Action.CompleteTask -> {
+            is Gtd2Action.ToggleTask -> {
                 state.copy(
-                    taskTree = state.taskTree.withTaskCompleted(action.task)
+                    taskTree = state.taskTree.withTaskToggled(action.task)
                 ).withEffects()
             }
         }

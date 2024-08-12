@@ -90,6 +90,16 @@ data class Routine(
         }
     }
 
+    override fun withTaskToggled(toggledTask: Task): Element {
+        return if (innerElement.active) {
+            this.copy(
+                element = element.withTaskToggled(toggledTask)
+            )
+        } else {
+            this
+        }
+    }
+
     override fun withStatus(active: Boolean): Element {
         return copy(active = active)
     }

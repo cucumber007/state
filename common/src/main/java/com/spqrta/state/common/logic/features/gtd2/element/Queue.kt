@@ -80,6 +80,12 @@ data class Queue(
         })
     }
 
+    override fun withTaskToggled(toggledTask: Task): Element {
+        return copy(elements = elements.map {
+            it.withTaskToggled(toggledTask)
+        })
+    }
+
     override fun withStatus(active: Boolean): Element {
         return copy(active = active)
     }

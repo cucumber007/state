@@ -166,6 +166,30 @@ data class Flipper(
         })
     }
 
+    override fun withTaskToggled(toggledTask: Task): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.withTaskToggled(
+                        toggledTask
+                    )
+                )
+
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withTaskToggled(
+                        toggledTask
+                    )
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withTaskToggled(
+                        toggledTask
+                    )
+                )
+            }
+        })
+    }
+
     override fun withStatus(active: Boolean): Element {
         return copy(active = active)
     }

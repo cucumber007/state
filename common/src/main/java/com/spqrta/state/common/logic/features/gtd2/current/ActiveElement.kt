@@ -13,7 +13,10 @@ sealed class ActiveElement {
         val queue: Queue,
         val activeTask: TimeredTask?
     ) : ActiveElement() {
-        val tasksToDo: List<Task> = queue.tasks().filter { it.status == TaskStatus.Active }
+        val tasksToShow: List<Task> = queue.tasks()
+
+        // .filter { it.status == TaskStatus.Active }
+        val activeTasks: List<Task> = queue.tasks().filter { it.status == TaskStatus.Active }
     }
 
 

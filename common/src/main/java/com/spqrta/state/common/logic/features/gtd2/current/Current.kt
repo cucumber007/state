@@ -43,12 +43,16 @@ object Current {
                     }
 
                     is CurrentAction.OnSubElementClick -> {
-                        optActiveTask.set(
-                            state,
-                            TimeredTask(
-                                action.element, TimeredState.Paused()
-                            )
-                        ).withEffects()
+                        if (action.element.status == TaskStatus.Active) {
+                            optActiveTask.set(
+                                state,
+                                TimeredTask(
+                                    action.element, TimeredState.Paused()
+                                )
+                            ).withEffects()
+                        } else {
+                            state.withEffects()
+                        }
                     }
 
                     is CurrentAction.OnTimerPause -> {
@@ -101,10 +105,10 @@ object Current {
                     }
 
                     is CurrentAction.OnSubElementLongClick -> {
-                        state.withEffects(ActionEffect(Gtd2Action.CompleteTask(action.element)))
+                        state.withEffects(ActionEffect(Gtd2Action.ToggleTask(action.element)))
                     }
 
-                    is Gtd2Action.CompleteTask -> {
+                    is Gtd2Action.ToggleTask -> {
                         state.taskTree.getElement(activeElement.queue.name)!!
                             .let { it as Queue }
                             .let { newActiveQueue ->
@@ -140,7 +144,7 @@ object Current {
                     }
 
                     is ClockAction.TickAction,
-                    is Gtd2Action.CompleteTask -> {
+                    is Gtd2Action.ToggleTask -> {
                         state.withEffects()
                     }
 

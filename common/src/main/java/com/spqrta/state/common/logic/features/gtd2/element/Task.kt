@@ -111,11 +111,23 @@ data class Task(
     }
 
     override fun withTaskLongClicked(clickedTask: Task): Element {
-        return if (this == clickedTask) {
+        return if (this.name == clickedTask.name) {
             when (status) {
                 TaskStatus.Active -> withStatus(TaskStatus.Inactive)
                 TaskStatus.Done -> withStatus(TaskStatus.Active)
                 TaskStatus.Inactive -> withStatus(TaskStatus.Active)
+            }
+        } else {
+            this
+        }
+    }
+
+    override fun withTaskToggled(toggledTask: Task): Element {
+        return if (this.name == toggledTask.name) {
+            when (status) {
+                TaskStatus.Active -> withStatus(TaskStatus.Done)
+                TaskStatus.Done -> withStatus(TaskStatus.Active)
+                TaskStatus.Inactive -> withStatus(TaskStatus.Inactive)
             }
         } else {
             this

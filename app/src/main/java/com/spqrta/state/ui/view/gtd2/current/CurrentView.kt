@@ -9,10 +9,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.ui.theme.FontSize
 import com.spqrta.state.ui.view.common.controls.ActionButton
 
@@ -27,7 +31,7 @@ fun CurrentView(state: Gtd2State) {
                         fontSize = FontSize.TITLE,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    activeElement.tasksToDo.forEach {
+                    activeElement.activeTasks.forEach {
                         ActionButton(action = CurrentAction.OnSubElementClick(it)) {
                             Text(
                                 text = it.displayName,
@@ -38,7 +42,7 @@ fun CurrentView(state: Gtd2State) {
                     }
                 }
             } else {
-                val activeTask = activeElement.activeTask
+                val activeTask = activeElement.activeTask!!
                 Column {
                     Text(
                         activeElement.queue.displayName,
@@ -50,12 +54,10 @@ fun CurrentView(state: Gtd2State) {
                             .verticalScroll(rememberScrollState())
                             .height(IntrinsicSize.Max)
                     ) {
-                        activeElement.tasksToDo.forEach {
-                            if (activeTask != null && it.name == activeTask.task.name) {
+                        activeElement.tasksToShow.forEach {
+                            if (it.name == activeTask.task.name) {
                                 ActionButton(
-                                    longPressAction = CurrentAction.OnSubElementLongClick(
-                                        it
-                                    )
+                                    longPressAction = CurrentAction.OnSubElementLongClick(it)
                                 ) {
                                     ActiveTaskView(activeTask)
                                 }
@@ -67,7 +69,17 @@ fun CurrentView(state: Gtd2State) {
                                     Text(
                                         text = it.displayName,
                                         fontSize = FontSize.BASE,
-                                        modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)
+                                        modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
+                                        color = if (it.status is TaskStatus.Done) {
+                                            Color.Gray
+                                        } else {
+                                            Color.Black
+                                        },
+                                        style = if (it.status is TaskStatus.Done) {
+                                            TextStyle(textDecoration = TextDecoration.LineThrough)
+                                        } else {
+                                            TextStyle()
+                                        }
                                     )
                                 }
                             }
