@@ -10,7 +10,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import com.spqrta.state.common.logic.App
-import com.spqrta.state.common.logic.action.Gtd2Action
+import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.ui.theme.FontSize
@@ -25,10 +25,10 @@ fun TaskView(task: Task, displayName: String? = null) {
         modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(
                 onTap = {
-                    App.handleAction(Gtd2Action.OnTaskClickAction(taskState.value))
+                    App.handleAction(Gtd2ViewAction.OnTaskClick(taskState.value))
                 },
                 onLongPress = {
-                    App.handleAction(Gtd2Action.OnTaskLongClickAction(taskState.value))
+                    App.handleAction(Gtd2ViewAction.OnTaskLongClick(taskState.value))
                 }
             )
         },

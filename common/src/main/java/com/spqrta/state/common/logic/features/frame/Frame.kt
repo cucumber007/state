@@ -38,7 +38,7 @@ object Frame {
                 FrameState.TabAlarms -> Alarms.reducer(action, state)
                 FrameState.TabCurrent -> Current.reducer(action, state)
                 FrameState.TabDynalist -> Dynalist.viewReducer(action, state)
-                FrameState.TabGtd2 -> Gtd2.reducer(action, state)
+                FrameState.TabGtd2 -> Gtd2.viewReducer(action, state)
                 FrameState.TabStats -> Stats.reducer(action, state)
                 FrameState.TabTinder -> Tinder.reducer(action, state)
             }

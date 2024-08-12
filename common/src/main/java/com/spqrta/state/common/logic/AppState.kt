@@ -47,7 +47,7 @@ data class AppReady(
     val gtd2State: Gtd2State = Gtd2State.INITIAL,
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
-    val showDebugMenu: Boolean = true,
+    val showDebugMenu: Boolean = false,
     val statsState: StatsState = StatsState.INITIAL,
     val storage: Storage = Storage(),
 ) : AppState() {

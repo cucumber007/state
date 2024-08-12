@@ -27,8 +27,8 @@ fun CurrentView(state: Gtd2State) {
                         fontSize = FontSize.TITLE,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    activeElement.queue.tasks().forEach {
-                        ActionButton(action = CurrentAction.OnSubElementSelected(it)) {
+                    activeElement.tasksToDo.forEach {
+                        ActionButton(action = CurrentAction.OnSubElementClick(it)) {
                             Text(
                                 text = it.displayName,
                                 fontSize = FontSize.BASE,
@@ -50,11 +50,20 @@ fun CurrentView(state: Gtd2State) {
                             .verticalScroll(rememberScrollState())
                             .height(IntrinsicSize.Max)
                     ) {
-                        activeElement.queue.tasks().forEach {
+                        activeElement.tasksToDo.forEach {
                             if (activeTask != null && it.name == activeTask.task.name) {
-                                ActiveTaskView(activeTask)
+                                ActionButton(
+                                    longPressAction = CurrentAction.OnSubElementLongClick(
+                                        it
+                                    )
+                                ) {
+                                    ActiveTaskView(activeTask)
+                                }
                             } else {
-                                ActionButton(action = CurrentAction.OnSubElementSelected(it)) {
+                                ActionButton(
+                                    action = CurrentAction.OnSubElementClick(it),
+                                    longPressAction = CurrentAction.OnSubElementLongClick(it)
+                                ) {
                                     Text(
                                         text = it.displayName,
                                         fontSize = FontSize.BASE,
@@ -76,7 +85,7 @@ fun CurrentView(state: Gtd2State) {
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 state.taskTree.queues().forEach {
-                    ActionButton(action = CurrentAction.OnElementSelected(it)) {
+                    ActionButton(action = CurrentAction.OnElementClick(it)) {
                         Text(
                             text = it.displayName,
                             fontSize = FontSize.BASE,

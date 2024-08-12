@@ -12,6 +12,14 @@ data class Queue(
     override val active: Boolean = elements.isNotEmpty(),
 ) : Element {
 
+    override fun getElement(name: String): Element? {
+        return if (this.name == name) {
+            this
+        } else {
+            elements.firstNotNullOfOrNull { it.getElement(name) }
+        }
+    }
+
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
 //        Log.i("kek", ">>>> ${this.displayName} estimate")
@@ -42,21 +50,27 @@ data class Queue(
         }.flatten()
     }
 
-    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
         return copy(elements = elements.map {
-            it.withElement(name, action)
+            it.withElement(estimateName, action)
         })
     }
 
-    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
         return copy(elements = elements.map {
-            it.withEstimate(name, estimate)
+            it.withEstimate(estimateName, estimate)
         })
     }
 
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(elements = elements.map {
             it.withTaskClicked(clickedTask)
+        })
+    }
+
+    override fun withTaskCompleted(completedTask: Task): Element {
+        return copy(elements = elements.map {
+            it.withTaskCompleted(completedTask)
         })
     }
 

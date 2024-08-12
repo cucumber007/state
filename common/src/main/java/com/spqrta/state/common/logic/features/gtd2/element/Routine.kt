@@ -20,6 +20,14 @@ data class Routine(
 
     val innerElement = element.withStatus(if (!active) false else element.active)
 
+    override fun getElement(name: String): Element? {
+        return if (this.name == name) {
+            this
+        } else {
+            element.getElement(name)
+        }
+    }
+
     override fun nonEstimated(): List<Element> {
         return if (innerElement.estimate() == null) {
             listOf(this)
@@ -40,6 +48,18 @@ data class Routine(
         return innerElement.tasks()
     }
 
+    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
+        return if (estimateName == this.name) {
+            action(this)
+        } else {
+            innerElement.withElement(estimateName, action)
+        }
+    }
+
+    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
+        return copy(element = element.withEstimate(estimateName, estimate))
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return if (innerElement.active) {
             this.copy(
@@ -50,16 +70,14 @@ data class Routine(
         }
     }
 
-    override fun withElement(name: String, action: (element: Element) -> Element): Element {
-        return if (name == this.name) {
-            action(this)
+    override fun withTaskCompleted(completedTask: Task): Element {
+        return if (innerElement.active) {
+            this.copy(
+                element = element.withTaskCompleted(completedTask)
+            )
         } else {
-            innerElement.withElement(name, action)
+            this
         }
-    }
-
-    override fun withEstimate(name: String, estimate: TimeValue?): Element {
-        return copy(element = element.withEstimate(name, estimate))
     }
 
     override fun withTaskLongClicked(clickedTask: Task): Element {

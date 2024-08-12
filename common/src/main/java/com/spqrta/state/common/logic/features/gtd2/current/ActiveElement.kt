@@ -1,6 +1,8 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.optics.asOpticOptional
 import kotlinx.serialization.Serializable
 
@@ -9,8 +11,11 @@ sealed class ActiveElement {
     @Serializable
     data class ActiveQueue(
         val queue: Queue,
-        val activeTask: TimeredTask? = null
-    ) : ActiveElement()
+        val activeTask: TimeredTask?
+    ) : ActiveElement() {
+        val tasksToDo: List<Task> = queue.tasks().filter { it.status == TaskStatus.Active }
+    }
+
 
     companion object {
         val optActiveTask = ({ state: ActiveElement ->

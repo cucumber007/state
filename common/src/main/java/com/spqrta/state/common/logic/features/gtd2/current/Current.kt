@@ -2,8 +2,12 @@ package com.spqrta.state.common.logic.features.gtd2.current
 
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
+import com.spqrta.state.common.logic.action.Gtd2Action
+import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
+import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.plus
@@ -34,15 +38,11 @@ object Current {
         return when (val activeElement = state.currentState.activeElement) {
             is ActiveElement.ActiveQueue -> {
                 when (action) {
-                    is CurrentAction.OnElementSelected -> {
-                        state.copy(
-                            currentState = state.currentState.copy(
-                                activeElement = ActiveElement.ActiveQueue(action.element)
-                            )
-                        ).withEffects()
+                    is CurrentAction.OnElementClick -> {
+                        illegalAction(action, state)
                     }
 
-                    is CurrentAction.OnSubElementSelected -> {
+                    is CurrentAction.OnSubElementClick -> {
                         optActiveTask.set(
                             state,
                             TimeredTask(
@@ -99,24 +99,53 @@ object Current {
                             }
                         }
                     }
+
+                    is CurrentAction.OnSubElementLongClick -> {
+                        state.withEffects(ActionEffect(Gtd2Action.CompleteTask(action.element)))
+                    }
+
+                    is Gtd2Action.CompleteTask -> {
+                        state.taskTree.getElement(activeElement.queue.name)!!
+                            .let { it as Queue }
+                            .let { newActiveQueue ->
+                                optActiveElement.set(
+                                    state,
+                                    ActiveElement.ActiveQueue(
+                                        queue = newActiveQueue,
+                                        activeTask = newActiveQueue.tasks()
+                                            // check if active task is still not done/deactivated
+                                            .firstOrNull { it.name == activeElement.activeTask?.task?.name && it.status == TaskStatus.Active }
+                                            ?.let {
+                                                activeElement.activeTask
+                                            }
+                                    )
+                                ).withEffects()
+                            }
+                    }
                 }
             }
 
+            // no ActiveElement
             null -> {
                 when (action) {
-                    is CurrentAction.OnElementSelected -> {
+                    is CurrentAction.OnElementClick -> {
                         state.copy(
                             currentState = state.currentState.copy(
-                                activeElement = ActiveElement.ActiveQueue(action.element)
+                                activeElement = ActiveElement.ActiveQueue(
+                                    action.element,
+                                    activeTask = null
+                                )
                             )
                         ).withEffects()
                     }
 
-                    is ClockAction.TickAction -> {
+                    is ClockAction.TickAction,
+                    is Gtd2Action.CompleteTask -> {
                         state.withEffects()
                     }
 
-                    is CurrentAction.OnSubElementSelected,
+                    is CurrentAction.OnSubElementClick,
+                    is CurrentAction.OnSubElementLongClick,
                     CurrentAction.OnTimerPause,
                     CurrentAction.OnTimerReset,
                     CurrentAction.OnTimerStart -> {

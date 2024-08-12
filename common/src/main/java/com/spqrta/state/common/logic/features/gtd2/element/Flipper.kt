@@ -13,6 +13,14 @@ data class Flipper(
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
 
+    override fun getElement(name: String): Element? {
+        return if (this.name == name) {
+            this
+        } else {
+            scheduledElements.firstNotNullOfOrNull { it.element.getElement(name) }
+        }
+    }
+
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
         return 0.toSeconds()
@@ -30,26 +38,26 @@ data class Flipper(
         return scheduledElements.map { it.element.tasks() }.flatten()
     }
 
-    override fun withElement(name: String, action: (element: Element) -> Element): Element {
+    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
                     element = it.element.withElement(
-                        name,
+                        estimateName,
                         action
                     )
                 )
 
                 is FlipperSchedule.TimePeriod -> it.copy(
                     element = it.element.withElement(
-                        name,
+                        estimateName,
                         action
                     )
                 )
 
                 is FlipperSchedule.UntilTime -> it.copy(
                     element = it.element.withElement(
-                        name,
+                        estimateName,
                         action
                     )
                 )
@@ -57,27 +65,27 @@ data class Flipper(
         })
     }
 
-    override fun withEstimate(name: String, estimate: TimeValue?): Element {
+    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
         return copy(
             scheduledElements = scheduledElements.map {
                 when (it) {
                     is FlipperSchedule.TimeLeftPortion -> it.copy(
                         element = it.element.withEstimate(
-                            name,
+                            estimateName,
                             estimate
                         )
                     )
 
                     is FlipperSchedule.TimePeriod -> it.copy(
                         element = it.element.withEstimate(
-                            name,
+                            estimateName,
                             estimate
                         )
                     )
 
                     is FlipperSchedule.UntilTime -> it.copy(
                         element = it.element.withEstimate(
-                            name,
+                            estimateName,
                             estimate
                         )
                     )
@@ -104,6 +112,30 @@ data class Flipper(
                 is FlipperSchedule.TimePeriod -> it.copy(
                     element = it.element.withTaskClicked(
                         clickedTask
+                    )
+                )
+            }
+        })
+    }
+
+    override fun withTaskCompleted(completedTask: Task): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.withTaskCompleted(
+                        completedTask
+                    )
+                )
+
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withTaskCompleted(
+                        completedTask
+                    )
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withTaskCompleted(
+                        completedTask
                     )
                 )
             }

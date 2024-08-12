@@ -11,7 +11,7 @@ import com.spqrta.state.common.logic.action.AppAction
 
 @Composable
 fun ActionButton(
-    action: AppAction,
+    action: AppAction? = null,
     longPressAction: AppAction? = null,
     view: @Composable () -> Unit,
 ) {
@@ -22,7 +22,9 @@ fun ActionButton(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        App.handleAction(actionState.value)
+                        actionState.value?.let {
+                            App.handleAction(it)
+                        }
                     },
                     onLongPress = {
                         longPressActionState.value?.let {

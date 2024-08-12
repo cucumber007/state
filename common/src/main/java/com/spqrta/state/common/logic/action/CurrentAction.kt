@@ -9,8 +9,9 @@ sealed interface CurrentAction : AppAction {
         override fun toString(): String = javaClass.simpleName
     }
 
-    data class OnElementSelected(val element: Queue) : Action()
-    data class OnSubElementSelected(val element: Task) : Action()
+    data class OnElementClick(val element: Queue) : Action()
+    data class OnSubElementClick(val element: Task) : Action()
+    data class OnSubElementLongClick(val element: Task) : Action()
     object OnTimerStart : Action()
     object OnTimerPause : Action()
     object OnTimerReset : Action()
