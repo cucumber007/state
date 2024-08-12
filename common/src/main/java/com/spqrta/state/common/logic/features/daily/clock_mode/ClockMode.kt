@@ -19,7 +19,7 @@ sealed class ClockMode {
     override fun toString(): String = javaClass.simpleName
 
     companion object {
-        val INITIAL: ClockMode = Update
+        val INITIAL: ClockMode = Second
 
         val reducer = widen(
             typeGet(),

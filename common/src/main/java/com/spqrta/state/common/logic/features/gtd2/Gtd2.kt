@@ -45,10 +45,6 @@ object Gtd2 {
                     taskTree = state.taskTree.withTaskLongClicked(action.task)
                 ).withEffects()
             }
-
-            is AppReadyAction.ResetDayAction -> {
-                Gtd2State.INITIAL.withEffects()
-            }
         }.flatMapEffects {
             it.effects + ActionEffect(
                 StatsAction.UpdateStatsAction(
@@ -72,6 +68,10 @@ object Gtd2 {
                 state.copy(
                     taskTree = state.taskTree.withTaskToggled(action.task)
                 ).withEffects()
+            }
+
+            is AppReadyAction.ResetDayAction -> {
+                Gtd2State.INITIAL.withEffects()
             }
         }
     }

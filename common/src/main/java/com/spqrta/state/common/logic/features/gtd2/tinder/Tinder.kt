@@ -2,7 +2,6 @@ package com.spqrta.state.common.logic.features.gtd2.tinder
 
 import android.util.Log
 import com.spqrta.state.common.environments.tasks_database.DatabaseTask
-import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.action.TinderAction
 import com.spqrta.state.common.logic.effect.AppEffect
@@ -33,9 +32,9 @@ object Tinder {
         state: Gtd2State,
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
+            // todo use Gtd2Action to update Tinder state?
             is Gtd2ViewAction.OnTaskClick,
-            is Gtd2ViewAction.OnTaskLongClick,
-            is AppReadyAction.ResetDayAction -> Gtd2.reduceView(action as Gtd2ViewAction, state)
+            is Gtd2ViewAction.OnTaskLongClick -> Gtd2.reduceView(action as Gtd2ViewAction, state)
 
             is TinderAction.OnEstimated -> {
                 state.copy(

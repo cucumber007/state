@@ -6,5 +6,5 @@ sealed interface AppReadyAction : AppAction {
     }
 
     object FlipResetStateEnabledAction : Action()
-    object ResetDayAction : Action(), Gtd2ViewAction
+    object ResetDayAction : Action(), Gtd2Action
 }

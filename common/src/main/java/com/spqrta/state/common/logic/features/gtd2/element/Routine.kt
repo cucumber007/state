@@ -11,7 +11,7 @@ data class Routine(
     override val displayName: String = "${element.name} Routine",
     override val active: Boolean = true,
     val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
-    override val name: String = element.name,
+    override val name: String = displayName,
 ) : Element {
 
     constructor(name: String) : this(
