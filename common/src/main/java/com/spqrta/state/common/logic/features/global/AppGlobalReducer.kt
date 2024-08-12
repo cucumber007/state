@@ -75,6 +75,10 @@ object AppGlobalReducer {
                     is OnResumeAction -> {
                         state.withEffects()
                     }
+
+                    AppGlobalAction.OnDebugMenuButtonClick -> {
+                        state.copy(showDebugMenu = !state.showDebugMenu).withEffects()
+                    }
                 }
             }
         }

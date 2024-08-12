@@ -9,10 +9,13 @@ import java.time.LocalDateTime
  */
 sealed class AppGlobalAction : AppAction {
     override fun toString(): String = javaClass.simpleName
+
+    object OnDebugMenuButtonClick : AppGlobalAction()
 }
 
 data class AppErrorAction(val exception: Exception) : AppGlobalAction()
 object InitAppAction : AppGlobalAction()
+
 data class OnResumeAction(
     val datetime: LocalDateTime = DateTimeEnvironment.dateTimeNow
 ) : AppGlobalAction(), AppReadyAction
