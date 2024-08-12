@@ -18,6 +18,10 @@ open class TimeValue(val totalSeconds: Long) {
 
     override fun toString(): String = totalSeconds.toString()
 
+    fun format(): String {
+        return TimeValueFormatter.formatTimeValue(this)
+    }
+
     companion object {
         const val MINUTES_IN_HOUR = 60
         const val SECONDS_IN_MINUTE = 60
