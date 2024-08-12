@@ -36,6 +36,12 @@ data class Queue(
         }.flatten()
     }
 
+    override fun tasks(): List<Task> {
+        return elements.map {
+            it.tasks()
+        }.flatten()
+    }
+
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
         return copy(elements = elements.map {
             it.withElement(name, action)

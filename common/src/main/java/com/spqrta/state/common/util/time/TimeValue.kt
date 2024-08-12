@@ -5,6 +5,7 @@ import kotlin.math.abs
 
 @Serializable
 open class TimeValue(val totalSeconds: Long) {
+    val totalMinutes: Long = totalSeconds / SECONDS_IN_MINUTE
     val justSeconds: Int = (totalSeconds % SECONDS_IN_MINUTE).toInt()
     val justMinutes: Int = ((totalSeconds - justSeconds) / SECONDS_IN_MINUTE)
         .let { totalMinutesLeft ->

@@ -1,4 +1,4 @@
-package com.spqrta.state.ui.view.gtd2
+package com.spqrta.state.ui.view.gtd2.element
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable

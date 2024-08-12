@@ -26,6 +26,10 @@ data class Flipper(
         return scheduledElements.map { it.element.queues() }.flatten()
     }
 
+    override fun tasks(): List<Task> {
+        return scheduledElements.map { it.element.tasks() }.flatten()
+    }
+
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {

@@ -50,6 +50,10 @@ data class Task(
         return listOf()
     }
 
+    override fun tasks(): List<Task> {
+        return listOf(this)
+    }
+
     override fun withElement(name: String, action: (element: Element) -> Element): Element {
         return if (name == this.name) {
             action(this)

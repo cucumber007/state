@@ -9,6 +9,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
+import com.spqrta.state.common.util.optics.asOptic
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -72,5 +73,10 @@ data class Gtd2State(
         ).let {
             it.copy(tinderState = Tinder.getTinderState(it))
         }
+
+        val optCurrent =
+            ({ state: Gtd2State -> state.currentState } to { state: Gtd2State, subState: CurrentState ->
+                state.copy(currentState = subState)
+            }).asOptic()
     }
 }

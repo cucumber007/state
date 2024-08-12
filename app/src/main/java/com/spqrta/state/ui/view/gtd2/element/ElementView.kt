@@ -1,4 +1,4 @@
-package com.spqrta.state.ui.view.gtd2
+package com.spqrta.state.ui.view.gtd2.element
 
 import androidx.compose.runtime.Composable
 import com.spqrta.state.common.logic.features.gtd2.element.Element

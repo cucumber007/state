@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
-import com.spqrta.state.ui.view.gtd2.ElementView
+import com.spqrta.state.ui.view.gtd2.element.ElementView
 
 @Composable
 fun DynalistView(state: DynalistState) {
