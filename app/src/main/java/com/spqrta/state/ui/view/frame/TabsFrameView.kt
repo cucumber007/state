@@ -52,8 +52,8 @@ fun TabsFrameView(appState: AppReady) {
         Tabs(
             listOf(
                 FrameState.TabCurrent to Icons.Default.PlayArrow,
-                FrameState.TabGtd2 to Icons.Default.AccountBox,
                 FrameState.TabStats to Icons.Default.Info,
+                FrameState.TabGtd2 to Icons.Default.AccountBox,
                 FrameState.TabAlarms to Icons.Default.Notifications,
                 FrameState.TabDynalist to Icons.Default.Home,
                 FrameState.TabTinder to Icons.Default.ArrowForward,
