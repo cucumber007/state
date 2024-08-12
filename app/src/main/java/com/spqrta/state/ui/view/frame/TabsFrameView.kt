@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,12 @@ import com.spqrta.state.ui.view.tinder.TinderView
 fun TabsFrameView(appState: AppReady) {
     val frameState = appState.frameState
     Column {
-        Box(Modifier.padding().fillMaxSize().weight(1f)) {
+        Box(
+            Modifier
+                .padding()
+                .fillMaxSize()
+                .weight(1f)
+        ) {
             when (frameState) {
                 FrameState.TabGtd2 -> Gtd2View(state = appState.gtd2State)
                 FrameState.TabAlarms -> AlarmsView(state = appState.alarmsState)
@@ -42,25 +48,26 @@ fun TabsFrameView(appState: AppReady) {
         }
         Tabs(
             listOf(
-                TabItem(Icons.Default.AccountBox, FrameTabsAction.OnTabClicked(FrameState.TabGtd2)),
-                TabItem(Icons.Default.Info, FrameTabsAction.OnTabClicked(FrameState.TabStats)),
+                FrameState.TabGtd2 to Icons.Default.AccountBox,
+                FrameState.TabStats to Icons.Default.Info,
+                FrameState.TabAlarms to Icons.Default.Notifications,
+                FrameState.TabDynalist to Icons.Default.Home,
+                FrameState.TabTinder to Icons.Default.ArrowForward,
+            ).map {
                 TabItem(
-                    Icons.Default.Notifications,
-                    FrameTabsAction.OnTabClicked(FrameState.TabAlarms)
-                ),
-                TabItem(Icons.Default.Home, FrameTabsAction.OnTabClicked(FrameState.TabDynalist)),
-                TabItem(
-                    Icons.Default.ArrowForward,
-                    FrameTabsAction.OnTabClicked(FrameState.TabTinder)
-                ),
-            )
+                    image = it.second,
+                    action = FrameTabsAction.OnTabClicked(it.first),
+                    active = frameState == it.first
+                )
+            }
         )
     }
 }
 
 data class TabItem(
     val image: ImageVector,
-    val action: FrameTabsAction
+    val action: FrameTabsAction,
+    val active: Boolean = false
 )
 
 @Composable
@@ -74,7 +81,10 @@ fun Tabs(tabs: List<TabItem>) {
                 ImageActionButton(
                     imageVector = it.image,
                     action = it.action,
-                    size = 48.dp
+                    size = 48.dp,
+                    backgroundColor = if (it.active) {
+                        Color.LightGray
+                    } else null
                 )
             }
         }

@@ -13,13 +13,15 @@ import com.spqrta.state.common.logic.App
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.ui.theme.FontSize
 
 @Composable
 fun TaskView(task: Task, displayName: String? = null) {
     val taskState = rememberUpdatedState(task)
 
     Text(
-        text = taskState.value.displayName,
+        text = displayName ?: taskState.value.displayName,
+        fontSize = FontSize.BASE,
         modifier = Modifier.pointerInput(Unit) {
             detectTapGestures(
                 onTap = {
