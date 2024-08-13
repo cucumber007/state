@@ -9,18 +9,18 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TimeredTask(
     val task: Task,
-    val timerState: TimeredState
+    val timeredState: TimeredState
 ) {
     val remainingTime: TimeValue by lazy {
-        (task.estimate()!!.totalSeconds - timerState.timePassed.totalSeconds).toSeconds()
+        (task.estimate()!!.totalSeconds - timeredState.timePassed.totalSeconds).toSeconds()
     }
 
     companion object {
         val optTimeredState = ({ state: TimeredTask ->
-            state.timerState
+            state.timeredState
         } to { state: TimeredTask, subState: TimeredState ->
             state.copy(
-                timerState = subState
+                timeredState = subState
             )
         }).asOpticOptional()
     }
