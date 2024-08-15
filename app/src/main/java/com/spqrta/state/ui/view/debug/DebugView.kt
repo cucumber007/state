@@ -2,6 +2,7 @@ package com.spqrta.state.ui.view.debug
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,10 @@ fun DebugView(appState: AppReady) {
         TextActionButton(
             text = appState.clockMode.toString(),
             action = DebugAction.FlipClockMode
+        )
+        ImageActionButton(
+            imageVector = Icons.Default.Notifications,
+            action = DebugAction.SendTestNotification,
         )
     }
 }

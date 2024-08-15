@@ -6,7 +6,10 @@ sealed interface DebugAction : AppAction {
         override fun toString(): String = javaClass.simpleName
     }
 
+    // The actions extend AppReadyAction because it's legacy (they were handled in AppReady
+    // reducer). Create a separate DebugReducer?
     object FlipClockMode : Action(), ClockAction
     object FlipResetStateEnabled : AppReadyAction.Action()
     object ResetDay : AppReadyAction.Action(), Gtd2Action
+    object SendTestNotification : AppReadyAction.Action()
 }

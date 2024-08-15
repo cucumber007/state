@@ -13,6 +13,7 @@ import com.spqrta.state.common.logic.effect.LoadDynalistEffect
 import com.spqrta.state.common.logic.effect.LoadStateEffect
 import com.spqrta.state.common.logic.effect.PlayNotificationSoundEffect
 import com.spqrta.state.common.logic.effect.SaveStateEffect
+import com.spqrta.state.common.logic.effect.SendNotificationEffect
 import com.spqrta.state.common.logic.effect.ShowToastEffect
 import com.spqrta.state.common.logic.effect.TickEffect
 import com.spqrta.state.common.logic.effect.UpdateStatsEffect
@@ -118,6 +119,10 @@ object App {
 
                         is UpdateStatsEffect -> {
                             updateStatsUC.flow()
+                        }
+
+                        is SendNotificationEffect -> {
+                            sendNotificationUC.flow(effect)
                         }
                     }.collect { actions -> actions.forEach(App::handleAction) }
                 }
