@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic
 
 import com.spqrta.state.common.logic.action.AppReadyAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.OnResumeAction
 import com.spqrta.state.common.logic.effect.AddPromptEffect
 import com.spqrta.state.common.logic.effect.AppEffect
@@ -66,7 +67,11 @@ data class AppReady(
             state: AppReady
         ): Reduced<out AppReady, out AppEffect> {
             return when (action) {
-                AppReadyAction.ResetDayAction -> {
+                is DebugAction.FlipResetStateEnabled -> {
+                    state.copy(resetStateEnabled = !state.resetStateEnabled).withEffects()
+                }
+
+                is DebugAction.ResetDay -> {
                     wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
                         if (state.resetStateEnabled) {
                             resetDay(oldStats, oldDailyState)
@@ -74,10 +79,6 @@ data class AppReady(
                             (oldDailyState to oldStats).withEffects()
                         }
                     }
-                }
-
-                is AppReadyAction.FlipResetStateEnabledAction -> {
-                    state.copy(resetStateEnabled = !state.resetStateEnabled).withEffects()
                 }
 
                 is OnResumeAction -> {

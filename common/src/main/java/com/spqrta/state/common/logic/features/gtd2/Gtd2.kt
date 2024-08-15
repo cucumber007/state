@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2
 
-import com.spqrta.state.common.logic.action.AppReadyAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.action.StatsAction
@@ -70,7 +70,7 @@ object Gtd2 {
                 ).withEffects()
             }
 
-            is AppReadyAction.ResetDayAction -> {
+            is DebugAction.ResetDay -> {
                 Gtd2State.INITIAL.withEffects()
             }
         }

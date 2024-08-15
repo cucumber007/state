@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.spqrta.state.common.logic.App
-import com.spqrta.state.common.logic.action.AppReadyAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.ProductiveNavigationAction
 import com.spqrta.state.common.logic.features.daily.DailyState
 import com.spqrta.state.common.logic.features.daily.personas.Productive
@@ -55,11 +55,11 @@ fun PersonaHeader(dailyState: DailyState, resetStateEnabled: Boolean) {
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        App.handleAction(AppReadyAction.ResetDayAction)
+                        App.handleAction(DebugAction.ResetDay)
                     },
                     onLongPress = {
                         App.handleAction(
-                            AppReadyAction.FlipResetStateEnabledAction
+                            DebugAction.FlipResetStateEnabled
                         )
                     }
                 )

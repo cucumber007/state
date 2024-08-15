@@ -2,12 +2,15 @@ package com.spqrta.state.common.logic.features.daily.clock_mode
 
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.ClockAction.TickAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.TickEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
+import com.spqrta.state.common.util.collections.asSet
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
+import com.spqrta.state.common.util.state_machine.effectsIf
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.time.Seconds
@@ -27,12 +30,21 @@ sealed class ClockMode {
             Companion::reduce
         )
 
-        @Suppress("UnnecessaryVariable")
         private fun reduce(
             action: ClockAction,
             clockMode: ClockMode
         ): Reduced<out ClockMode, out AppEffect> {
             return when (action) {
+                is DebugAction.FlipClockMode -> {
+                    when (clockMode) {
+                        None -> Second
+                        Second -> Update
+                        Update -> None
+                    }.withEffects(effectsIf(clockMode is None) {
+                        TickEffect(Second.timeout).asSet()
+                    })
+                }
+
                 is TickAction -> {
                     when (clockMode) {
                         None -> {
