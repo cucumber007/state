@@ -15,6 +15,10 @@ data class TimeredTask(
         (task.estimate()!!.totalSeconds - timeredState.timePassed.totalSeconds).toSeconds()
     }
 
+    val passedTime: TimeValue by lazy {
+        timeredState.timePassed
+    }
+
     companion object {
         val optTimeredState = ({ state: TimeredTask ->
             state.timeredState

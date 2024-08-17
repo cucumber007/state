@@ -34,7 +34,10 @@ fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            CountdownView(activeTask.remainingTime, activeTask.task.estimate!!)
+            CountupView(
+                passedTime = activeTask.passedTime,
+                totalTime = activeTask.task.estimate!!
+            )
         }
         Box(
             Modifier.width(timeHeight)
