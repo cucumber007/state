@@ -8,5 +8,5 @@ sealed interface Gtd2Action : AppAction {
         override fun toString(): String = javaClass.simpleName
     }
 
-    data class ToggleTask(val task: Task) : Action(), CurrentViewAction
+    data class ToggleTask(val task: Task) : Action(), CurrentAction
 }

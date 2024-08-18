@@ -20,6 +20,10 @@ data class Routine(
 
     val innerElement = element.withStatus(if (!active) false else element.active)
 
+    override fun estimate(): TimeValue? {
+        return innerElement.estimate()
+    }
+
     override fun getElement(name: String): Element? {
         return if (this.name == name) {
             this
@@ -28,16 +32,20 @@ data class Routine(
         }
     }
 
+    override fun isLeaf(): Boolean {
+        return innerElement.isLeaf()
+    }
+
+    override fun isLeafGroup(): Boolean {
+        return innerElement.isLeafGroup()
+    }
+
     override fun nonEstimated(): List<Element> {
         return if (innerElement.estimate() == null) {
             listOf(this)
         } else {
             listOf()
         }
-    }
-
-    override fun estimate(): TimeValue? {
-        return innerElement.estimate()
     }
 
     override fun queues(): List<Queue> {

@@ -13,6 +13,11 @@ data class Flipper(
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
 
+    @Suppress("RedundantNullableReturnType")
+    override fun estimate(): TimeValue? {
+        return 0.toSeconds()
+    }
+
     override fun getElement(name: String): Element? {
         return if (this.name == name) {
             this
@@ -21,9 +26,14 @@ data class Flipper(
         }
     }
 
-    @Suppress("RedundantNullableReturnType")
-    override fun estimate(): TimeValue? {
-        return 0.toSeconds()
+    override fun isLeaf(): Boolean {
+        return false
+    }
+
+    override fun isLeafGroup(): Boolean {
+        return scheduledElements.all {
+            it.element.isLeaf() && it.element !is Queue && it.element !is Flipper
+        }
     }
 
     override fun nonEstimated(): List<Element> {

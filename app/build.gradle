@@ -93,7 +93,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }
 
-task("releaseDesktop", type: Copy) {
+tasks.register('releaseDesktop', Copy) {
 
     // Define the output directory (change this path to your actual Desktop path)
     def destPath = System.getProperty("user.home") + "/Desktop/"

@@ -43,11 +43,11 @@ object App {
     private val reducer: Reducer<AppAction, AppState, AppEffect> = APP_REDUCER
 
     private val stateMachine = object : StateMachine<AppAction, AppState, AppEffect>(
-        "StateMachine",
-        AppNotInitialized,
-        actionsScope,
-        reducer,
-        this::applyEffects
+        tag = "StateMachine",
+        initialState = AppNotInitialized,
+        scope = actionsScope,
+        reduce = reducer,
+        applyEffects = this::applyEffects
     ) {
         override fun shouldLog(
             action: AppAction,

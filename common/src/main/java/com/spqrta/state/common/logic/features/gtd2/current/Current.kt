@@ -3,12 +3,13 @@ package com.spqrta.state.common.logic.features.gtd2.current
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.action.CurrentViewAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.SendNotificationEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
-import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
@@ -55,7 +56,7 @@ object Current {
                             optActiveTask.set(
                                 state,
                                 TimeredTask(
-                                    action.element, TimeredState.Paused()
+                                    action.element, TimeredState.Paused.INITIAL
                                 )
                             ).withEffects()
                         } else {
@@ -65,22 +66,56 @@ object Current {
 
                     is CurrentViewAction.OnTimerPause -> {
                         optTimeredState.get(state)?.let { oldTimerState ->
-                            optTimeredState.set(
-                                state,
-                                TimeredState.Paused(oldTimerState.timePassed)
-                            ).withEffects()
+                            when (oldTimerState) {
+                                is TimeredState.Paused -> {
+                                    illegalAction(action, state)
+                                }
+
+                                is TimeredState.Running -> {
+                                    optTimeredState.set(
+                                        state,
+                                        TimeredState.Paused(
+                                            passed = oldTimerState.timePassed,
+                                            notificationSent = oldTimerState.notificationSent
+                                        )
+                                    ).withEffects()
+                                }
+                            }
                         } ?: illegalAction(action, state)
                     }
 
                     is CurrentViewAction.OnTimerStart -> {
-                        optTimeredState.get(state)?.let { oldTimerState ->
-                            optTimeredState.set(
-                                state,
-                                TimeredState.Running(
-                                    oldTimerState.timePassed,
-                                    LocalTime.now()
-                                )
-                            ).withEffects()
+                        optActiveTask.get(state)?.let { activeTask ->
+                            val oldTimeredState = activeTask.timeredState
+                            when (oldTimeredState) {
+                                is TimeredState.Paused -> {
+                                    val effects = mutableSetOf<AppEffect>()
+                                    var newTimeredState = TimeredState.Running(
+                                        passed = oldTimeredState.timePassed,
+                                        updatedAt = LocalTime.now(),
+                                        notificationSent = oldTimeredState.notificationSent
+                                    )
+
+                                    // send notification
+                                    if (activeTask.isTimerOverdue && !oldTimeredState.notificationSent) {
+                                        newTimeredState = newTimeredState.copy(
+                                            notificationSent = true
+                                        )
+                                        effects.add(
+                                            SendNotificationEffect(
+                                                "Timer is up for ${optActiveTask.get(state)!!.task.name}",
+                                            )
+                                        )
+                                    }
+
+                                    optTimeredState.set(state, newTimeredState).withEffects(effects)
+                                }
+
+                                is TimeredState.Running -> {
+                                    illegalAction(action, state)
+                                }
+                            }
+
                         } ?: illegalAction(action, state)
                     }
 
@@ -91,48 +126,8 @@ object Current {
                         )
                     }
 
-                    is ClockAction.TickAction -> {
-                        when (val timerState = optTimeredState.get(state)) {
-                            is TimeredState.Running -> {
-                                val newState = timerState.copy(
-                                    passed = (
-                                            timerState.passed.totalSeconds + (
-                                                    action.time.toLocalTime().toSecondOfDay()
-                                                            - timerState.updatedAt.toSecondOfDay()
-                                                    )
-                                            ).toSeconds(),
-                                    updatedAt = action.time.toLocalTime()
-                                )
-                                optTimeredState.set(state, newState).withEffects()
-                            }
-
-                            is TimeredState.Paused, null -> {
-                                state.withEffects()
-                            }
-                        }
-                    }
-
                     is CurrentViewAction.OnSubElementLongClick -> {
                         state.withEffects(ActionEffect(Gtd2Action.ToggleTask(action.element)))
-                    }
-
-                    is Gtd2Action.ToggleTask -> {
-                        state.taskTree.getElement(activeElement.queue.name)!!
-                            .let { it as Queue }
-                            .let { newActiveQueue ->
-                                optActiveElement.set(
-                                    state,
-                                    ActiveElement.ActiveQueue(
-                                        queue = newActiveQueue,
-                                        activeTask = newActiveQueue.tasks()
-                                            // check if active task is still not done/deactivated
-                                            .firstOrNull { it.name == activeElement.activeTask?.task?.name && it.status == TaskStatus.Active }
-                                            ?.let {
-                                                activeElement.activeTask
-                                            }
-                                    )
-                                ).withEffects()
-                            }
                     }
                 }
             }
@@ -149,11 +144,6 @@ object Current {
                                 )
                             )
                         ).withEffects()
-                    }
-
-                    is ClockAction.TickAction,
-                    is Gtd2Action.ToggleTask -> {
-                        state.withEffects()
                     }
 
                     is CurrentViewAction.OnSubElementClick,
@@ -173,35 +163,104 @@ object Current {
         state: Gtd2State
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
-            is StateLoadedAction -> {
-                when (state.currentState.activeElement) {
-                    is ActiveElement.ActiveQueue -> {
-                        state.withEffects()
-                    }
+            is ClockAction.TickAction -> {
+                optActiveTask.get(state)?.let { activeTask ->
+                    when (val timeredState = activeTask.timeredState) {
+                        is TimeredState.Running -> {
+                            val effects = mutableSetOf<AppEffect>()
 
-                    null -> {
-                        val newActiveElement = state.taskTree.queues().let { queues ->
-                            if (queues.size == 1) {
-                                queues.first().let { queue ->
-                                    ActiveElement.ActiveQueue(
-                                        queue, queue.tasks().firstOrNull()?.let {
-                                            TimeredTask(
-                                                it,
-                                                TimeredState.Paused()
-                                            )
-                                        }
+                            // bump timer
+                            var newTimeredState = timeredState.copy(
+                                passed = (
+                                        timeredState.passed.totalSeconds + (
+                                                action.time.toLocalTime().toSecondOfDay()
+                                                        - timeredState.updatedAt.toSecondOfDay()
+                                                )
+                                        ).toSeconds(),
+                                updatedAt = action.time.toLocalTime()
+                            )
+
+                            // send notification
+                            if (activeTask.isTimerOverdue && !timeredState.notificationSent) {
+                                newTimeredState = newTimeredState.copy(
+                                    notificationSent = true
+                                )
+                                optTimeredState.set(state, newTimeredState)
+                                effects.add(
+                                    SendNotificationEffect(
+                                        "Timer is up for ${activeTask.task.name}",
                                     )
-                                }
-                            } else {
-                                null
+                                )
                             }
+                            optTimeredState.set(state, newTimeredState).withEffects(effects)
                         }
-                        if (newActiveElement != null) {
-                            optActiveElement.set(state, newActiveElement).withEffects()
-                        } else {
+
+                        is TimeredState.Paused, null -> {
                             state.withEffects()
                         }
                     }
+                } ?: state.withEffects()
+            }
+
+            is Gtd2Action.ToggleTask -> {
+                optActiveElement.get(state)?.let { activeElement ->
+                    when (activeElement) {
+                        is ActiveElement.ActiveQueue -> {
+                            if (activeElement.activeTask?.task == action.task) {
+                                optActiveElement.set(
+                                    state,
+                                    activeElement.copy(activeTask = null)
+                                ).withEffects()
+                            } else {
+                                state.withEffects()
+                            }
+                        }
+                    }
+                } ?: state.withEffects()
+            }
+
+            is DebugAction.ResetDay -> {
+                onNewState(state)
+            }
+
+            is StateLoadedAction -> {
+                onNewState(state)
+            }
+        }
+    }
+
+    private fun onNewState(state: Gtd2State): Reduced<out Gtd2State, out AppEffect> {
+        return when (state.currentState.activeElement) {
+            is ActiveElement.ActiveQueue -> {
+                state.withEffects()
+            }
+
+            null -> {
+                val queuesToChoose = state.taskTree.queues().filter { it.isLeafGroup() }
+                val newActiveElement =
+                    queuesToChoose.let { queues ->
+                        if (queues.size == 1) {
+                            queues.first().let { queue ->
+                                ActiveElement.ActiveQueue(
+                                    queue, queue.tasks().firstOrNull()?.let {
+                                        TimeredTask(
+                                            it,
+                                            TimeredState.Paused.INITIAL
+                                        )
+                                    }
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                    }
+                if (newActiveElement != null) {
+                    optActiveElement.set(state, newActiveElement).withEffects()
+                } else {
+                    Gtd2State.optCurrent.set(
+                        state,
+                        state.currentState.copy(queuesToChoose = queuesToChoose)
+                    ).withEffects()
                 }
             }
         }

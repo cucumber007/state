@@ -1,4 +1,4 @@
-package com.spqrta.state.common.logic.features.gtd2
+package com.spqrta.state.common.logic.features.gtd2.data
 
 import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue

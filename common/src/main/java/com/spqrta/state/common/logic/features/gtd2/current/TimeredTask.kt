@@ -11,6 +11,10 @@ data class TimeredTask(
     val task: Task,
     val timeredState: TimeredState
 ) {
+    val isTimerOverdue: Boolean by lazy {
+        remainingTime.totalSeconds <= 0
+    }
+
     val remainingTime: TimeValue by lazy {
         (task.estimate()!!.totalSeconds - timeredState.timePassed.totalSeconds).toSeconds()
     }

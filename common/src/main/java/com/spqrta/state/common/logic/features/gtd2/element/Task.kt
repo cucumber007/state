@@ -35,6 +35,14 @@ data class Task(
             }
         }
 
+    override fun estimate(): TimeValue? {
+        return when (status) {
+            TaskStatus.Active -> estimate
+            TaskStatus.Done,
+            TaskStatus.Inactive -> 0.toSeconds()
+        }
+    }
+
     override fun getElement(name: String): Element? {
         return if (this.name == name) {
             this
@@ -43,12 +51,12 @@ data class Task(
         }
     }
 
-    override fun estimate(): TimeValue? {
-        return when (status) {
-            TaskStatus.Active -> estimate
-            TaskStatus.Done,
-            TaskStatus.Inactive -> 0.toSeconds()
-        }
+    override fun isLeaf(): Boolean {
+        return true
+    }
+
+    override fun isLeafGroup(): Boolean {
+        return false
     }
 
     override fun nonEstimated(): List<Element> {

@@ -38,16 +38,7 @@ open class StateMachine<A, S, E>(
     }
 
     protected open fun format(action: A, newState: S, effects: Set<E>): String {
-        val msg = StringBuilder()
-//        msg.appendLine(tag)
-        msg.appendLine("v $action")
-        msg.appendLine("= $newState")
-        msg.appendLine("effects: [")
-        effects.forEach { effect ->
-            msg.appendLine("\t> $effect")
-        }
-        msg.appendLine("]")
-        return msg.toString()
+        return formatReducedValues(action, newState, effects)
     }
 
     protected open fun log(txt: String) {

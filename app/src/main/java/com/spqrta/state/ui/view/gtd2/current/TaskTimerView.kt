@@ -44,12 +44,12 @@ fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
         ) {
             Box(Modifier.align(Alignment.CenterEnd)) {
                 ImageActionButton(
-                    imageVector = if(paused) {
+                    imageVector = if (paused) {
                         Icons.Default.PlayArrow
                     } else {
                         Icons.Default.KeyboardArrowUp
                     },
-                    action = if(paused) {
+                    action = if (paused) {
                         CurrentViewAction.OnTimerStart
                     } else {
                         CurrentViewAction.OnTimerPause
@@ -71,7 +71,7 @@ fun TimerPausedViewPreview() {
                     name = "Task",
                     estimate = 25.toSeconds()
                 ),
-                timeredState = TimeredState.Paused(passed = 10.toSeconds())
+                timeredState = TimeredState.Paused.INITIAL.copy(passed = 10.toSeconds())
             ),
             paused = true
         )
@@ -90,7 +90,8 @@ fun TimerRunningViewPreview() {
                 ),
                 timeredState = TimeredState.Running(
                     passed = 10.toSeconds(),
-                    updatedAt = LocalTime.now()
+                    updatedAt = LocalTime.now(),
+                    notificationSent = false
                 )
             ),
             paused = false

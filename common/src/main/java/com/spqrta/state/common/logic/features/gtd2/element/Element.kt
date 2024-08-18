@@ -8,8 +8,10 @@ sealed interface Element {
     val name: String
     val displayName: String
     val active: Boolean
-    fun getElement(name: String): Element?
     fun estimate(): TimeValue?
+    fun getElement(name: String): Element?
+    fun isLeaf(): Boolean
+    fun isLeafGroup(): Boolean
     fun nonEstimated(): List<Element>
     fun queues(): List<Queue>
     fun tasks(): List<Task>
@@ -21,4 +23,3 @@ sealed interface Element {
     fun withTaskToggled(toggledTask: Task): Element
     fun withStatus(active: Boolean): Element
 }
-

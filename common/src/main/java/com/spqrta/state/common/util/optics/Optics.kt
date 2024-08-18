@@ -8,25 +8,6 @@ import com.spqrta.state.common.util.state_machine.withEffects
 
 // todo refactor naming
 
-interface OpticSet<S : Any, Sub> {
-    fun set(state: S, subState: Sub): S
-}
-
-interface OpticGet<S : Any, Sub> {
-    fun get(state: S): Sub?
-}
-
-interface OpticOptional<S : Any, Sub : Any> : OpticGet<S, Sub>, OpticSet<S, Sub>
-
-interface OpticGetStrict<S : Any, Sub> : OpticGet<S, Sub> {
-    fun getStrict(state: S): Sub
-    override fun get(state: S): Sub? = getStrict(state)
-}
-
-interface OpticStrict<S : Any, Sub : Any> : OpticGetStrict<S, Sub>, OpticSet<S, Sub>
-
-interface Optic<S : Any, Sub : Any> : OpticOptional<S, Sub>, OpticGetStrict<S, Sub>
-
 
 fun <T, S : Any, T1, T2> withSubState(
     state: S,
@@ -106,21 +87,4 @@ fun <BigS : Any, S1 : Any, S2 : Any, NewS : Any> gather(
             }
         }
     }
-}
-
-
-inline fun <A : Any, reified B : Any> typeGet(): OpticGet<A, B> {
-    return object : OpticGet<A, B> {
-        override fun get(state: A): B? {
-            return if (state is B) state else null
-        }
-    }
-}
-
-fun <T : Any> identityGet(): OpticGet<T, T> {
-    return { a: T -> a }.asOpticGet()
-}
-
-fun <T : Any> identityOptional(): OpticOptional<T, T> {
-    return ({ a: T -> a } to { a: T, b: T -> b }).asOpticOptional()
 }

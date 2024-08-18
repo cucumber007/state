@@ -12,13 +12,6 @@ data class Queue(
     override val active: Boolean = elements.isNotEmpty(),
 ) : Element {
 
-    override fun getElement(name: String): Element? {
-        return if (this.name == name) {
-            this
-        } else {
-            elements.firstNotNullOfOrNull { it.getElement(name) }
-        }
-    }
 
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
@@ -30,6 +23,24 @@ data class Queue(
         }
 //        Log.i("kek", "<<<< ${this.displayName} estimated: $sum")
         return sum.toSeconds()
+    }
+
+    override fun getElement(name: String): Element? {
+        return if (this.name == name) {
+            this
+        } else {
+            elements.firstNotNullOfOrNull { it.getElement(name) }
+        }
+    }
+
+    override fun isLeaf(): Boolean {
+        return false
+    }
+
+    override fun isLeafGroup(): Boolean {
+        return elements.all {
+            it.isLeaf()
+        }
     }
 
     override fun nonEstimated(): List<Element> {

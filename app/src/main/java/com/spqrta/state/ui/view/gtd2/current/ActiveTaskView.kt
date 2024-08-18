@@ -74,7 +74,8 @@ fun ActiveTaskViewTimerRunningPreview() {
             ),
             timeredState = TimeredState.Running(
                 passed = 15.toMinutes(),
-                updatedAt = LocalTime.now()
+                updatedAt = LocalTime.now(),
+                notificationSent = false
             )
         )
     )
@@ -90,7 +91,8 @@ fun ActiveTaskViewTimerPausedPreview() {
                 estimate = 20.toMinutes(),
             ),
             timeredState = TimeredState.Paused(
-                passed = 15.toMinutes()
+                passed = 15.toMinutes(),
+                notificationSent = false
             )
         )
     )
@@ -107,7 +109,8 @@ fun ActiveTaskViewOverduePreview() {
             ),
             timeredState = TimeredState.Running(
                 passed = 25.toMinutes(),
-                updatedAt = LocalTime.now()
+                updatedAt = LocalTime.now(),
+                notificationSent = false
             )
         )
     )

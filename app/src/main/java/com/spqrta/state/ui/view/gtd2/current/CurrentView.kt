@@ -96,7 +96,7 @@ fun CurrentView(state: Gtd2State) {
                     fontSize = FontSize.TITLE,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                state.taskTree.queues().forEach {
+                state.currentState.queuesToChoose.forEach {
                     ActionButton(action = CurrentViewAction.OnElementClick(it)) {
                         Text(
                             text = it.displayName,
@@ -109,4 +109,3 @@ fun CurrentView(state: Gtd2State) {
         }
     }
 }
-

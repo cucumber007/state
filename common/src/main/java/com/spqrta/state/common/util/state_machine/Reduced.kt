@@ -16,6 +16,16 @@ open class Reduced<State, Effect>(val newState: State, val effects: Set<Effect>)
     fun <NewEffect> flatMapEffects(mapFunction: (Reduced<State, Effect>) -> Set<NewEffect>): Reduced<State, NewEffect> {
         return Reduced(this.newState, mapFunction(this))
     }
+
+    override fun hashCode(): Int {
+        return newState.hashCode() + effects.joinToString("#").hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return (other as Reduced<State, Effect>).let { otherTyped ->
+            otherTyped.newState == newState && otherTyped.effects == effects
+        }
+    }
 }
 
 fun <State, Effect> chain(

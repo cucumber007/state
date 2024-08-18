@@ -11,7 +11,18 @@ data class AddPromptEffect(val prompt: Prompt) : AppEffect
 data class SaveStateEffect(val state: AppReady) : AppEffect
 data class ShowToastEffect(val message: String) : AppEffect
 data class TickEffect(val duration: Seconds) : AppEffect
-object UpdateStatsEffect : AppEffect
-object LoadStateEffect : AppEffect
-object PlayNotificationSoundEffect : AppEffect
-object VibrateEffect : AppEffect
+object UpdateStatsEffect : AppEffect {
+    override fun toString(): String = javaClass.simpleName
+}
+
+object LoadStateEffect : AppEffect {
+    override fun toString(): String = javaClass.simpleName
+}
+
+object PlayNotificationSoundEffect : AppEffect {
+    override fun toString(): String = javaClass.simpleName
+}
+
+object VibrateEffect : AppEffect {
+    override fun toString(): String = javaClass.simpleName
+}
