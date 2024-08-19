@@ -18,8 +18,9 @@ android {
         applicationId "com.spqrta.state"
         minSdk 25
         targetSdk 34
-        versionCode 1010010
-        versionName "1.0.10"
+        // 1000000 1000 1
+        versionCode 1
+        versionName "0.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -102,10 +103,10 @@ tasks.register('releaseDesktop', Copy) {
     def versionName = android.defaultConfig.versionName
 
     // Define the APK's origin and output paths
-//    def apkPath = "${buildDir}/outputs/apk/debug/"
+    // def apkPath = "${buildDir}/outputs/apk/debug/"
     def apkPath = "${buildDir}/outputs/apk/release/"
     def apkName = "app-release.apk"
-    def newApkName = "State_v${versionName}.apk"
+    def newApkName = "State_PRIVATE_v${versionName}.apk"
 
     println("\nCopying: ${apkPath + apkName}")
     println("To: ${destPath + newApkName}\n")
@@ -117,7 +118,12 @@ tasks.register('releaseDesktop', Copy) {
     into destPath
 }
 
-tasks.getByName("releaseDesktop").dependsOn("assembleRelease")
+tasks.register('openDesktop', Exec) {
+    commandLine "open", "${System.getProperty("user.home")}/Desktop/"
+}
+
+//noinspection ConfigurationAvoidance
+tasks.getByName("releaseDesktop").dependsOn("assembleRelease").dependsOn("openDesktop")
 
 static def getProperty(Properties properties, String key, String defaultValue = null) {
     def property = properties.getProperty(key)
