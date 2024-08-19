@@ -11,11 +11,27 @@ data class CurrentState(
 ) {
 
     companion object {
-        val INITIAL = CurrentState(null, listOf())
+        val INITIAL = CurrentState(
+            activeElement = null,
+            // filled up on StateLoadedAction
+            queuesToChoose = listOf()
+        )
 
         val optActiveElement = ({ state: CurrentState ->
             state.activeElement
         } to { state: CurrentState, subState: ActiveElement ->
+            state.copy(
+                activeElement = subState
+            )
+        }).asOpticOptional()
+
+        val optActiveQueue = ({ state: CurrentState ->
+            if (state.activeElement is ActiveElement.ActiveQueue) {
+                state.activeElement
+            } else {
+                null
+            }
+        } to { state: CurrentState, subState: ActiveElement.ActiveQueue ->
             state.copy(
                 activeElement = subState
             )

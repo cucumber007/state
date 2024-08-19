@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2
 
+import com.spqrta.state.common.BuildConfig
 import com.spqrta.state.common.environments.tasks_database.DatabaseTask
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.data.DebugQueue
@@ -26,8 +27,9 @@ data class Gtd2State(
             name = "Main",
             elements = listOf(
                 RoutineFlowQueue.value,
-                DebugQueue.value
-            )
+            ) + if (BuildConfig.DEBUG) {
+                listOf(DebugQueue.value)
+            } else listOf()
         )
 
         val INITIAL = Gtd2State(
@@ -45,6 +47,11 @@ data class Gtd2State(
         val optCurrent =
             ({ state: Gtd2State -> state.currentState } to { state: Gtd2State, subState: CurrentState ->
                 state.copy(currentState = subState)
+            }).asOptic()
+
+        val optTaskTree =
+            ({ state: Gtd2State -> state.taskTree } to { state: Gtd2State, subState: Element ->
+                state.copy(taskTree = subState)
             }).asOptic()
     }
 }

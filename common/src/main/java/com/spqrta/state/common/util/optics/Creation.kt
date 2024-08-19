@@ -41,6 +41,14 @@ fun <A : Any, B : Any> Pair<((A) -> B), ((A, B) -> A)>.asOptic(): Optic<A, B> {
     }
 }
 
+fun <A : Any, B : Any> ((A, B) -> A).asOpticSet(): OpticSet<A, B> {
+    return object : OpticSet<A, B> {
+        override fun set(state: A, subState: B): A {
+            return this@asOpticSet(state, subState)
+        }
+    }
+}
+
 inline fun <A : Any, reified B : Any> typeGet(): OpticGet<A, B> {
     return object : OpticGet<A, B> {
         override fun get(state: A): B? {

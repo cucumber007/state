@@ -5,21 +5,9 @@ package com.spqrta.state.common.logic
 import com.spqrta.state.common.AppScope
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
-import com.spqrta.state.common.logic.action.PromptAction
-import com.spqrta.state.common.logic.effect.ActionEffect
-import com.spqrta.state.common.logic.effect.AddPromptEffect
 import com.spqrta.state.common.logic.effect.AppEffect
-import com.spqrta.state.common.logic.effect.LoadDynalistEffect
-import com.spqrta.state.common.logic.effect.LoadStateEffect
-import com.spqrta.state.common.logic.effect.PlayNotificationSoundEffect
-import com.spqrta.state.common.logic.effect.SaveStateEffect
-import com.spqrta.state.common.logic.effect.SendNotificationEffect
-import com.spqrta.state.common.logic.effect.ShowToastEffect
-import com.spqrta.state.common.logic.effect.TickEffect
-import com.spqrta.state.common.logic.effect.UpdateStatsEffect
-import com.spqrta.state.common.logic.effect.VibrateEffect
+import com.spqrta.state.common.logic.effect.applyEffects
 import com.spqrta.state.common.use_case.UseCases
-import com.spqrta.state.common.util.collections.asList
 import com.spqrta.state.common.util.optics.OpticGet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
@@ -28,13 +16,12 @@ import com.spqrta.state.common.util.state_machine.withEffects
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 object App {
     private lateinit var appScope: AppScope
-    private val useCases by lazy { UseCases(App.appScope) }
+    private val useCases by lazy { UseCases(appScope) }
     private val actionsScope: CoroutineScope = CoroutineScope(
         SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     )
@@ -46,8 +33,10 @@ object App {
         tag = "StateMachine",
         initialState = AppNotInitialized,
         scope = actionsScope,
-        reduce = reducer,
-        applyEffects = this::applyEffects
+        reducer = reducer,
+        applyEffects = {
+            applyEffects(it, effectsScope, useCases, App::handleAction)
+        }
     ) {
         override fun shouldLog(
             action: AppAction,
@@ -72,63 +61,15 @@ object App {
 
     fun runEffect(effect: AppEffect) {
         effectsScope.launch {
-            applyEffects(setOf(effect))
+            applyEffects(
+                setOf(effect),
+                effectsScope,
+                useCases,
+                App::handleAction
+            )
         }
     }
 
-    private fun applyEffects(effects: Set<AppEffect>) {
-        effects.forEach { effect ->
-            effectsScope.launch {
-                with(useCases) {
-                    when (effect) {
-                        is ActionEffect -> {
-                            { effect.action.asList() }.asFlow()
-                        }
-
-                        is AddPromptEffect -> {
-                            { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
-                        }
-
-                        is LoadDynalistEffect -> {
-                            loadDynalistUC.flow()
-                        }
-
-                        is LoadStateEffect -> {
-                            loadStateUC.flow()
-                        }
-
-                        is PlayNotificationSoundEffect -> {
-                            playNotificationSoundUC.flow()
-                        }
-
-                        is SaveStateEffect -> {
-                            saveStateUC.flow(effect.state)
-                        }
-
-                        is ShowToastEffect -> {
-                            showToastUC.flow(effect.message)
-                        }
-
-                        is TickEffect -> {
-                            tickUC.flow(effect.duration)
-                        }
-
-                        is VibrateEffect -> {
-                            vibrateUC.flow()
-                        }
-
-                        is UpdateStatsEffect -> {
-                            updateStatsUC.flow()
-                        }
-
-                        is SendNotificationEffect -> {
-                            sendNotificationUC.flow(effect)
-                        }
-                    }.collect { actions -> actions.forEach(App::handleAction) }
-                }
-            }
-        }
-    }
 }
 
 fun <

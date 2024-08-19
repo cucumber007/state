@@ -1,6 +1,6 @@
 package com.spqrta.state.common.util.state_machine
 
-open class SyncStateMachine<A, S, E>(
+open class SyncStateMachine<A, S : Any, E>(
     initialState: S,
     private val reducer: Reducer<A, S, E>,
     private val onEffect: (E) -> List<A>,
@@ -29,5 +29,14 @@ open class SyncStateMachine<A, S, E>(
             }
             newState
         }
+    }
+
+    fun withState(stateFun: (oldState: S) -> S): SyncStateMachine<A, S, E> {
+        return SyncStateMachine(
+            initialState = stateFun(_state),
+            reducer = reducer,
+            log = log,
+            onEffect = onEffect
+        )
     }
 }

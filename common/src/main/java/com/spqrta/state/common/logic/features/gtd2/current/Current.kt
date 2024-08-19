@@ -206,7 +206,7 @@ object Current {
                 optActiveElement.get(state)?.let { activeElement ->
                     when (activeElement) {
                         is ActiveElement.ActiveQueue -> {
-                            if (activeElement.activeTask?.task == action.task) {
+                            if (activeElement.activeTask?.task?.name == action.task.name) {
                                 optActiveElement.set(
                                     state,
                                     activeElement.copy(activeTask = null)
