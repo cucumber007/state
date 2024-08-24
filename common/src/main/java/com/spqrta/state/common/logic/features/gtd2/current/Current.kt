@@ -10,6 +10,8 @@ import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.SendNotificationEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
+import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
@@ -203,20 +205,7 @@ object Current {
             }
 
             is Gtd2Action.ToggleTask -> {
-                optActiveElement.get(state)?.let { activeElement ->
-                    when (activeElement) {
-                        is ActiveElement.ActiveQueue -> {
-                            if (activeElement.activeTask?.task?.name == action.task.name) {
-                                optActiveElement.set(
-                                    state,
-                                    activeElement.copy(activeTask = null)
-                                ).withEffects()
-                            } else {
-                                state.withEffects()
-                            }
-                        }
-                    }
-                } ?: state.withEffects()
+                onNewState(state)
             }
 
             is DebugAction.ResetDay -> {
@@ -230,9 +219,32 @@ object Current {
     }
 
     private fun onNewState(state: Gtd2State): Reduced<out Gtd2State, out AppEffect> {
-        return when (state.currentState.activeElement) {
+        return when (val activeElement = state.currentState.activeElement) {
             is ActiveElement.ActiveQueue -> {
-                state.withEffects()
+                val optActiveElement = Gtd2State.optCurrent + CurrentState.optActiveElement
+                val activeTask = activeElement.activeTask
+                val newActiveTask = if (activeTask != null) {
+                    val newStateOfActiveTask =
+                        state.taskTree.getElement(activeTask.task.name) as Task
+                    when (newStateOfActiveTask.status) {
+                        is TaskStatus.Active -> {
+                            activeTask
+                        }
+
+                        is TaskStatus.Done, TaskStatus.Inactive -> {
+                            null
+                        }
+                    }
+                } else null
+
+                val newState = optActiveElement.set(
+                    state,
+                    activeElement.copy(
+                        activeTask = newActiveTask,
+                        queue = state.taskTree.getElement(activeElement.queue.name) as Queue
+                    )
+                )
+                newState.withEffects()
             }
 
             null -> {

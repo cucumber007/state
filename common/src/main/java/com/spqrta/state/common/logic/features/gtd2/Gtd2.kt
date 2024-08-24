@@ -67,7 +67,7 @@ object Gtd2 {
             is Gtd2Action.ToggleTask -> {
                 state.copy(
                     taskTree = state.taskTree.withTaskToggled(action.task)
-                ).withEffects<Gtd2State, AppEffect>()
+                ).withEffects()
             }
 
             is DebugAction.ResetDay -> {

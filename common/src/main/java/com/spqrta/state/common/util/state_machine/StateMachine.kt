@@ -20,6 +20,9 @@ open class StateMachine<A, S, E>(
     val state: StateFlow<S>
         get() = _state
 
+    val currentState: S
+        get() = _state.value
+
     fun handleAction(action: A) {
         scope.launch {
             reducer(action, _state.value).let {

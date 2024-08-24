@@ -19,6 +19,17 @@ operator fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.plus(
     }
 }
 
+operator fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.plus(
+    secondOptic: OpticGet<Sub, Sub1>
+): OpticGet<S, Sub1> {
+    val firstOptic: OpticOptional<S, Sub> = this
+    return object : OpticGet<S, Sub1> {
+        override fun get(state: S): Sub1? {
+            return firstOptic.get(state)?.let { secondOptic.get(it) }
+        }
+    }
+}
+
 infix fun <S : Any, Sub : Any, Sub1 : Any> OpticOptional<S, Sub>.withGet(
     secondOptic: OpticGet<Sub, Sub1>
 ): OpticGet<S, Sub1> {
