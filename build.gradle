@@ -1,7 +1,7 @@
 buildscript {
     ext {
         compose_ui_version = '1.5.1'
-        kotlin_version = '1.6.21'
+        kotlin_version = project_kotlin_version
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {

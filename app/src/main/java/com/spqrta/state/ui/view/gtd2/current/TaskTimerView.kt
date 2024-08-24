@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,9 +40,14 @@ fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
             )
         }
         Box(
-            Modifier.width(timeHeight)
+            Modifier.width(timeHeight * 2)
         ) {
-            Box(Modifier.align(Alignment.CenterEnd)) {
+            Row {
+                ImageActionButton(
+                    imageVector = Icons.Default.Refresh,
+                    action = CurrentViewAction.OnTimerReset,
+                    size = timeHeight,
+                )
                 ImageActionButton(
                     imageVector = if (paused) {
                         Icons.Default.PlayArrow

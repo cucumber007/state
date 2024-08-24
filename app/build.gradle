@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "com.spqrta.state"
-        minSdk 25
+        minSdk project_min_sdk.toInteger()
         targetSdk 34
         // 1000000 1000 1
         versionCode 1
@@ -50,7 +50,7 @@ android {
         jvmTarget = project_jvm_target
     }
     lintOptions {
-        checkReleaseBuilds false
+//        checkReleaseBuilds false
     }
     buildFeatures {
         compose true

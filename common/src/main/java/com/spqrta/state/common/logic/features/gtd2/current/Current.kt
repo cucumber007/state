@@ -122,10 +122,18 @@ object Current {
                     }
 
                     is CurrentViewAction.OnTimerReset -> {
-                        reduceView(
-                            CurrentViewAction.OnTimerStart,
-                            state
-                        )
+                        optActiveTask.get(state)?.let { activeTask ->
+                            val oldTimeredState = activeTask.timeredState
+                            val newTimeredState = when (oldTimeredState) {
+                                is TimeredState.Paused -> TimeredState.Paused.INITIAL
+                                is TimeredState.Running -> TimeredState.Running(
+                                    passed = 0.toSeconds(),
+                                    updatedAt = LocalTime.now(),
+                                    notificationSent = false
+                                )
+                            }
+                            optTimeredState.set(state, newTimeredState).withEffects()
+                        } ?: illegalAction(action, state)
                     }
 
                     is CurrentViewAction.OnSubElementLongClick -> {
