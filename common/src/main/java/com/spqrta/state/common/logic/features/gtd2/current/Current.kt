@@ -21,6 +21,7 @@ import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
+import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toSeconds
 import java.time.LocalTime
 
@@ -53,17 +54,11 @@ object Current {
                         illegalAction(action, state)
                     }
 
-                    is CurrentViewAction.OnSubElementClick -> {
-                        if (action.element.status == TaskStatus.Active) {
-                            optActiveTask.set(
-                                state,
-                                TimeredTask(
-                                    action.element, TimeredState.Paused.INITIAL
-                                )
-                            ).withEffects()
-                        } else {
-                            state.withEffects()
-                        }
+                    is CurrentViewAction.OnTaskComplete -> {
+                        val activeTask = activeElement.activeTask
+                        if (activeTask != null) {
+                            state.withEffects(ActionEffect(Gtd2Action.ToggleTask(activeTask.task)))
+                        } else illegalAction(action, state)
                     }
 
                     is CurrentViewAction.OnTimerPause -> {
@@ -111,6 +106,9 @@ object Current {
                                     }
 
                                     optTimeredState.set(state, newTimeredState).withEffects(effects)
+                                        .also {
+                                            testLog(newTimeredState)
+                                        }
                                 }
 
                                 is TimeredState.Running -> {
@@ -136,8 +134,53 @@ object Current {
                         } ?: illegalAction(action, state)
                     }
 
+                    is CurrentViewAction.OnSubElementClick -> {
+                        if (action.element.status == TaskStatus.Active) {
+                            optActiveTask.set(
+                                state,
+                                TimeredTask(
+                                    action.element, TimeredState.Paused.INITIAL
+                                )
+                            ).withEffects()
+                        } else {
+                            state.withEffects()
+                        }
+                    }
+
                     is CurrentViewAction.OnSubElementLongClick -> {
                         state.withEffects(ActionEffect(Gtd2Action.ToggleTask(action.element)))
+                    }
+
+                    is CurrentViewAction.OnSkipTask -> {
+                        val activeTask = activeElement.activeTask
+                        if (activeTask != null) {
+                            val tasks = activeElement.activeTasks
+                            val remainingTasks = tasks.filter { it.name != activeTask.task.name }
+                            if (remainingTasks.isEmpty()) {
+                                // do nothing, it's the only task left
+                                state.withEffects()
+                            } else {
+                                val currentIndex =
+                                    tasks.indexOfFirst { it.name == activeTask.task.name }
+                                val newIndex = if (currentIndex < remainingTasks.size - 1) {
+                                    currentIndex + 1
+                                } else {
+                                    0
+                                }
+                                val nextTask = remainingTasks[newIndex]
+                                optActiveElement.set(
+                                    state,
+                                    activeElement.copy(
+                                        activeTask = TimeredTask(
+                                            nextTask,
+                                            TimeredState.Paused.INITIAL
+                                        )
+                                    )
+                                ).withEffects()
+                            }
+                        } else {
+                            illegalAction(action, state)
+                        }
                     }
                 }
             }
@@ -156,11 +199,13 @@ object Current {
                         ).withEffects()
                     }
 
+                    is CurrentViewAction.OnSkipTask,
+                    is CurrentViewAction.OnTaskComplete,
                     is CurrentViewAction.OnSubElementClick,
                     is CurrentViewAction.OnSubElementLongClick,
-                    CurrentViewAction.OnTimerPause,
-                    CurrentViewAction.OnTimerReset,
-                    CurrentViewAction.OnTimerStart -> {
+                    is CurrentViewAction.OnTimerPause,
+                    is CurrentViewAction.OnTimerReset,
+                    is CurrentViewAction.OnTimerStart -> {
                         illegalAction(action, state)
                     }
                 }

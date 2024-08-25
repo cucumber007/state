@@ -15,4 +15,6 @@ sealed interface CurrentViewAction : AppAction {
     object OnTimerStart : Action()
     object OnTimerPause : Action()
     object OnTimerReset : Action()
+    object OnSkipTask : Action()
+    object OnTaskComplete : Action()
 }

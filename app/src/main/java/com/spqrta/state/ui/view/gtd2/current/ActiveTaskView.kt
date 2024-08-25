@@ -6,57 +6,118 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toMinutes
 import com.spqrta.state.ui.theme.FontSize
+import com.spqrta.state.ui.theme.ThemeColor
+import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import java.time.LocalTime
 
 @Composable
 fun ActiveTaskView(activeTask: TimeredTask) {
-    val task = activeTask.task
+    val activeTaskState = rememberUpdatedState(activeTask)
+    val task = activeTaskState.value.task
     Column(
         Modifier.padding(16.dp)
     ) {
+        Text(
+            text = "${task.estimate?.totalMinutes} min scheduled",
+            fontSize = FontSize.SMALL,
+            color = ThemeColor.FontGray,
+            modifier = Modifier
+        )
         Row {
             Text(
                 text = task.displayName,
                 fontSize = FontSize.TITLE,
                 color = Color.Blue
             )
+
+        }
+        val paused = when (activeTaskState.value.timeredState) {
+            is TimeredState.Paused -> true
+            is TimeredState.Running -> false
+        }
+        testLog("paused $paused")
+        TaskTimerView(
+            activeTask = activeTaskState.value,
+            paused = paused
+        )
+        val timeHeight = 36.dp
+        Row(
+            Modifier.fillMaxWidth()
+        ) {
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.CenterVertically)
+                    .weight(1f)
             ) {
-                Text(
-                    text = "${task.estimate?.totalMinutes} min",
-                    fontSize = FontSize.BASE,
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .align(Alignment.CenterEnd)
+                ImageActionButton(
+                    imageVector = Icons.Default.Refresh,
+                    action = CurrentViewAction.OnTimerReset,
+                    size = timeHeight,
                 )
             }
-        }
-        when (val timerState = activeTask.timeredState) {
-            is TimeredState.Paused -> {
-                TaskTimerView(
-                    activeTask = activeTask,
-                    paused = true
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                ImageActionButton(
+                    imageVector = Icons.Default.ArrowForward,
+                    action = CurrentViewAction.OnSkipTask,
+                    size = timeHeight,
                 )
             }
-
-            is TimeredState.Running -> {
-                TaskTimerView(
-                    activeTask = activeTask,
-                    paused = false
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                ImageActionButton(
+                    imageVector = if (paused) {
+                        Icons.Default.PlayArrow
+                    } else {
+                        Icons.Default.KeyboardArrowUp
+                    },
+                    action = if (paused) {
+                        CurrentViewAction.OnTimerStart
+                    } else {
+                        CurrentViewAction.OnTimerPause
+                    },
+                    size = timeHeight
+                )
+            }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                ImageActionButton(
+                    imageVector = Icons.Default.Done,
+                    action = CurrentViewAction.OnTaskComplete,
+                    size = timeHeight,
                 )
             }
         }

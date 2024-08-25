@@ -1,67 +1,31 @@
 package com.spqrta.state.ui.view.gtd2.current
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.util.time.toSeconds
-import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import java.time.LocalTime
 
 @Composable
 fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
     val timeHeight = 36.dp
-    Row(
-        Modifier.height(timeHeight)
-    ) {
+    Column {
         Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .weight(1f)
+            Modifier.height(timeHeight)
         ) {
             CountupView(
                 passedTime = activeTask.passedTime,
                 totalTime = activeTask.task.estimate!!
             )
-        }
-        Box(
-            Modifier.width(timeHeight * 2)
-        ) {
-            Row {
-                ImageActionButton(
-                    imageVector = Icons.Default.Refresh,
-                    action = CurrentViewAction.OnTimerReset,
-                    size = timeHeight,
-                )
-                ImageActionButton(
-                    imageVector = if (paused) {
-                        Icons.Default.PlayArrow
-                    } else {
-                        Icons.Default.KeyboardArrowUp
-                    },
-                    action = if (paused) {
-                        CurrentViewAction.OnTimerStart
-                    } else {
-                        CurrentViewAction.OnTimerPause
-                    },
-                    size = timeHeight
-                )
-            }
         }
     }
 }

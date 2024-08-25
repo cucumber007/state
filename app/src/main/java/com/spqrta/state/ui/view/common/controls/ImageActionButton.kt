@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -26,6 +27,8 @@ fun ImageActionButton(
     tint: Color = Color.Black,
     size: Dp = Dp(24f)
 ) {
+    val actionState = rememberUpdatedState(action)
+    val longPressActionState = rememberUpdatedState(longPressAction)
     Box(
         Modifier
             .height(size)
@@ -44,10 +47,10 @@ fun ImageActionButton(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            App.handleAction(action)
+                            App.handleAction(actionState.value)
                         },
                         onLongPress = {
-                            longPressAction?.let {
+                            longPressActionState.value?.let {
                                 App.handleAction(it)
                             }
                         }
