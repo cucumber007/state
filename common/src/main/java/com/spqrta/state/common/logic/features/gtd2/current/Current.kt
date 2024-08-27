@@ -276,7 +276,13 @@ object Current {
             is ActiveElement.ActiveQueue -> {
                 val optActiveElement = Gtd2State.optCurrent + CurrentState.optActiveElement
                 val activeTask = activeElement.activeTask
-                val newActiveTask = if (activeTask != null) {
+
+                val newActiveQueue = state.taskTree.getElement(activeElement.queue.name) as Queue
+                var newActiveElement = activeElement.copy(
+                    queue = newActiveQueue,
+                    activeTask = null
+                )
+                val newActiveTask = activeTask?.let {
                     val newStateOfActiveTask =
                         state.taskTree.getElement(activeTask.task.name) as Task
                     when (newStateOfActiveTask.status) {
@@ -288,14 +294,23 @@ object Current {
                             null
                         }
                     }
-                } else null
+                } ?: run {
+                    // the previous active task was completed or there wasn't any
+                    if (newActiveElement.activeTasks.isNotEmpty()) {
+                        TimeredTask(
+                            newActiveElement.activeTasks.first(),
+                            TimeredState.Paused.INITIAL
+                        )
+                    } else {
+                        null
+                    }
+                }.also {
+                    newActiveElement = newActiveElement.copy(activeTask = it)
+                }
 
                 val newState = optActiveElement.set(
                     state,
-                    activeElement.copy(
-                        activeTask = newActiveTask,
-                        queue = state.taskTree.getElement(activeElement.queue.name) as Queue
-                    )
+                    newActiveElement
                 )
                 newState.withEffects()
             }
