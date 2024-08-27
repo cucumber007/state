@@ -155,19 +155,18 @@ object Current {
                         val activeTask = activeElement.activeTask
                         if (activeTask != null) {
                             val tasks = activeElement.activeTasks
-                            val remainingTasks = tasks.filter { it.name != activeTask.task.name }
-                            if (remainingTasks.isEmpty()) {
+                            if (tasks.isEmpty()) {
                                 // do nothing, it's the only task left
                                 state.withEffects()
                             } else {
                                 val currentIndex =
                                     tasks.indexOfFirst { it.name == activeTask.task.name }
-                                val newIndex = if (currentIndex < remainingTasks.size - 1) {
+                                val newIndex = if (currentIndex < tasks.size - 1) {
                                     currentIndex + 1
                                 } else {
                                     0
                                 }
-                                val nextTask = remainingTasks[newIndex]
+                                val nextTask = tasks[newIndex]
                                 optActiveElement.set(
                                     state,
                                     activeElement.copy(
