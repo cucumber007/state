@@ -62,6 +62,7 @@ object Dynalist {
                                 .plusSeconds(UPDATE_TIMEOUT.totalSeconds)
                                 .isBefore(LocalDateTime.now())
                         ) {
+//                            state.withEffects(LoadDynalistEffect)
                             state.withEffects(LoadDynalistEffect)
                         } else {
                             state.withEffects()

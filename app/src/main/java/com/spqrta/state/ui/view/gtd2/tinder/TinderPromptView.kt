@@ -1,4 +1,4 @@
-package com.spqrta.state.ui.view.tinder
+package com.spqrta.state.ui.view.gtd2.tinder
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text

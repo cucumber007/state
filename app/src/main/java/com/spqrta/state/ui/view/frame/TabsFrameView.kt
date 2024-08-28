@@ -27,8 +27,8 @@ import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import com.spqrta.state.ui.view.dynalist.DynalistView
 import com.spqrta.state.ui.view.gtd2.Gtd2View
 import com.spqrta.state.ui.view.gtd2.current.CurrentView
-import com.spqrta.state.ui.view.stats.StatsView
-import com.spqrta.state.ui.view.tinder.TinderView
+import com.spqrta.state.ui.view.gtd2.stats.StatsView
+import com.spqrta.state.ui.view.gtd2.tinder.TinderView
 
 @Composable
 fun TabsFrameView(appState: AppReady) {

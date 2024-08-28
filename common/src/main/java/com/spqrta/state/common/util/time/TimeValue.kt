@@ -22,6 +22,10 @@ open class TimeValue(val totalSeconds: Long) {
         return TimeValueFormatter.formatTimeValue(this)
     }
 
+    fun formatWithoutSeconds(): String {
+        return TimeValueFormatter.formatTimeValueWithoutSeconds(this)
+    }
+
     companion object {
         const val MINUTES_IN_HOUR = 60
         const val SECONDS_IN_MINUTE = 60
