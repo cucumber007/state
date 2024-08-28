@@ -303,9 +303,8 @@ object Current {
                     } else {
                         null
                     }
-                }.also {
-                    newActiveElement = newActiveElement.copy(activeTask = it)
                 }
+                newActiveElement = newActiveElement.copy(activeTask = newActiveTask)
 
                 val newState = optActiveElement.set(
                     state,
