@@ -38,7 +38,7 @@ fun ActiveTaskView(activeTask: TimeredTask) {
         Modifier.padding(16.dp)
     ) {
         Text(
-            text = "${task.estimate?.totalMinutes} min scheduled",
+            text = "Estimate: ${task.estimate?.totalMinutes} min",
             fontSize = FontSize.SMALL,
             color = ThemeColor.FontGray,
             modifier = Modifier

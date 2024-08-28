@@ -181,6 +181,14 @@ object Current {
                             illegalAction(action, state)
                         }
                     }
+
+                    CurrentViewAction.ToggleShowDone -> {
+                        state.copy(
+                            currentState = state.currentState.copy(
+                                showDone = !state.currentState.showDone
+                            )
+                        ).withEffects()
+                    }
                 }
             }
 
@@ -204,7 +212,8 @@ object Current {
                     is CurrentViewAction.OnSubElementLongClick,
                     is CurrentViewAction.OnTimerPause,
                     is CurrentViewAction.OnTimerReset,
-                    is CurrentViewAction.OnTimerStart -> {
+                    is CurrentViewAction.OnTimerStart,
+                    is CurrentViewAction.ToggleShowDone -> {
                         illegalAction(action, state)
                     }
                 }

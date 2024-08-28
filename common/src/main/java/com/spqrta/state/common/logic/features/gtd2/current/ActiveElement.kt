@@ -14,9 +14,6 @@ sealed class ActiveElement {
         val queue: Queue,
         val activeTask: TimeredTask?
     ) : ActiveElement() {
-        val tasksToShow: List<Task> = queue.tasks()
-
-        // .filter { it.status == TaskStatus.Active }
         val activeTasks: List<Task> = queue.tasks().filter { it.status == TaskStatus.Active }
 
         companion object {
