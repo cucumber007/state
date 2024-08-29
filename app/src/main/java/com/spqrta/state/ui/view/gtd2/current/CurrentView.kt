@@ -11,16 +11,26 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.spqrta.state.Effects
 import com.spqrta.state.common.logic.action.CurrentViewAction
+import com.spqrta.state.common.logic.effect.ViewEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
@@ -71,27 +81,66 @@ fun CurrentView(state: Gtd2State) {
                                 fontSize = FontSize.TITLE,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
-                            Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
                                 ImageActionButton(
                                     imageVector = if (state.currentState.showDone) {
                                         Icons.Default.List
                                     } else {
                                         Icons.Default.ThumbUp
                                     },
-                                    action = CurrentViewAction.ToggleShowDone
+                                    action = CurrentViewAction.OnToggleShowDoneClick
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                ImageActionButton(
+                                    imageVector = Icons.Default.Home,
+                                    action = CurrentViewAction.OnScrollToActiveClick
                                 )
                             }
                         }
+                        var itemPosition by remember { mutableStateOf(0F) }
+                        val scrollState = rememberScrollState()
                         Column(
                             Modifier
-                                .verticalScroll(rememberScrollState())
+                                .verticalScroll(scrollState)
                                 .height(IntrinsicSize.Max)
                         ) {
+                            LaunchedEffect(key1 = Unit) {
+                                Effects.effects.collect {
+                                    val mut = it.toMutableList()
+                                    while (mut.isNotEmpty()) {
+                                        val effect = mut.removeAt(0)
+                                        when (effect) {
+                                            is ViewEffect.Scroll -> {
+                                                scrollState.scrollTo(itemPosition.toInt())
+
+                                            }
+                                        }
+                                    }
+                                    Effects.effects.emit(emptyList())
+                                }
+                            }
+
                             state.currentState.tasksToShow.forEach {
                                 if (it.name == activeTask.task.name) {
                                     ActionButton(
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                     ) {
+                                        Box(modifier = Modifier.then(
+                                            Modifier.onGloballyPositioned { layoutCoordinates ->
+                                                itemPosition = layoutCoordinates.positionInRoot().y
+                                            }
+                                        ))
                                         ActiveTaskView(activeTask)
                                     }
                                 } else {

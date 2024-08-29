@@ -18,6 +18,7 @@ import com.spqrta.state.common.use_case.UseCases
 import com.spqrta.state.common.util.asSuccess
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.state_machine.StateMachine
+import com.spqrta.state.common.util.toFlow
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -82,6 +83,7 @@ fun testApplyEffects(
                     }
                 },
                 mainThreadScope = mockk(),
+                viewEffectsHandler = { listOf<AppAction>().toFlow() },
             )
         ),
         handleAction = handleAction

@@ -61,6 +61,10 @@ fun applyEffects(
                     is SendNotificationEffect -> {
                         sendNotificationUC.flow(effect)
                     }
+
+                    is ViewEffect.Scroll -> {
+                        useCases.appScope.viewEffectsHandler(effect)
+                    }
                 }.collect { actions -> actions.forEach(handleAction) }
             }
         }

@@ -9,6 +9,7 @@ import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.SendNotificationEffect
+import com.spqrta.state.common.logic.effect.ViewEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
@@ -28,6 +29,7 @@ import java.time.LocalTime
 object Current {
     private val optActiveElement = Gtd2State.optCurrent + CurrentState.optActiveElement
     private val optActiveTask = optActiveElement + ActiveElement.optActiveTask
+    private val optActiveQueue = Gtd2State.optCurrent + CurrentState.optActiveQueue
     private val optTimeredState =
         Gtd2State.optCurrent + CurrentState.optActiveElement + ActiveElement.optActiveTask + TimeredTask.optTimeredState
 
@@ -182,12 +184,24 @@ object Current {
                         }
                     }
 
-                    CurrentViewAction.ToggleShowDone -> {
+                    is CurrentViewAction.OnToggleShowDoneClick -> {
                         state.copy(
                             currentState = state.currentState.copy(
                                 showDone = !state.currentState.showDone
                             )
                         ).withEffects()
+                    }
+
+                    is CurrentViewAction.OnScrollToActiveClick -> {
+                        optActiveTask.get(state)?.let { activeTask ->
+                            state.currentState.tasksToShow.indexOf(activeTask.task).let { index ->
+                                state.withEffects(
+                                    ViewEffect.Scroll(
+                                        index,
+                                    )
+                                )
+                            }
+                        } ?: illegalAction(action, state)
                     }
                 }
             }
@@ -206,14 +220,16 @@ object Current {
                         ).withEffects()
                     }
 
+                    is CurrentViewAction.OnScrollToActiveClick,
                     is CurrentViewAction.OnSkipTask,
-                    is CurrentViewAction.OnTaskComplete,
                     is CurrentViewAction.OnSubElementClick,
                     is CurrentViewAction.OnSubElementLongClick,
+                    is CurrentViewAction.OnTaskComplete,
                     is CurrentViewAction.OnTimerPause,
                     is CurrentViewAction.OnTimerReset,
                     is CurrentViewAction.OnTimerStart,
-                    is CurrentViewAction.ToggleShowDone -> {
+                    is CurrentViewAction.OnToggleShowDoneClick,
+                    -> {
                         illegalAction(action, state)
                     }
                 }

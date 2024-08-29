@@ -17,9 +17,10 @@ class MyApplication : Application() {
         App.inject(
             AppScope(
                 appContext = this,
+                viewEffectsHandler = ViewEffectsHandler::handle,
                 dynalistApi = DynalistApiClient.api,
+                mainThreadScope = CoroutineScope(Dispatchers.Main),
                 preferencesRepository = PreferencesRepository(this),
-                mainThreadScope = CoroutineScope(Dispatchers.Main)
             )
         )
         App.handleAction(InitAppAction)

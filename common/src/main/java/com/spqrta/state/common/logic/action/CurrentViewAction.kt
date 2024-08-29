@@ -12,10 +12,12 @@ sealed interface CurrentViewAction : AppAction {
     data class OnElementClick(val element: Queue) : Action()
     data class OnSubElementClick(val element: Task) : Action()
     data class OnSubElementLongClick(val element: Task) : Action()
-    object OnTimerStart : Action()
-    object OnTimerPause : Action()
-    object OnTimerReset : Action()
+    object OnScrollToActiveClick : Action()
+
     object OnSkipTask : Action()
     object OnTaskComplete : Action()
-    object ToggleShowDone : Action()
+    object OnTimerPause : Action()
+    object OnTimerReset : Action()
+    object OnTimerStart : Action()
+    object OnToggleShowDoneClick : Action()
 }
