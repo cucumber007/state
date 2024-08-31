@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toMinutes
 import com.spqrta.state.ui.theme.FontSize
+import com.spqrta.state.ui.theme.StateIcons
 import com.spqrta.state.ui.theme.ThemeColor
 import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import java.time.LocalTime
@@ -98,7 +98,7 @@ fun ActiveTaskView(activeTask: TimeredTask) {
                     imageVector = if (paused) {
                         Icons.Default.PlayArrow
                     } else {
-                        Icons.Default.KeyboardArrowUp
+                        StateIcons.pause()
                     },
                     action = if (paused) {
                         CurrentViewAction.OnTimerStart

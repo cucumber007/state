@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -54,7 +53,7 @@ fun TabsFrameView(appState: AppReady) {
                 FrameState.TabCurrent to Icons.Default.PlayArrow,
                 FrameState.TabStats to Icons.Default.Info,
                 FrameState.TabGtd2 to Icons.Default.AccountBox,
-                FrameState.TabAlarms to Icons.Default.Notifications,
+//                FrameState.TabAlarms to Icons.Default.Notifications,
                 FrameState.TabDynalist to Icons.Default.Home,
                 FrameState.TabTinder to Icons.Default.ArrowForward,
             ).map {
