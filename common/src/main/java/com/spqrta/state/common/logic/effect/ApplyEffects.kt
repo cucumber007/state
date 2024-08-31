@@ -26,6 +26,10 @@ fun applyEffects(
                         { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
                     }
 
+                    is AppEffectNew.StartFgs -> {
+                        useCases.startFgsUC.flow()
+                    }
+
                     is LoadDynalistEffect -> {
                         loadDynalistUC.flow()
                     }

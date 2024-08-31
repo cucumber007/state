@@ -10,6 +10,7 @@ import com.spqrta.state.common.logic.action.InitAppAction
 import com.spqrta.state.common.logic.action.OnResumeAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.LoadStateEffect
 import com.spqrta.state.common.logic.effect.SaveStateEffect
 import com.spqrta.state.common.logic.optics.AppStateOptics
@@ -47,7 +48,9 @@ object AppGlobalReducer {
 
                     is StateLoadedAction -> {
                         chain(
-                            action.state.withEffects()
+                            action.state.withEffects(
+                                AppEffectNew.StartFgs
+                            )
                         ) {
                             AppReady.reducer(OnResumeAction(), it)
                         }

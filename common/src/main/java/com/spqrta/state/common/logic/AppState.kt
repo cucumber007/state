@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.action.OnResumeAction
 import com.spqrta.state.common.logic.effect.AddPromptEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.SendNotificationEffect
+import com.spqrta.state.common.logic.effect.ShowToastEffect
 import com.spqrta.state.common.logic.features.alarms.AlarmsState
 import com.spqrta.state.common.logic.features.daily.DailyState
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
@@ -68,6 +69,10 @@ data class AppReady(
             state: AppReady
         ): Reduced<out AppReady, out AppEffect> {
             return when (action) {
+                is AppReadyAction.ShowErrorAction -> {
+                    state.withEffects(ShowToastEffect(action.exception.message ?: "Unknown error"))
+                }
+
                 is DebugAction.FlipResetStateEnabled -> {
                     state.copy(resetStateEnabled = !state.resetStateEnabled).withEffects()
                 }
