@@ -38,8 +38,16 @@ fun applyEffects(
                         playNotificationSoundUC.flow()
                     }
 
+                    is PlaySoundEffect -> {
+                        playSoundUC.flow(effect.sound)
+                    }
+
                     is SaveStateEffect -> {
                         saveStateUC.flow(effect.state)
+                    }
+
+                    is SendNotificationEffect -> {
+                        sendNotificationUC.flow(effect)
                     }
 
                     is ShowToastEffect -> {
@@ -50,16 +58,12 @@ fun applyEffects(
                         tickUC.flow(effect.duration)
                     }
 
-                    is VibrateEffect -> {
-                        vibrateUC.flow()
-                    }
-
                     is UpdateStatsEffect -> {
                         updateStatsUC.flow()
                     }
 
-                    is SendNotificationEffect -> {
-                        sendNotificationUC.flow(effect)
+                    is VibrateEffect -> {
+                        vibrateUC.flow()
                     }
 
                     is ViewEffect.Scroll -> {

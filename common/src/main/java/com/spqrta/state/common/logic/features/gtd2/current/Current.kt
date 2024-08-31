@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.PlaySoundEffect
 import com.spqrta.state.common.logic.effect.SendNotificationEffect
 import com.spqrta.state.common.logic.effect.ViewEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
@@ -16,6 +17,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
+import com.spqrta.state.common.use_case.play_sound.Sound
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
@@ -59,7 +61,10 @@ object Current {
                     is CurrentViewAction.OnTaskComplete -> {
                         val activeTask = activeElement.activeTask
                         if (activeTask != null) {
-                            state.withEffects(ActionEffect(Gtd2Action.ToggleTask(activeTask.task)))
+                            state.withEffects(
+                                ActionEffect(Gtd2Action.ToggleTask(activeTask.task)),
+                                PlaySoundEffect(Sound.Ping)
+                            )
                         } else illegalAction(action, state)
                     }
 
@@ -177,7 +182,9 @@ object Current {
                                             TimeredState.Paused.INITIAL
                                         )
                                     )
-                                ).withEffects()
+                                ).withEffects(
+                                    PlaySoundEffect(Sound.Ping)
+                                )
                             }
                         } else {
                             illegalAction(action, state)
@@ -268,7 +275,10 @@ object Current {
                                 effects.add(
                                     SendNotificationEffect(
                                         "Timer is up for ${activeTask.task.name}",
-                                    )
+                                    ),
+                                )
+                                effects.add(
+                                    PlaySoundEffect(Sound.Flute)
                                 )
                             }
                             optTimeredState.set(state, newTimeredState).withEffects(effects)

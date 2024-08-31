@@ -7,6 +7,7 @@ import com.spqrta.state.common.external.preferences.PreferencesRepository
 import com.spqrta.state.common.logic.App
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.InitAppAction
+import com.spqrta.state.common.use_case.play_sound.MediaPlayers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -20,6 +21,7 @@ class MyApplication : Application() {
                 viewEffectsHandler = ViewEffectsHandler::handle,
                 dynalistApi = DynalistApiClient.api,
                 mainThreadScope = CoroutineScope(Dispatchers.Main),
+                mediaPlayers = MediaPlayers(this),
                 preferencesRepository = PreferencesRepository(this),
             )
         )

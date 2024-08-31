@@ -83,6 +83,7 @@ fun testApplyEffects(
                     }
                 },
                 mainThreadScope = mockk(),
+                mediaPlayers = mockk(),
                 viewEffectsHandler = { listOf<AppAction>().toFlow() },
             )
         ),
