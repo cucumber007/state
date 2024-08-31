@@ -1,25 +1,28 @@
 package com.spqrta.state.common.logic.features.dynalist
 
-import com.spqrta.state.common.logic.features.gtd2.element.Element
-import com.spqrta.state.common.util.serialization.LocalDateTimeSerializer
+import com.spqrta.state.common.util.optics.asOpticOptional
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 
 @Serializable
 sealed class DynalistState {
     override fun toString(): String = javaClass.simpleName
 
     @Serializable
-    object Initial : DynalistState()
+    object KeyNotSet : DynalistState()
 
     @Serializable
-    data class Loaded(
-        @Serializable(with = LocalDateTimeSerializer::class)
-        val loadedAt: LocalDateTime,
-        val elements: List<Element>,
+    data class KeySet(
+        val key: String,
+        val loadingState: DynalistLoadingState,
     ) : DynalistState()
 
     companion object {
-        val INITIAL = Initial
+        val optLoadedState = ({ state: DynalistState ->
+            (state as? KeySet)?.loadingState
+        } to { state: DynalistState, loadingState: DynalistLoadingState ->
+            (state as? KeySet)?.copy(loadingState = loadingState) ?: state
+        }).asOpticOptional()
+
+        val INITIAL = KeyNotSet
     }
 }

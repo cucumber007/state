@@ -16,12 +16,12 @@ class LoadDynalistUC(
     private val dynalistApi: DynalistApi,
 ) {
 
-    fun flow(): Flow<List<AppAction>> {
+    fun flow(apiKey: String): Flow<List<AppAction>> {
         return suspend {
             dynalistApi.getDoc(
                 GetDocumentBody(
                     file_id = Dynalist.TODO_DOCUMENT_ID,
-                    token = Dynalist.DYNALIST_API_KEY
+                    token = apiKey
                 )
             )
         }.asFlow()

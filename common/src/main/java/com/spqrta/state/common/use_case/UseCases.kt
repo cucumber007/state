@@ -12,6 +12,7 @@ class UseCases(
 
     val loadDynalistUC = LoadDynalistUC(appScope.dynalistApi)
     val loadStateUC = LoadStateUC(appScope)
+    val openUrlUC = OpenUrlUC(appScope.appContext)
     val playNotificationSoundUC = PlayNotificationSoundUC(appScope.appContext)
     val playSoundUC = PlaySoundUC(appScope.mediaPlayers)
     val saveStateUC = SaveStateUC(appScope)

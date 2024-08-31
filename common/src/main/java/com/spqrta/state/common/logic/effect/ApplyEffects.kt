@@ -26,12 +26,17 @@ fun applyEffects(
                         { PromptAction.AddPrompt(effect.prompt).asList() }.asFlow()
                     }
 
+                    is AppEffectNew.OpenUrl -> {
+                        useCases.openUrlUC.flow(effect.url)
+                    }
+
+
                     is AppEffectNew.StartFgs -> {
                         useCases.startFgsUC.flow()
                     }
 
                     is LoadDynalistEffect -> {
-                        loadDynalistUC.flow()
+                        loadDynalistUC.flow(effect.dynalistState.key)
                     }
 
                     is LoadStateEffect -> {

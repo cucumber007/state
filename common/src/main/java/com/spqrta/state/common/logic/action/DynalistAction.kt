@@ -12,4 +12,8 @@ sealed interface DynalistAction : AppAction {
     data class DynalistLoaded(
         val tasks: Res<DynalistNode>,
     ) : Action()
+
+    object OpenGetApiKeyPage : Action()
+
+    data class SetApiKey(val key: String) : Action()
 }

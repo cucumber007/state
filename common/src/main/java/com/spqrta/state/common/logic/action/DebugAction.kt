@@ -10,6 +10,6 @@ sealed interface DebugAction : AppAction {
     // reducer). Create a separate DebugReducer?
     object FlipClockMode : Action(), ClockAction
     object FlipResetStateEnabled : AppReadyAction.Action()
-    object ResetDay : AppReadyAction.Action(), Gtd2Action, CurrentAction
+    object ResetDay : AppReadyAction.Action(), Gtd2Action, CurrentAction, DynalistAction
     object SendTestNotification : AppReadyAction.Action()
 }
