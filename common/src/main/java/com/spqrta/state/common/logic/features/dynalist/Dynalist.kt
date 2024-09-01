@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.AppEffectNew
+import com.spqrta.state.common.logic.effect.DynalistEffect
 import com.spqrta.state.common.logic.effect.LoadDynalistEffect
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
@@ -50,20 +51,129 @@ object Dynalist {
         action: DynalistAction,
         state: DynalistState
     ): Reduced<out DynalistState, out AppEffect> {
+        if (action is DebugAction.ResetDay) {
+            return handleAction(action)
+        }
+        if (action is ClockAction.TickAction && state !is DynalistState.DocCreated) {
+            return state.withEffects()
+        }
+
+        // sorting states by order
         return when (state) {
-            is DynalistState.KeySet -> {
-                when (state.loadingState) {
-                    is DynalistLoadingState.Initial -> {
-                        when (action) {
-                            is ClockAction.TickAction -> {
+            is DynalistState.KeyNotSet -> {
+                // sorting actions by importance
+                when (action) {
+                    is DynalistAction.OpenGetApiKeyPage -> {
+                        state.withEffects(AppEffectNew.OpenUrl(API_KEY_URL))
+                    }
+
+                    is DynalistAction.SetApiKey -> {
+                        if (action.key.isNotEmpty()) {
+                            val newState = DynalistState.DocsLoading(
+                                key = action.key,
+                                loadingState = DynalistLoadingState.Initial
+                            )
+                            newState.withEffects(
+                                DynalistEffect.GetDocs(newState)
+                            )
+                        } else {
+                            state.withEffects()
+                        }
+                    }
+
+                    is ClockAction.TickAction,
+                    is DynalistAction.DynalistDatabaseDocCreated,
+                    is DebugAction.ResetDay,
+                    is DynalistAction.DynalistDocsLoaded,
+                    is DynalistAction.DynalistLoaded -> {
+                        illegalAction(action, state)
+                    }
+                }
+            }
+
+            is DynalistState.DocsLoading -> {
+                // sorting actions by importance
+                when (action) {
+                    is DynalistAction.DynalistDocsLoaded -> {
+                        when (action.docIdResult) {
+                            is Success -> {
+                                val docId = action.docIdResult.success
+                                if (docId != null) {
+                                    DynalistState.DocCreated(
+                                        key = state.key,
+                                        docId = docId,
+                                        loadingState = DynalistLoadingState.Initial
+                                    ).withEffects()
+                                } else {
+                                    val newState = DynalistState.CreatingDoc(
+                                        key = state.key
+                                    )
+                                    newState.withEffects(
+                                        DynalistEffect.CreateDoc(newState)
+                                    )
+                                }
+                            }
+
+                            is Failure -> {
+                                state.withEffects()
+                            }
+                        }
+                    }
+
+                    is DynalistAction.DynalistDatabaseDocCreated,
+                    is DebugAction.ResetDay,
+                    is DynalistAction.DynalistLoaded,
+                    is DynalistAction.OpenGetApiKeyPage,
+                    is DynalistAction.SetApiKey,
+                    is ClockAction.TickAction -> {
+                        illegalAction(action, state)
+                    }
+                }
+            }
+
+            is DynalistState.CreatingDoc -> {
+                // sorting actions by importance
+                when (action) {
+                    is DynalistAction.DynalistDatabaseDocCreated -> {
+                        TODO()
+                    }
+
+                    is DynalistAction.DynalistDocsLoaded,
+                    is DynalistAction.DynalistLoaded,
+                    is DynalistAction.OpenGetApiKeyPage,
+                    is DynalistAction.SetApiKey,
+                    is DebugAction.ResetDay,
+                    is ClockAction.TickAction -> {
+                        illegalAction(action, state)
+                    }
+                }
+            }
+
+            is DynalistState.DocCreated -> {
+                when (action) {
+                    is ClockAction.TickAction -> {
+                        when (state.loadingState) {
+                            is DynalistLoadingState.Initial -> {
                                 state.withEffects(LoadDynalistEffect(state))
                             }
 
-                            is DebugAction.ResetDay -> {
-                                handleAction(action)
+                            is DynalistLoadingState.Loaded -> {
+                                if (state.loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
+                                        .isBefore(LocalDateTime.now())
+                                ) {
+                                    state.loadingState.withEffects(LoadDynalistEffect(state))
+                                } else {
+                                    state.loadingState.withEffects()
+                                }.flatMapState {
+                                    DynalistState.optLoadedState.set(state, it.newState)
+                                }
                             }
+                        }
+                    }
 
-                            is DynalistAction.DynalistLoaded -> {
+                    is DynalistAction.DynalistLoaded -> {
+                        when (state.loadingState) {
+                            is DynalistLoadingState.Initial -> {
                                 when (action.tasks) {
                                     is Success -> {
                                         DynalistLoadingState.Loaded(
@@ -83,79 +193,22 @@ object Dynalist {
                                 }
                             }
 
-                            is DynalistAction.OpenGetApiKeyPage,
-                            is DynalistAction.SetApiKey -> {
-                                illegalAction(action, state)
-                            }
-                        }
-                    }
-
-                    is DynalistLoadingState.Loaded -> {
-                        val oldLoadingState = state.loadingState
-                        when (action) {
-                            is ClockAction.TickAction -> {
-                                if (
-                                    oldLoadingState.loadedAt
-                                        .plusSeconds(UPDATE_TIMEOUT.totalSeconds)
-                                        .isBefore(LocalDateTime.now())
-                                ) {
-                                    oldLoadingState.withEffects(LoadDynalistEffect(state))
-                                } else {
-                                    oldLoadingState.withEffects()
-                                }.flatMapState {
-                                    DynalistState.optLoadedState.set(state, it.newState)
-                                }
-                            }
-
-                            is DebugAction.ResetDay -> {
-                                handleAction(action)
-                            }
-
-                            is DynalistAction.DynalistLoaded -> {
+                            is DynalistLoadingState.Loaded -> {
+                                val oldLoadingState = state.loadingState
                                 oldLoadingState.copy(loadedAt = LocalDateTime.now())
                                     .withEffects<DynalistLoadingState, AppEffect>()
                                     .flatMapState {
                                         DynalistState.optLoadedState.set(state, it.newState)
                                     }
                             }
-
-                            is DynalistAction.OpenGetApiKeyPage,
-                            is DynalistAction.SetApiKey -> {
-                                illegalAction(action, state)
-                            }
                         }
                     }
-                }
-            }
 
-            is DynalistState.KeyNotSet -> {
-                when (action) {
-                    is ClockAction.TickAction -> {
-                        state.withEffects()
-                    }
-
-                    is DebugAction.ResetDay -> {
-                        handleAction(action)
-                    }
-
-                    is DynalistAction.DynalistLoaded -> {
-                        illegalAction(action, state)
-                    }
-
-                    is DynalistAction.OpenGetApiKeyPage -> {
-                        state.withEffects(AppEffectNew.OpenUrl(API_KEY_URL))
-                    }
-
-                    is DynalistAction.SetApiKey -> {
-                        if (action.key.isNotEmpty()) {
-                            DynalistState.KeySet(
-                                key = action.key,
-                                loadingState = DynalistLoadingState.Initial
-                            ).withEffects()
-                        } else {
-                            state.withEffects()
-                        }
-                    }
+                    is DynalistAction.DynalistDatabaseDocCreated -> TODO()
+                    is DynalistAction.DynalistDocsLoaded -> TODO()
+                    is DynalistAction.OpenGetApiKeyPage -> TODO()
+                    is DynalistAction.SetApiKey -> TODO()
+                    is DebugAction.ResetDay -> TODO()
                 }
             }
         }

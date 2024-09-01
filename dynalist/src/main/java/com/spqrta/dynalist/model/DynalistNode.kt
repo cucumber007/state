@@ -6,7 +6,7 @@ data class DynalistNode(
 ) {
     companion object {
         fun create(
-            doc: DynalistDocumentRemote,
+            doc: DynalistDocRemote,
             dynalistNodeRemote: DynalistNodeRemote
         ): DynalistNode {
             return DynalistNode(

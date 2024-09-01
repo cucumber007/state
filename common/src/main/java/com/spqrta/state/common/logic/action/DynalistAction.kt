@@ -9,8 +9,16 @@ sealed interface DynalistAction : AppAction {
         override fun toString(): String = javaClass.simpleName
     }
 
+    data class DynalistDocsLoaded(
+        val docIdResult: Res<String?>,
+    ) : Action()
+
     data class DynalistLoaded(
         val tasks: Res<DynalistNode>,
+    ) : Action()
+
+    data class DynalistDatabaseDocCreated(
+        val docIdResult: Res<String>,
     ) : Action()
 
     object OpenGetApiKeyPage : Action()

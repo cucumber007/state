@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.use_case.UseCases
 import com.spqrta.state.common.util.collections.asList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 
@@ -35,8 +36,8 @@ fun applyEffects(
                         useCases.startFgsUC.flow()
                     }
 
-                    is LoadDynalistEffect -> {
-                        loadDynalistUC.flow(effect.dynalistState.key)
+                    is DynalistEffect -> {
+                        getFlow(effect, useCases)
                     }
 
                     is LoadStateEffect -> {
@@ -80,6 +81,22 @@ fun applyEffects(
                     }
                 }.collect { actions -> actions.forEach(handleAction) }
             }
+        }
+    }
+}
+
+private fun getFlow(effect: DynalistEffect, useCases: UseCases): Flow<List<AppAction>> {
+    return when (effect) {
+        is LoadDynalistEffect -> {
+            useCases.loadDynalistUC.flow(effect.dynalistState.key)
+        }
+
+        is DynalistEffect.GetDocs -> {
+            useCases.getDynalistDocsUC.flow(effect.dynalistState.key)
+        }
+
+        is DynalistEffect.CreateDoc -> {
+            useCases.createDynalistDocUC.flow(effect.dynalistState.key)
         }
     }
 }

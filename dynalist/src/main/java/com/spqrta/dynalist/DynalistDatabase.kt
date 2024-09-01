@@ -1,11 +1,11 @@
 package com.spqrta.dynalist
 
 import com.spqrta.dynalist.model.Delete
-import com.spqrta.dynalist.model.DynalistDocumentRemote
+import com.spqrta.dynalist.model.DynalistDocRemote
 import com.spqrta.dynalist.model.DynalistNodeRemote
 import com.spqrta.dynalist.model.Edit
 import com.spqrta.dynalist.model.EditBody
-import com.spqrta.dynalist.model.GetDocumentBody
+import com.spqrta.dynalist.model.GetDocBody
 import com.spqrta.dynalist.model.Insert
 
 @Suppress("IfThenToElvis")
@@ -116,9 +116,9 @@ class DynalistDatabase(
         }
     }
 
-    private suspend fun getChildren(fileId: String): DynalistDocumentRemote {
+    private suspend fun getChildren(fileId: String): DynalistDocRemote {
         return api.getDoc(
-            GetDocumentBody(
+            GetDocBody(
                 file_id = fileId,
                 token = apiKey
             )

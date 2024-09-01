@@ -1,7 +1,7 @@
 package com.spqrta.state.common
 
 import android.util.Log
-import com.spqrta.dynalist.model.DynalistDocumentRemote
+import com.spqrta.dynalist.model.DynalistDocRemote
 import com.spqrta.state.common.logic.APP_REDUCER
 import com.spqrta.state.common.logic.AppNotInitialized
 import com.spqrta.state.common.logic.AppReady
@@ -62,7 +62,7 @@ fun testApplyEffects(
             AppScope(
                 appContext = mockk(),
                 dynalistApi = mockk {
-                    coEvery { getDoc(any()) } returns DynalistDocumentRemote(
+                    coEvery { getDoc(any()) } returns DynalistDocRemote(
                         nodes = listOf(),
                         errorMessage = null
                     )

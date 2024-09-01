@@ -1,6 +1,9 @@
 package com.spqrta.state.common.use_case
 
 import com.spqrta.state.common.AppScope
+import com.spqrta.state.common.use_case.dynalist.CreateDynalistDocU
+import com.spqrta.state.common.use_case.dynalist.GetDynalistDocsUC
+import com.spqrta.state.common.use_case.dynalist.LoadDynalistUC
 import com.spqrta.state.common.use_case.foreground_service.StartFgsUC
 import com.spqrta.state.common.use_case.foreground_service.StopFgsUC
 import com.spqrta.state.common.use_case.play_sound.PlaySoundUC
@@ -10,6 +13,8 @@ class UseCases(
 ) {
     val showToastUC = ShowToastUC(appScope)
 
+    val createDynalistDocUC = CreateDynalistDocU(appScope.dynalistApi)
+    val getDynalistDocsUC = GetDynalistDocsUC(appScope.dynalistApi)
     val loadDynalistUC = LoadDynalistUC(appScope.dynalistApi)
     val loadStateUC = LoadStateUC(appScope)
     val openUrlUC = OpenUrlUC(appScope.appContext)

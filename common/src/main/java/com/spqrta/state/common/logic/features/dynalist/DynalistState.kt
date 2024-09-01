@@ -11,16 +11,28 @@ sealed class DynalistState {
     object KeyNotSet : DynalistState()
 
     @Serializable
-    data class KeySet(
+    data class DocsLoading(
         val key: String,
+        val loadingState: DynalistLoadingState,
+    ) : DynalistState()
+
+    @Serializable
+    data class CreatingDoc(
+        val key: String,
+    ) : DynalistState()
+
+    @Serializable
+    data class DocCreated(
+        val key: String,
+        val docId: String,
         val loadingState: DynalistLoadingState,
     ) : DynalistState()
 
     companion object {
         val optLoadedState = ({ state: DynalistState ->
-            (state as? KeySet)?.loadingState
+            (state as? DocsLoading)?.loadingState
         } to { state: DynalistState, loadingState: DynalistLoadingState ->
-            (state as? KeySet)?.copy(loadingState = loadingState) ?: state
+            (state as? DocsLoading)?.copy(loadingState = loadingState) ?: state
         }).asOpticOptional()
 
         val INITIAL = KeyNotSet

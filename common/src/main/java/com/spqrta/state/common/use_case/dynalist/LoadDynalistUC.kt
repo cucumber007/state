@@ -1,8 +1,8 @@
-package com.spqrta.state.common.use_case
+package com.spqrta.state.common.use_case.dynalist
 
 import com.spqrta.dynalist.DynalistApi
 import com.spqrta.dynalist.model.DynalistNode
-import com.spqrta.dynalist.model.GetDocumentBody
+import com.spqrta.dynalist.model.GetDocBody
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.features.dynalist.Dynalist
@@ -19,7 +19,7 @@ class LoadDynalistUC(
     fun flow(apiKey: String): Flow<List<AppAction>> {
         return suspend {
             dynalistApi.getDoc(
-                GetDocumentBody(
+                GetDocBody(
                     file_id = Dynalist.TODO_DOCUMENT_ID,
                     token = apiKey
                 )
