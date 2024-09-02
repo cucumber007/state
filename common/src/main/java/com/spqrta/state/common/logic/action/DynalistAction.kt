@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.action
 
 import com.spqrta.dynalist.model.DynalistNode
+import com.spqrta.state.common.logic.features.dynalist.LoadDocsResult
 import com.spqrta.state.common.util.Res
 
 
@@ -10,7 +11,7 @@ sealed interface DynalistAction : AppAction {
     }
 
     data class DynalistDocsLoaded(
-        val docIdResult: Res<String?>,
+        val docIdResult: Res<LoadDocsResult>,
     ) : Action()
 
     data class DynalistLoaded(

@@ -50,6 +50,14 @@ fun DynalistView(state: DynalistState) {
             }
 
             is DynalistState.DocsLoading -> {
+                Text(text = "Loading docs")
+            }
+
+            is DynalistState.CreatingDoc -> {
+                Text("Creating doc")
+            }
+
+            is DynalistState.DocCreated -> {
                 when (val loadingState = state.loadingState) {
                     is DynalistLoadingState.Initial -> {
                         Text("Initial")
@@ -61,14 +69,6 @@ fun DynalistView(state: DynalistState) {
                         }
                     }
                 }
-            }
-
-            is DynalistState.CreatingDoc -> {
-                Text("Creating doc")
-            }
-
-            is DynalistState.DocCreated -> {
-                Text("Doc created")
             }
         }
     }

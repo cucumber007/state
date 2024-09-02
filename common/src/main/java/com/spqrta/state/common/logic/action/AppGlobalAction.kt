@@ -23,4 +23,4 @@ data class OnResumeAction(
 data class StateLoadedAction(
     val state: AppReady,
     val dateTime: LocalDateTime = DateTimeEnvironment.dateTimeNow
-) : AppGlobalAction(), ClockAction, CurrentAction
+) : AppGlobalAction(), ClockAction, CurrentAction, DynalistAction

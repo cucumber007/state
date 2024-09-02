@@ -1,5 +1,7 @@
 package com.spqrta.dynalist
 
+import com.spqrta.dynalist.model.CreateDocBody
+import com.spqrta.dynalist.model.CreateDocResponse
 import com.spqrta.dynalist.model.DynalistDocRemote
 import com.spqrta.dynalist.model.DynalistDocsRemote
 import com.spqrta.dynalist.model.EditBody
@@ -21,9 +23,13 @@ interface DynalistApi {
         @Body body: GetDocBody,
     ): DynalistDocRemote
 
-    @POST("doc/read")
+    @POST("file/list")
     suspend fun getDocs(
         @Body body: GetDocsBody,
     ): DynalistDocsRemote
 
+    @POST("file/edit")
+    suspend fun createDoc(
+        @Body body: CreateDocBody,
+    ): CreateDocResponse
 }

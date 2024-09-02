@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.DynalistAction
+import com.spqrta.state.common.logic.action.StateLoadedAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.DynalistEffect
@@ -51,13 +52,18 @@ object Dynalist {
         action: DynalistAction,
         state: DynalistState
     ): Reduced<out DynalistState, out AppEffect> {
-        if (action is DebugAction.ResetDay) {
-            return handleAction(action)
+        return when (action) {
+            is DebugAction.ResetDay -> handleAction(action)
+            is ClockAction.TickAction -> state.withEffects()
+            is StateLoadedAction -> handleAction(action)
+            else -> reduceRest(action, state)
         }
-        if (action is ClockAction.TickAction && state !is DynalistState.DocCreated) {
-            return state.withEffects()
-        }
+    }
 
+    private fun reduceRest(
+        action: DynalistAction,
+        state: DynalistState
+    ): Reduced<out DynalistState, out AppEffect> {
         // sorting states by order
         return when (state) {
             is DynalistState.KeyNotSet -> {
@@ -69,10 +75,7 @@ object Dynalist {
 
                     is DynalistAction.SetApiKey -> {
                         if (action.key.isNotEmpty()) {
-                            val newState = DynalistState.DocsLoading(
-                                key = action.key,
-                                loadingState = DynalistLoadingState.Initial
-                            )
+                            val newState = DynalistState.DocsLoading(key = action.key)
                             newState.withEffects(
                                 DynalistEffect.GetDocs(newState)
                             )
@@ -85,7 +88,8 @@ object Dynalist {
                     is DynalistAction.DynalistDatabaseDocCreated,
                     is DebugAction.ResetDay,
                     is DynalistAction.DynalistDocsLoaded,
-                    is DynalistAction.DynalistLoaded -> {
+                    is DynalistAction.DynalistLoaded,
+                    is StateLoadedAction -> {
                         illegalAction(action, state)
                     }
                 }
@@ -97,7 +101,8 @@ object Dynalist {
                     is DynalistAction.DynalistDocsLoaded -> {
                         when (action.docIdResult) {
                             is Success -> {
-                                val docId = action.docIdResult.success
+                                val result = action.docIdResult.success
+                                val docId = result.stateAppDatabaseDocId
                                 if (docId != null) {
                                     DynalistState.DocCreated(
                                         key = state.key,
@@ -106,7 +111,8 @@ object Dynalist {
                                     ).withEffects()
                                 } else {
                                     val newState = DynalistState.CreatingDoc(
-                                        key = state.key
+                                        key = state.key,
+                                        rootId = action.docIdResult.success.rootId
                                     )
                                     newState.withEffects(
                                         DynalistEffect.CreateDoc(newState)
@@ -125,7 +131,8 @@ object Dynalist {
                     is DynalistAction.DynalistLoaded,
                     is DynalistAction.OpenGetApiKeyPage,
                     is DynalistAction.SetApiKey,
-                    is ClockAction.TickAction -> {
+                    is ClockAction.TickAction,
+                    is StateLoadedAction -> {
                         illegalAction(action, state)
                     }
                 }
@@ -135,7 +142,19 @@ object Dynalist {
                 // sorting actions by importance
                 when (action) {
                     is DynalistAction.DynalistDatabaseDocCreated -> {
-                        TODO()
+                        when (action.docIdResult) {
+                            is Failure -> {
+                                state.withEffects()
+                            }
+
+                            is Success -> {
+                                DynalistState.DocCreated(
+                                    key = state.key,
+                                    docId = action.docIdResult.success,
+                                    loadingState = DynalistLoadingState.Initial
+                                ).withEffects()
+                            }
+                        }
                     }
 
                     is DynalistAction.DynalistDocsLoaded,
@@ -143,7 +162,8 @@ object Dynalist {
                     is DynalistAction.OpenGetApiKeyPage,
                     is DynalistAction.SetApiKey,
                     is DebugAction.ResetDay,
-                    is ClockAction.TickAction -> {
+                    is ClockAction.TickAction,
+                    is StateLoadedAction -> {
                         illegalAction(action, state)
                     }
                 }
@@ -204,11 +224,14 @@ object Dynalist {
                         }
                     }
 
-                    is DynalistAction.DynalistDatabaseDocCreated -> TODO()
-                    is DynalistAction.DynalistDocsLoaded -> TODO()
-                    is DynalistAction.OpenGetApiKeyPage -> TODO()
-                    is DynalistAction.SetApiKey -> TODO()
-                    is DebugAction.ResetDay -> TODO()
+                    is DynalistAction.DynalistDatabaseDocCreated,
+                    is DynalistAction.DynalistDocsLoaded,
+                    is DynalistAction.OpenGetApiKeyPage,
+                    is DynalistAction.SetApiKey,
+                    is DebugAction.ResetDay,
+                    is StateLoadedAction -> {
+                        illegalAction(action, state)
+                    }
                 }
             }
         }
@@ -216,6 +239,15 @@ object Dynalist {
 
     private fun handleAction(action: DebugAction.ResetDay): Reduced<DynalistState, AppEffect> {
         return DynalistState.INITIAL.withEffects()
+    }
+
+    private fun handleAction(action: StateLoadedAction): Reduced<DynalistState, AppEffect> {
+        return when (val state = action.state.dynalistState) {
+            is DynalistState.CreatingDoc -> state.withEffects(DynalistEffect.CreateDoc(state))
+            is DynalistState.DocCreated -> state.withEffects()
+            is DynalistState.DocsLoading -> state.withEffects(DynalistEffect.GetDocs(state))
+            is DynalistState.KeyNotSet -> state.withEffects()
+        }
     }
 
     private fun DynalistNode.toElement(): Element {
