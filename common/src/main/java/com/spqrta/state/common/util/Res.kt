@@ -16,6 +16,13 @@ sealed class Res<T> {
         }
     }
 
+    suspend fun <E> mapSuccessSuspend(mapFunction: suspend (T) -> E): Res<E> {
+        return when (this) {
+            is Success -> Success(mapFunction(this.success))
+            is Failure -> Failure(this.failure)
+        }
+    }
+
     fun withFallback(value: T): T {
         return when (this) {
             is Success -> {

@@ -7,6 +7,6 @@ sealed interface DynalistEffect : AppEffect {
     data class CreateDoc(val dynalistState: DynalistState.CreatingDoc) : DynalistEffect
 }
 
-data class LoadDynalistEffect(val dynalistState: DynalistState.DocCreated) : DynalistEffect {
+data class LoadDynalistEffect(val apiKey: String, val docId: String) : DynalistEffect {
     override fun toString(): String = javaClass.simpleName
 }

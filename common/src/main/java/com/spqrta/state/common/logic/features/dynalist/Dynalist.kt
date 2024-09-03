@@ -22,21 +22,17 @@ import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
+import com.spqrta.state.common.util.state_machine.chain
 import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
-import com.spqrta.state.common.util.time.toMinutes
+import com.spqrta.state.common.util.testLog
+import com.spqrta.state.common.util.time.toSeconds
 import java.time.LocalDateTime
 
 object Dynalist {
     private const val API_KEY_URL = "https://dynalist.io/developer"
-    const val TODO_DOCUMENT_ID = "omSjo4KOvqr1J4kNlysdo9In"
-    //    const val TODO_DOCUMENT_ID = "fj8owT2lQyd7nikhyRSJE1GK"
-
-    const val TASKS_NODE_ID = "kjHpmZQSU7Hukgy_l1QrRLib"
-
-    //    const val TASKS_NODE_ID = "TkPa2KwGiYEaOTbU2vGKuEM4"
-    private val UPDATE_TIMEOUT = 100.toMinutes()
+    private val UPDATE_TIMEOUT = 1000.toSeconds()
 
     val reducer = widen(
         typeGet(),
@@ -52,10 +48,10 @@ object Dynalist {
         action: DynalistAction,
         state: DynalistState
     ): Reduced<out DynalistState, out AppEffect> {
-        return when (action) {
-            is DebugAction.ResetDay -> handleAction(action)
-            is ClockAction.TickAction -> state.withEffects()
-            is StateLoadedAction -> handleAction(action)
+        return when {
+            action is DebugAction.ResetDay -> handleAction(action)
+            action is ClockAction.TickAction && state !is DynalistState.DocCreated -> state.withEffects()
+            action is StateLoadedAction -> handleAction(action)
             else -> reduceRest(action, state)
         }
     }
@@ -102,12 +98,15 @@ object Dynalist {
                         when (action.docIdResult) {
                             is Success -> {
                                 val result = action.docIdResult.success
-                                val docId = result.stateAppDatabaseDocId
-                                if (docId != null) {
+                                if (result.stateAppDatabaseDocData != null) {
+                                    val (stateDocId, stateDoc) = result.stateAppDatabaseDocData
                                     DynalistState.DocCreated(
                                         key = state.key,
-                                        docId = docId,
-                                        loadingState = DynalistLoadingState.Initial
+                                        stateDocId = stateDocId,
+                                        loadingState = DynalistLoadingState.Loaded(
+                                            loadedAt = LocalDateTime.now(),
+                                            elements = stateDoc.children.map { it.toElement() }
+                                        )
                                     ).withEffects()
                                 } else {
                                     val newState = DynalistState.CreatingDoc(
@@ -142,7 +141,7 @@ object Dynalist {
                 // sorting actions by importance
                 when (action) {
                     is DynalistAction.DynalistDatabaseDocCreated -> {
-                        when (action.docIdResult) {
+                        when (action.docResult) {
                             is Failure -> {
                                 state.withEffects()
                             }
@@ -150,8 +149,11 @@ object Dynalist {
                             is Success -> {
                                 DynalistState.DocCreated(
                                     key = state.key,
-                                    docId = action.docIdResult.success,
-                                    loadingState = DynalistLoadingState.Initial
+                                    stateDocId = action.docResult.success.docId,
+                                    loadingState = DynalistLoadingState.Loaded(
+                                        loadedAt = LocalDateTime.now(),
+                                        elements = action.docResult.success.doc.children.map { it.toElement() }
+                                    )
                                 ).withEffects()
                             }
                         }
@@ -172,16 +174,21 @@ object Dynalist {
             is DynalistState.DocCreated -> {
                 when (action) {
                     is ClockAction.TickAction -> {
-                        when (state.loadingState) {
+                        when (val loadingState = state.loadingState) {
                             is DynalistLoadingState.Initial -> {
-                                state.withEffects(LoadDynalistEffect(state))
+                                state.withEffects(LoadDynalistEffect(state.key, state.stateDocId))
                             }
 
                             is DynalistLoadingState.Loaded -> {
-                                if (state.loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
+                                if (loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
                                         .isBefore(LocalDateTime.now())
                                 ) {
-                                    state.loadingState.withEffects(LoadDynalistEffect(state))
+                                    state.loadingState.withEffects(
+                                        LoadDynalistEffect(
+                                            state.key,
+                                            state.stateDocId
+                                        )
+                                    )
                                 } else {
                                     state.loadingState.withEffects()
                                 }.flatMapState {
@@ -194,11 +201,11 @@ object Dynalist {
                     is DynalistAction.DynalistLoaded -> {
                         when (state.loadingState) {
                             is DynalistLoadingState.Initial -> {
-                                when (action.tasks) {
+                                when (action.docResult) {
                                     is Success -> {
                                         DynalistLoadingState.Loaded(
                                             loadedAt = LocalDateTime.now(),
-                                            elements = action.tasks.success.children.map { it.toElement() }
+                                            elements = action.docResult.success.children.map { it.toElement() }
                                         ).withEffects<DynalistLoadingState, AppEffect>()
                                     }
 
@@ -215,10 +222,20 @@ object Dynalist {
 
                             is DynalistLoadingState.Loaded -> {
                                 val oldLoadingState = state.loadingState
-                                oldLoadingState.copy(loadedAt = LocalDateTime.now())
-                                    .withEffects<DynalistLoadingState, AppEffect>()
+                                val newLoadingState = DynalistLoadingState.Loaded(
+                                    loadedAt = LocalDateTime.now(),
+                                    elements = action.docResult.let {
+                                        when (it) {
+                                            is Success -> it.success.children.map { it.toElement() }
+                                            is Failure -> listOf()
+                                        }
+                                    }
+                                )
+                                newLoadingState.withEffects<DynalistLoadingState, AppEffect>()
                                     .flatMapState {
                                         DynalistState.optLoadedState.set(state, it.newState)
+                                    }.also {
+                                        testLog("")
                                     }
                             }
                         }
@@ -237,16 +254,34 @@ object Dynalist {
         }
     }
 
-    private fun handleAction(action: DebugAction.ResetDay): Reduced<DynalistState, AppEffect> {
-        return DynalistState.INITIAL.withEffects()
+    private fun handleAction(action: DebugAction.ResetDay): Reduced<out DynalistState, out AppEffect> {
+        return chain(
+            DynalistState.INITIAL.withEffects<DynalistState, AppEffect>()
+        ) {
+            onStateLoaded(it)
+        }
     }
 
     private fun handleAction(action: StateLoadedAction): Reduced<DynalistState, AppEffect> {
-        return when (val state = action.state.dynalistState) {
-            is DynalistState.CreatingDoc -> state.withEffects(DynalistEffect.CreateDoc(state))
-            is DynalistState.DocCreated -> state.withEffects()
-            is DynalistState.DocsLoading -> state.withEffects(DynalistEffect.GetDocs(state))
-            is DynalistState.KeyNotSet -> state.withEffects()
+        return onStateLoaded(action.state.dynalistState)
+    }
+
+    private fun onStateLoaded(dynalistState: DynalistState): Reduced<DynalistState, AppEffect> {
+        return when (dynalistState) {
+            is DynalistState.CreatingDoc -> dynalistState.withEffects(
+                DynalistEffect.CreateDoc(
+                    dynalistState
+                )
+            )
+
+            is DynalistState.DocCreated -> dynalistState.withEffects()
+            is DynalistState.DocsLoading -> dynalistState.withEffects(
+                DynalistEffect.GetDocs(
+                    dynalistState
+                )
+            )
+
+            is DynalistState.KeyNotSet -> dynalistState.withEffects()
         }
     }
 

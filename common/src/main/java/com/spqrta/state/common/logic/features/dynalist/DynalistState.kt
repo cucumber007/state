@@ -24,7 +24,7 @@ sealed class DynalistState {
     @Serializable
     data class DocCreated(
         val key: String,
-        val docId: String,
+        val stateDocId: String,
         val loadingState: DynalistLoadingState,
     ) : DynalistState()
 

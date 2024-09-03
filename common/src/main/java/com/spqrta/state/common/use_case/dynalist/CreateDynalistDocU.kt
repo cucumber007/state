@@ -5,6 +5,7 @@ import com.spqrta.dynalist.model.CreateDocBody
 import com.spqrta.dynalist.model.CreateDocChange
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.DynalistAction
+import com.spqrta.state.common.logic.features.dynalist.DocCreatedResult
 import com.spqrta.state.common.util.asSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -16,7 +17,7 @@ class CreateDynalistDocU(
 ) {
     fun flow(apiKey: String, rootId: String): Flow<List<AppAction>> {
         return suspend {
-            dynalistApi.createDoc(
+            val result = dynalistApi.createDoc(
                 CreateDocBody(
                     token = apiKey,
                     change = CreateDocChange(
@@ -26,8 +27,23 @@ class CreateDynalistDocU(
                     )
                 )
             )
+            result.created!!.first()
         }.asFlow().map {
-            listOf(DynalistAction.DynalistDatabaseDocCreated(it.created!!.first().asSuccess()))
+            it to loadStateDoc(
+                apiKey = apiKey,
+                dynalistApi = dynalistApi,
+                rootId = rootId,
+                stateAppDatabaseDocId = it
+            )
+        }.map { (docId, stateAppDatabaseDoc) ->
+            listOf(
+                DynalistAction.DynalistDatabaseDocCreated(
+                    DocCreatedResult(
+                        docId = docId,
+                        doc = stateAppDatabaseDoc
+                    ).asSuccess()
+                )
+            )
         }
     }
 }

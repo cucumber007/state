@@ -16,3 +16,19 @@ fun <T> T.toFlow(): Flow<T> {
 fun Flow<Unit>.noActions(): Flow<List<AppAction>> {
     return this.map { listOf() }
 }
+
+fun <T, K> Flow<Res<T>>.mapSuccess(mapper: (T) -> K): Flow<Res<K>> {
+    return this.map {
+        it.mapSuccess {
+            mapper(it)
+        }
+    }
+}
+
+fun <T, K> Flow<Res<T>>.mapSuccessSuspend(mapper: suspend (T) -> K): Flow<Res<K>> {
+    return this.map {
+        it.mapSuccessSuspend {
+            mapper(it)
+        }
+    }
+}

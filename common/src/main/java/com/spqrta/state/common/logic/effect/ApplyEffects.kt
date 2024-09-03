@@ -88,7 +88,7 @@ fun applyEffects(
 private fun getFlow(effect: DynalistEffect, useCases: UseCases): Flow<List<AppAction>> {
     return when (effect) {
         is LoadDynalistEffect -> {
-            useCases.loadDynalistUC.flow(effect.dynalistState.key)
+            useCases.loadDynalistUC.flow(effect.apiKey, effect.docId)
         }
 
         is DynalistEffect.GetDocs -> {
