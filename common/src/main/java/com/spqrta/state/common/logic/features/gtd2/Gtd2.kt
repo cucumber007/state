@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.action.StatsAction
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
@@ -72,6 +73,15 @@ object Gtd2 {
 
             is DebugAction.ResetDay -> {
                 Gtd2State.INITIAL.withEffects()
+            }
+
+            is Gtd2Action.DynalistStateUpdated -> {
+                state.copy(taskTree = action.elements?.let {
+                    Queue(
+                        name = "Main",
+                        elements = it
+                    )
+                } ?: Gtd2State.INITIAL_TASK_TREE).withEffects()
             }
         }
     }

@@ -291,14 +291,9 @@ object Current {
                 } ?: state.withEffects()
             }
 
-            is Gtd2Action.ToggleTask -> {
-                onNewState(state)
-            }
-
-            is DebugAction.ResetDay -> {
-                onNewState(state)
-            }
-
+            is Gtd2Action.DynalistStateUpdated,
+            is Gtd2Action.ToggleTask,
+            is DebugAction.ResetDay,
             is StateLoadedAction -> {
                 onNewState(state)
             }

@@ -6,7 +6,9 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.DynalistAction
+import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.StateLoadedAction
+import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.DynalistEffect
@@ -27,12 +29,12 @@ import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.testLog
-import com.spqrta.state.common.util.time.toSeconds
+import com.spqrta.state.common.util.time.toMinutes
 import java.time.LocalDateTime
 
 object Dynalist {
     private const val API_KEY_URL = "https://dynalist.io/developer"
-    private val UPDATE_TIMEOUT = 1000.toSeconds()
+    private val UPDATE_TIMEOUT = 5.toMinutes()
 
     val reducer = widen(
         typeGet(),
@@ -80,6 +82,10 @@ object Dynalist {
                         }
                     }
 
+                    is DebugAction.UpdateDynalist -> {
+                        state.withEffects()
+                    }
+
                     is ClockAction.TickAction,
                     is DynalistAction.DynalistDatabaseDocCreated,
                     is DebugAction.ResetDay,
@@ -125,6 +131,10 @@ object Dynalist {
                         }
                     }
 
+                    is DebugAction.UpdateDynalist -> {
+                        state.withEffects()
+                    }
+
                     is DynalistAction.DynalistDatabaseDocCreated,
                     is DebugAction.ResetDay,
                     is DynalistAction.DynalistLoaded,
@@ -157,6 +167,10 @@ object Dynalist {
                                 ).withEffects()
                             }
                         }
+                    }
+
+                    is DebugAction.UpdateDynalist -> {
+                        state.withEffects()
                     }
 
                     is DynalistAction.DynalistDocsLoaded,
@@ -231,7 +245,14 @@ object Dynalist {
                                         }
                                     }
                                 )
-                                newLoadingState.withEffects<DynalistLoadingState, AppEffect>()
+                                newLoadingState.withEffects<DynalistLoadingState.Loaded, AppEffect>()
+                                    .flatMapEffects {
+                                        it.effects + ActionEffect(
+                                            Gtd2Action.DynalistStateUpdated(
+                                                it.newState.elements
+                                            )
+                                        )
+                                    }
                                     .flatMapState {
                                         DynalistState.optLoadedState.set(state, it.newState)
                                     }.also {
@@ -239,6 +260,15 @@ object Dynalist {
                                     }
                             }
                         }
+                    }
+
+                    is DebugAction.UpdateDynalist -> {
+                        state.withEffects(
+                            LoadDynalistEffect(
+                                state.key,
+                                state.stateDocId
+                            )
+                        )
                     }
 
                     is DynalistAction.DynalistDatabaseDocCreated,
@@ -268,20 +298,38 @@ object Dynalist {
 
     private fun onStateLoaded(dynalistState: DynalistState): Reduced<DynalistState, AppEffect> {
         return when (dynalistState) {
-            is DynalistState.CreatingDoc -> dynalistState.withEffects(
-                DynalistEffect.CreateDoc(
-                    dynalistState
+            is DynalistState.CreatingDoc -> {
+                dynalistState.withEffects(
+                    DynalistEffect.CreateDoc(
+                        dynalistState
+                    )
                 )
-            )
+            }
 
-            is DynalistState.DocCreated -> dynalistState.withEffects()
-            is DynalistState.DocsLoading -> dynalistState.withEffects(
-                DynalistEffect.GetDocs(
-                    dynalistState
+            is DynalistState.DocCreated -> {
+                dynalistState.withEffects(
+                    ActionEffect(
+                        Gtd2Action.DynalistStateUpdated(
+                            when (dynalistState.loadingState) {
+                                is DynalistLoadingState.Loaded -> dynalistState.loadingState.elements
+                                is DynalistLoadingState.Initial -> null
+                            }
+                        )
+                    )
                 )
-            )
+            }
 
-            is DynalistState.KeyNotSet -> dynalistState.withEffects()
+            is DynalistState.DocsLoading -> {
+                dynalistState.withEffects(
+                    DynalistEffect.GetDocs(
+                        dynalistState
+                    )
+                )
+            }
+
+            is DynalistState.KeyNotSet -> {
+                dynalistState.withEffects()
+            }
         }
     }
 

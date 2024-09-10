@@ -1,12 +1,9 @@
 package com.spqrta.state.common.logic.features.gtd2
 
-import com.spqrta.state.common.BuildConfig
 import com.spqrta.state.common.environments.tasks_database.DatabaseTask
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
-import com.spqrta.state.common.logic.features.gtd2.data.DebugQueue
-import com.spqrta.state.common.logic.features.gtd2.data.RoutineFlowQueue
 import com.spqrta.state.common.logic.features.gtd2.element.Element
-import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
@@ -23,14 +20,7 @@ data class Gtd2State(
     val stats: Gtd2Stats = Gtd2Stats.INITIAL
 ) {
     companion object {
-        private val INITIAL_TASK_TREE = Queue(
-            name = "Main",
-            elements = listOf(
-                RoutineFlowQueue.value,
-            ) + if (BuildConfig.DEBUG) {
-                listOf(DebugQueue.value)
-            } else listOf()
-        )
+        val INITIAL_TASK_TREE = Task("Stub")
 
         val INITIAL = Gtd2State(
             currentState = CurrentState.INITIAL,

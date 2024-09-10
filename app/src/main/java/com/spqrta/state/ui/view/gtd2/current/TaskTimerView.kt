@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,15 +19,20 @@ import java.time.LocalTime
 @Composable
 fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
     val timeHeight = 36.dp
-    Column {
-        Row(
-            Modifier.height(timeHeight)
-        ) {
-            CountupView(
-                passedTime = activeTask.passedTime,
-                totalTime = activeTask.task.estimate!!
-            )
+    val estimate = activeTask.task.estimate
+    if(estimate != null) {
+        Column {
+            Row(
+                Modifier.height(timeHeight)
+            ) {
+                CountupView(
+                    passedTime = activeTask.passedTime,
+                    totalTime = estimate
+                )
+            }
         }
+    } else {
+        Text("No estimate")
     }
 }
 

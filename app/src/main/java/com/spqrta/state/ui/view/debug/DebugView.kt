@@ -2,6 +2,7 @@ package com.spqrta.state.ui.view.debug
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
@@ -27,6 +28,10 @@ fun DebugView(appState: AppReady) {
         ImageActionButton(
             imageVector = Icons.Default.Notifications,
             action = DebugAction.SendTestNotification,
+        )
+        ImageActionButton(
+            imageVector = Icons.Default.Done,
+            action = DebugAction.UpdateDynalist
         )
     }
 }
