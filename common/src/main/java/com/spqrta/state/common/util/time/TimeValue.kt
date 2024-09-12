@@ -45,3 +45,4 @@ class PositiveSeconds(seconds: Long) : Seconds(abs(seconds)) {
 fun Long.toSeconds() = Seconds(this)
 fun Int.toSeconds() = Seconds(this)
 fun Int.toMinutes() = Seconds(this * 60)
+fun Int.toDays() = Seconds(this * 24 * 60 * 60)

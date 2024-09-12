@@ -35,8 +35,9 @@ sealed class DynalistState {
             (state as? DocCreated)?.copy(loadingState = loadingState) ?: state
         }).asOpticOptional()
 
-        val INITIAL = DocsLoading(
-            "Stq27PzrRWqpu1zMPC4NG-bAbNbvgrKa-JHPF5LjKqEGv-o-vYVThopjX5HKAMcWjvPBvH-W-bA_TrpQipuIAPjkYveMf-91DInFmJ4OAG9Y0Ar7JL0HCtzrpS374NUO"
-        )
+        val INITIAL = KeyNotSet
+//        val INITIAL = DocsLoading(
+//            "Stq27PzrRWqpu1zMPC4NG-bAbNbvgrKa-JHPF5LjKqEGv-o-vYVThopjX5HKAMcWjvPBvH-W-bA_TrpQipuIAPjkYveMf-91DInFmJ4OAG9Y0Ar7JL0HCtzrpS374NUO"
+//        )
     }
 }

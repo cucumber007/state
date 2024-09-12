@@ -29,12 +29,13 @@ import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.testLog
+import com.spqrta.state.common.util.time.toDays
 import com.spqrta.state.common.util.time.toMinutes
 import java.time.LocalDateTime
 
 object Dynalist {
     private const val API_KEY_URL = "https://dynalist.io/developer"
-    private val UPDATE_TIMEOUT = 5.toMinutes()
+    private val UPDATE_TIMEOUT = 1.toDays()
 
     val reducer = widen(
         typeGet(),
