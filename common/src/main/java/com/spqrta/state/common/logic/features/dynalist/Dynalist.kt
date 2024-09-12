@@ -342,8 +342,13 @@ object Dynalist {
         } else {
             Task(
                 name = this.title,
+                estimate = this.note.parseEstimate()?.toMinutes()
             )
         }
+    }
+
+    private fun String?.parseEstimate(): Int? {
+        return this?.toIntOrNull()
     }
 
 }

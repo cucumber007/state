@@ -2,7 +2,8 @@ package com.spqrta.dynalist.model
 
 data class DynalistNode(
     val children: List<DynalistNode>,
-    val title: String
+    val note: String?,
+    val title: String,
 ) {
     companion object {
         fun create(
@@ -15,7 +16,8 @@ data class DynalistNode(
                         create(doc, it)
                     }
                 } ?: listOf(),
-                title = dynalistNodeRemote.content
+                note = dynalistNodeRemote.note,
+                title = dynalistNodeRemote.content,
             )
         }
     }
