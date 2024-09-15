@@ -1,6 +1,5 @@
 package com.spqrta.dynalyst.utility
 
-//todo to reusables
 class Consumable<T>(
     val payload: T,
     private var _consumed: Boolean = false

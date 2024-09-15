@@ -1,6 +1,5 @@
 package com.spqrta.state.common.logic.features.dynalist
 
-import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.state.common.logic.AppState
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
@@ -13,9 +12,6 @@ import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.DynalistEffect
 import com.spqrta.state.common.logic.effect.LoadDynalistEffect
-import com.spqrta.state.common.logic.features.gtd2.element.Element
-import com.spqrta.state.common.logic.features.gtd2.element.Queue
-import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.Failure
@@ -28,9 +24,7 @@ import com.spqrta.state.common.util.state_machine.chain
 import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
-import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toDays
-import com.spqrta.state.common.util.time.toMinutes
 import java.time.LocalDateTime
 
 object Dynalist {
@@ -112,7 +106,7 @@ object Dynalist {
                                         stateDocId = stateDocId,
                                         loadingState = DynalistLoadingState.Loaded(
                                             loadedAt = LocalDateTime.now(),
-                                            elements = stateDoc.children.map { it.toElement() }
+                                            nodes = stateDoc.children
                                         )
                                     ).withEffects()
                                 } else {
@@ -163,7 +157,7 @@ object Dynalist {
                                     stateDocId = action.docResult.success.docId,
                                     loadingState = DynalistLoadingState.Loaded(
                                         loadedAt = LocalDateTime.now(),
-                                        elements = action.docResult.success.doc.children.map { it.toElement() }
+                                        nodes = action.docResult.success.doc.children
                                     )
                                 ).withEffects()
                             }
@@ -220,14 +214,14 @@ object Dynalist {
                                     is Success -> {
                                         DynalistLoadingState.Loaded(
                                             loadedAt = LocalDateTime.now(),
-                                            elements = action.docResult.success.children.map { it.toElement() }
+                                            nodes = action.docResult.success.children
                                         ).withEffects<DynalistLoadingState, AppEffect>()
                                     }
 
                                     is Failure -> {
                                         DynalistLoadingState.Loaded(
                                             loadedAt = LocalDateTime.now(),
-                                            elements = emptyList()
+                                            nodes = emptyList()
                                         ).withEffects()
                                     }
                                 }.flatMapState {
@@ -239,26 +233,22 @@ object Dynalist {
                                 val oldLoadingState = state.loadingState
                                 val newLoadingState = DynalistLoadingState.Loaded(
                                     loadedAt = LocalDateTime.now(),
-                                    elements = action.docResult.let {
+                                    nodes = action.docResult.let {
                                         when (it) {
-                                            is Success -> it.success.children.map { it.toElement() }
+                                            is Success -> it.success.children
                                             is Failure -> listOf()
                                         }
                                     }
                                 )
-                                newLoadingState.withEffects<DynalistLoadingState.Loaded, AppEffect>()
-                                    .flatMapEffects {
-                                        it.effects + ActionEffect(
-                                            Gtd2Action.DynalistStateUpdated(
-                                                it.newState.elements
-                                            )
-                                        )
-                                    }
-                                    .flatMapState {
-                                        DynalistState.optLoadedState.set(state, it.newState)
-                                    }.also {
-                                        testLog("")
-                                    }
+                                val newDynalistState = DynalistState.optLoadedState.set(
+                                    state,
+                                    newLoadingState
+                                )
+                                newDynalistState.withEffects(
+                                    ActionEffect(
+                                        Gtd2Action.DynalistStateUpdated(newDynalistState)
+                                    )
+                                )
                             }
                         }
                     }
@@ -310,12 +300,7 @@ object Dynalist {
             is DynalistState.DocCreated -> {
                 dynalistState.withEffects(
                     ActionEffect(
-                        Gtd2Action.DynalistStateUpdated(
-                            when (dynalistState.loadingState) {
-                                is DynalistLoadingState.Loaded -> dynalistState.loadingState.elements
-                                is DynalistLoadingState.Initial -> null
-                            }
-                        )
+                        Gtd2Action.DynalistStateUpdated(dynalistState)
                     )
                 )
             }
@@ -332,24 +317,6 @@ object Dynalist {
                 dynalistState.withEffects()
             }
         }
-    }
-
-    private fun DynalistNode.toElement(): Element {
-        return if (this.children.isNotEmpty()) {
-            Queue(
-                name = this.title,
-                elements = this.children.map { it.toElement() }
-            )
-        } else {
-            Task(
-                name = this.title,
-                estimate = this.note.parseEstimate()?.toMinutes()
-            )
-        }
-    }
-
-    private fun String?.parseEstimate(): Int? {
-        return this?.toIntOrNull()
     }
 
 }

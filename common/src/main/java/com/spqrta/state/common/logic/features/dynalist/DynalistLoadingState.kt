@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.features.dynalist
 
-import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.state.common.util.serialization.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
@@ -14,6 +14,6 @@ sealed class DynalistLoadingState {
     data class Loaded(
         @Serializable(with = LocalDateTimeSerializer::class)
         val loadedAt: LocalDateTime,
-        val elements: List<Element>,
+        val nodes: List<DynalistNode>,
     ) : DynalistLoadingState()
 }

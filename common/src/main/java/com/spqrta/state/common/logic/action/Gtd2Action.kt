@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.action
 
-import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 
 
@@ -9,7 +9,13 @@ sealed interface Gtd2Action : AppAction {
         override fun toString(): String = javaClass.simpleName
     }
 
-    data class ToggleTask(val task: Task) : Action(), CurrentAction
+    data class DynalistStateUpdated(val dynalistState: DynalistState) : Action()
 
-    data class DynalistStateUpdated(val elements: List<Element>?) : Action(), CurrentAction
+    // not in View action because used in TaskView on multiple screens
+    data class OnTaskClick(val task: Task) : Action()
+
+    // not in View action because used in TaskView on multiple screens
+    data class OnTaskLongClick(val task: Task) : Action()
+    data class ToggleTask(val task: Task) : Action()
+
 }

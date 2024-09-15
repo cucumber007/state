@@ -43,6 +43,7 @@ object AppReadyOptics {
         )
 
     }).asOptic()
+
     val optGtd2State: OpticOptional<AppReady, Gtd2State> =
         ({ state: AppReady ->
             state.gtd2State
@@ -51,7 +52,6 @@ object AppReadyOptics {
                 gtd2State = subState
             )
         }).asOptic()
-
 
     val optTimers = object : OpticOptional<AppReady, Map<TimerId, Timer>> {
         override fun get(state: AppReady): Map<TimerId, Timer> {
@@ -62,6 +62,7 @@ object AppReadyOptics {
             return state.copy(timers = Timers(subState))
         }
     }
+
     val optStats = object : OpticOptional<AppReady, StatsState> {
         override fun get(state: AppReady): StatsState {
             return state.statsState
@@ -71,6 +72,7 @@ object AppReadyOptics {
             return state.copy(statsState = subState)
         }
     }
+
     val optClockMode = object : OpticOptional<AppReady, ClockMode> {
         override fun get(state: AppReady): ClockMode {
             return state.clockMode
@@ -105,7 +107,6 @@ object AppReadyOptics {
 
     private val optPromptsEnabled = optDailyState withGet { state: DailyState ->
         when (val persona = state.persona) {
-//            is Productive -> persona.promptsEnabled
             is Productive -> null
             Depressed,
             Irritated,

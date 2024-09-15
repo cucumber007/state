@@ -8,6 +8,6 @@ import com.spqrta.state.ui.view.gtd2.element.ElementView
 @Composable
 fun Gtd2View(state: Gtd2State) {
     Column {
-        ElementView(state.taskTree)
+        ElementView(state.tasksState)
     }
 }

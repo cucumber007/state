@@ -16,8 +16,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-//        def dynalistApiKey = properties.getProperty('dynalistApiKey')
-//        buildConfigField "String", "DYNALIST_API_KEY", "\"$dynalistApiKey\""
     }
     buildTypes {
         release {

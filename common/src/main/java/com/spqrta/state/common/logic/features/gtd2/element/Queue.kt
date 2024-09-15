@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Queue(
     override val name: String,
-    val elements: List<Element>,
+    val elements: List<Element> = listOf(),
     override val displayName: String = "$name Queue",
     override val active: Boolean = elements.isNotEmpty(),
 ) : Element {

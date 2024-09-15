@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
+import com.spqrta.state.common.logic.features.gtd2.logic.toElement
 import com.spqrta.state.ui.theme.FontSize
 import com.spqrta.state.ui.view.common.controls.TextActionButton
 import com.spqrta.state.ui.view.gtd2.element.ElementView
@@ -64,8 +65,8 @@ fun DynalistView(state: DynalistState) {
                     }
 
                     is DynalistLoadingState.Loaded -> {
-                        loadingState.elements.forEach {
-                            ElementView(element = it)
+                        loadingState.nodes.forEach {
+                            ElementView(element = it.toElement())
                         }
                     }
                 }

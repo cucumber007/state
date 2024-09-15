@@ -1,5 +1,8 @@
 package com.spqrta.dynalist.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DynalistNode(
     val children: List<DynalistNode>,
     val note: String?,

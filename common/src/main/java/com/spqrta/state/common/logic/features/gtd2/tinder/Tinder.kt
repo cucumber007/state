@@ -1,50 +1,68 @@
 package com.spqrta.state.common.logic.features.gtd2.tinder
 
-import android.util.Log
 import com.spqrta.state.common.environments.tasks_database.DatabaseTask
-import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.action.TinderAction
 import com.spqrta.state.common.logic.effect.AppEffect
-import com.spqrta.state.common.logic.features.gtd2.Gtd2
+import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
-import com.spqrta.state.common.logic.features.gtd2.element.Routine
-import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.TasksState
+import com.spqrta.state.common.logic.features.gtd2.TinderTuple
+import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
+import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
+import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
+import com.spqrta.state.common.logic.features.gtd2.logic.mapToTasksState
+import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
+import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
+import com.spqrta.state.common.util.optics.asOpticSet
 import com.spqrta.state.common.util.optics.plus
+import com.spqrta.state.common.util.optics.times
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
+import com.spqrta.state.common.util.state_machine.set
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
+import com.spqrta.state.common.util.tuple.Tuple4
 
 object Tinder {
 
+    private val optDynalistState = AppStateOptics.optReady + AppReadyOptics.optDynalistState
+    private val optGtd2State = AppStateOptics.optReady + AppReadyOptics.optGtd2State
+    private val optOnTasksDatabase =
+        { state: Gtd2State, subState: Tuple4<TasksState, CurrentState, Gtd2Stats, TinderTuple> ->
+            val (tasksState, currentState, stats, tinderTuple) = subState
+            val (tinderState, tasksDatabase) = tinderTuple
+            state.copy(
+                tasksState = tasksState,
+                currentState = currentState,
+                stats = stats,
+                tinderState = tinderState,
+                tasksDatabase = tasksDatabase
+            )
+        }.asOpticSet()
+    
     val reducer by lazy {
         widen(
             typeGet(),
-            AppStateOptics.optReady + AppReadyOptics.optGtd2State,
+            optGtd2State * optDynalistState,
+            optGtd2State,
             ::reduce
         )
     }
 
     private fun reduce(
         action: TinderAction,
-        state: Gtd2State,
+        state: Pair<Gtd2State, DynalistState>,
     ): Reduced<out Gtd2State, out AppEffect> {
+        val (gtd2State, dynalistState) = state
         return when (action) {
-            // todo use Gtd2Action to update Tinder state?
-            is Gtd2ViewAction.OnTaskClick,
-            is Gtd2ViewAction.OnTaskLongClick -> Gtd2.reduceView(action as Gtd2ViewAction, state)
-
             is TinderAction.OnEstimated -> {
-                state.copy(
-                    taskTree = state.taskTree.withElement(action.element.name) {
-                        it.withEstimate(action.element.name, action.estimate)
-                    },
-                    tasksDatabase = (state.tasksDatabase.get(action.element.name) ?: DatabaseTask(
+                val newTasksDatabaseState =
+                    (gtd2State.tasksDatabase[action.element.name] ?: DatabaseTask(
                         action.element.name
                     )).let {
-                        state.tasksDatabase.toMutableMap()
+                        gtd2State.tasksDatabase.toMutableMap()
                             .also { map ->
                                 map.put(
                                     action.element.name,
@@ -52,39 +70,36 @@ object Tinder {
                                 )
                             }
                     }
-                ).also {
-                    Log.d("Tinder", "OnEstimated: $it")
-                }.withEffects()
+                updateTasksDatabase(state, newTasksDatabaseState)
             }
 
             is TinderAction.OnSkipped -> {
-                state.copy(
-                    tinderState = state.tinderState.copy(
-                        skipped = state.tinderState.skipped + action.prompt
+                Gtd2State.optTinder.set(
+                    gtd2State,
+                    gtd2State.tinderState.copy(
+                        skipped = gtd2State.tinderState.skipped + action.prompt
                     )
                 ).withEffects()
             }
-
-            else -> throw IllegalStateException("Unexpected action: $action")
-        }.flatMapState {
-            it.newState.copy(
-                tinderState = getTinderState(it.newState)
-            )
         }
     }
 
-    fun getTinderState(state: Gtd2State): TinderState {
-        val prompts = mutableListOf<TinderPrompt>()
-        prompts.addAll(state.taskTree.nonEstimated().map {
-            when (it) {
-                is Task -> TinderPrompt.NonEstimatedTask(it)
-                is Routine -> TinderPrompt.NonEstimatedRoutine(it)
-                else -> throw IllegalStateException("Unexpected element type")
-            }
-        }.filter {
-            !state.tinderState.skipped.contains(it)
-        })
-        return TinderState(prompts)
+    private fun updateTasksDatabase(
+        state: Pair<Gtd2State, DynalistState>,
+        newTasksDatabaseState: Map<String, DatabaseTask>
+    ): Reduced<out Gtd2State, out AppEffect> {
+        val (gtd2State, dynalistState) = state
+        return set(optOnTasksDatabase, gtd2State) {
+            val newTasksState = mapToTasksState(dynalistState, newTasksDatabaseState)
+            val currentState =
+                mapToCurrentState(gtd2State.currentState, newTasksState, newTasksDatabaseState)
+            val stats = mapToStats(newTasksState, newTasksDatabaseState)
+            val tinderTuple = mapToTinderState(
+                (gtd2State.tinderState to newTasksDatabaseState),
+                newTasksState
+            ) to newTasksDatabaseState
+            Tuple4(newTasksState, currentState, stats, tinderTuple)
+        }.withEffects()
     }
 
 }

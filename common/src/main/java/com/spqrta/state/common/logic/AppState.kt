@@ -47,7 +47,7 @@ data class AppReady(
     val clockMode: ClockMode = ClockMode.INITIAL,
     val dynalistState: DynalistState = DynalistState.INITIAL,
     val frameState: FrameState = FrameState.INITIAL,
-    val gtd2State: Gtd2State = Gtd2State.INITIAL,
+    val gtd2State: Gtd2State = Gtd2State.initial(),
     val globalState: AppGlobalState = AppGlobalState(),
     val resetStateEnabled: Boolean = false,
     val showDebugMenu: Boolean = false,
