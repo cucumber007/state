@@ -41,7 +41,7 @@ object Tinder {
                 tasksDatabase = tasksDatabase
             )
         }.asOpticSet()
-    
+
     val reducer by lazy {
         widen(
             typeGet(),
@@ -79,6 +79,13 @@ object Tinder {
                     gtd2State.tinderState.copy(
                         skipped = gtd2State.tinderState.skipped + action.prompt
                     )
+                ).withEffects()
+            }
+
+            is TinderAction.OnMetaState -> {
+                Gtd2State.optMeta.set(
+                    gtd2State,
+                    gtd2State.metaState.set(action.property, action.value)
                 ).withEffects()
             }
         }

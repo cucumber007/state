@@ -10,6 +10,7 @@ import com.spqrta.state.common.logic.features.alarms.Alarms
 import com.spqrta.state.common.logic.features.dynalist.Dynalist
 import com.spqrta.state.common.logic.features.gtd2.Gtd2
 import com.spqrta.state.common.logic.features.gtd2.current.Current
+import com.spqrta.state.common.logic.features.gtd2.meta.Meta
 import com.spqrta.state.common.logic.features.gtd2.tinder.Tinder
 import com.spqrta.state.common.logic.features.stats.Stats
 import com.spqrta.state.common.logic.optics.AppReadyOptics
@@ -41,6 +42,7 @@ object Frame {
                 FrameState.TabGtd2 -> Gtd2.viewReducer(action, state)
                 FrameState.TabStats -> Stats.reducer(action, state)
                 FrameState.TabTinder -> Tinder.reducer(action, state)
+                FrameState.TabMeta -> Meta.reducer(action, state)
             }
         }
     }

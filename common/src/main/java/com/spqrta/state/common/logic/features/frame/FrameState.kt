@@ -24,7 +24,10 @@ sealed class FrameState {
     @Serializable
     object TabCurrent : FrameState()
 
+    @Serializable
+    object TabMeta : FrameState()
+
     companion object {
-        val INITIAL = TabCurrent
+        val INITIAL = TabMeta
     }
 }

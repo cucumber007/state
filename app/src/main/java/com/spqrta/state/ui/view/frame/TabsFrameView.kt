@@ -26,6 +26,7 @@ import com.spqrta.state.ui.view.common.controls.ImageActionButton
 import com.spqrta.state.ui.view.dynalist.DynalistView
 import com.spqrta.state.ui.view.gtd2.Gtd2View
 import com.spqrta.state.ui.view.gtd2.current.CurrentView
+import com.spqrta.state.ui.view.gtd2.meta.MetaView
 import com.spqrta.state.ui.view.gtd2.stats.StatsView
 import com.spqrta.state.ui.view.gtd2.tinder.TinderView
 
@@ -46,6 +47,7 @@ fun TabsFrameView(appState: AppReady) {
                 FrameState.TabDynalist -> DynalistView(appState.dynalistState)
                 FrameState.TabTinder -> TinderView(appState.gtd2State.tinderState)
                 FrameState.TabCurrent -> CurrentView(appState.gtd2State)
+                FrameState.TabMeta -> MetaView(appState.gtd2State)
             }
         }
         Tabs(
@@ -56,6 +58,7 @@ fun TabsFrameView(appState: AppReady) {
 //                FrameState.TabAlarms to Icons.Default.Notifications,
                 FrameState.TabDynalist to Icons.Default.Home,
                 FrameState.TabTinder to Icons.Default.ArrowForward,
+                FrameState.TabMeta to Icons.Default.Info,
             ).map {
                 TabItem(
                     image = it.second,

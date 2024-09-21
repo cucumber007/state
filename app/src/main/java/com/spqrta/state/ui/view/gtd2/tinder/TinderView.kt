@@ -9,6 +9,4 @@ fun TinderView(state: TinderState) {
     state.prompts.firstOrNull()?.let {
         TinderPromptView(it)
     } ?: Text("All is done")
-
-
 }

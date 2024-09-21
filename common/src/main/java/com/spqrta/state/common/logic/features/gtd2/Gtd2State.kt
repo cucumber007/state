@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.util.optics.asOptic
@@ -58,12 +59,15 @@ data class Gtd2State(
                 state.copy(tinderState = subState)
             }).asOptic()
 
+        val optMeta =
+            ({ state: Gtd2State -> state.metaState } to { state: Gtd2State, subState: MetaState ->
+                state.copy(metaState = subState)
+            }).asOptic()
+
         private val INITIAL_TASK_TREE = Task("Stub")
         private val INITIAL = Gtd2State(
             currentState = CurrentState.INITIAL,
-            metaState = MetaState(
-                workdayStarted = false,
-            ),
+            metaState = MetaState.INITIAL,
             tasksState = INITIAL_TASK_TREE,
             tasksDatabase = mapOf(),
             tinderState = TinderState.INITIAL,
