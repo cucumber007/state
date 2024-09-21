@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DynalistNode(
-    val children: List<DynalistNode>,
-    val note: String?,
     val title: String,
+    val children: List<DynalistNode> = listOf(),
+    val note: String? = null,
 ) {
     companion object {
         fun create(

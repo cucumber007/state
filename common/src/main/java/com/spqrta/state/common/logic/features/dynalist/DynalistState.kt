@@ -30,7 +30,31 @@ sealed class DynalistState {
     ) : DynalistState()
 
     companion object {
-        val optLoadedState = ({ state: DynalistState ->
+        val optCreatingDoc = ({ state: DynalistState ->
+            state as? CreatingDoc
+        } to { _: DynalistState, subState: DynalistState ->
+            subState
+        }).asOpticOptional()
+
+        val optDocCreated = ({ state: DynalistState ->
+            state as? DocCreated
+        } to { _: DynalistState, subState: DynalistState ->
+            subState
+        }).asOpticOptional()
+
+        val optDocsLoading = ({ state: DynalistState ->
+            state as? DocsLoading
+        } to { _: DynalistState, subState: DynalistState ->
+            subState
+        }).asOpticOptional()
+
+        val optKeyNotSet = ({ state: DynalistState ->
+            state as? KeyNotSet
+        } to { _: DynalistState, subState: DynalistState ->
+            subState
+        }).asOpticOptional()
+
+        val optLoaded = ({ state: DynalistState ->
             (state as? DocCreated)?.loadingState
         } to { state: DynalistState, loadingState: DynalistLoadingState ->
             (state as? DocCreated)?.copy(loadingState = loadingState) ?: state

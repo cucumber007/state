@@ -15,6 +15,8 @@ fun mapToCurrentState(
     tasksState: TasksState,
     tasksDatabaseState: TasksDatabaseState
 ): CurrentState {
+
+
     return when (val activeElement = oldCurrentState.activeElement) {
         is ActiveElement.ActiveQueue -> {
             mapToCurrentStateActiveQueue(
@@ -36,13 +38,15 @@ fun mapToCurrentState(
 private fun mapToCurrentStateActiveQueue(
     oldCurrentState: CurrentState,
     tasksState: TasksState,
-    activeElement: ActiveElement.ActiveQueue,
+    oldActiveElement: ActiveElement.ActiveQueue,
 ): CurrentState {
     val optActiveElement = CurrentState.optActiveElement
-    val activeTask = activeElement.activeTask
+    val activeTask = oldActiveElement.activeTask
 
-    val newActiveQueue = tasksState.getElement(activeElement.queue.name) as Queue
-    var newActiveElement = activeElement.copy(
+    // todo check if active element still exists
+
+    val newActiveQueue = tasksState.getElement(oldActiveElement.queue.name) as Queue
+    var newActiveElement = oldActiveElement.copy(
         queue = newActiveQueue,
         activeTask = null
     )

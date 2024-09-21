@@ -25,6 +25,6 @@ sealed class FrameState {
     object TabCurrent : FrameState()
 
     companion object {
-        val INITIAL = TabStats
+        val INITIAL = TabCurrent
     }
 }

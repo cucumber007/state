@@ -22,7 +22,6 @@ import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toMinutes
 import com.spqrta.state.ui.theme.FontSize
 import com.spqrta.state.ui.theme.StateIcons
@@ -55,7 +54,6 @@ fun ActiveTaskView(activeTask: TimeredTask) {
             is TimeredState.Paused -> true
             is TimeredState.Running -> false
         }
-        testLog("paused $paused")
         TaskTimerView(
             activeTask = activeTaskState.value,
             paused = paused

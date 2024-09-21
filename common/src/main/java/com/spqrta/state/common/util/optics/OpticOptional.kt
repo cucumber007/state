@@ -10,3 +10,5 @@ fun <S : Any, SubState : Any> S.copyWithOptic(
         optic.set(this, update(it))
     } ?: this
 }
+
+fun <A : Any, B : Any> OpticOptional<A, B>.toGet(): OpticGet<A, B> = this as OpticGet<A, B>

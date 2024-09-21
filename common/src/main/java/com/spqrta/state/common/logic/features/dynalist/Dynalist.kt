@@ -16,14 +16,15 @@ import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.Failure
 import com.spqrta.state.common.util.Success
+import com.spqrta.state.common.util.optics.identityOptional
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.chain
-import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
+import com.spqrta.state.common.util.state_machine.withOptic
 import com.spqrta.state.common.util.time.toDays
 import java.time.LocalDateTime
 
@@ -45,232 +46,222 @@ object Dynalist {
         action: DynalistAction,
         state: DynalistState
     ): Reduced<out DynalistState, out AppEffect> {
-        return when {
-            action is DebugAction.ResetDay -> handleAction(action)
-            action is ClockAction.TickAction && state !is DynalistState.DocCreated -> state.withEffects()
-            action is StateLoadedAction -> handleAction(action)
-            else -> reduceRest(action, state)
-        }
-    }
-
-    private fun reduceRest(
-        action: DynalistAction,
-        state: DynalistState
-    ): Reduced<out DynalistState, out AppEffect> {
-        // sorting states by order
-        return when (state) {
-            is DynalistState.KeyNotSet -> {
-                // sorting actions by importance
-                when (action) {
-                    is DynalistAction.OpenGetApiKeyPage -> {
-                        state.withEffects(AppEffectNew.OpenUrl(API_KEY_URL))
-                    }
-
-                    is DynalistAction.SetApiKey -> {
-                        if (action.key.isNotEmpty()) {
-                            val newState = DynalistState.DocsLoading(key = action.key)
-                            newState.withEffects(
-                                DynalistEffect.GetDocs(newState)
+        return when (action) {
+            is ClockAction.TickAction -> {
+                withOptic(
+                    action,
+                    state,
+                    DynalistState.optDocCreated,
+                    identityOptional(),
+                ) { docCreated: DynalistState.DocCreated ->
+                    when (val loadingState = docCreated.loadingState) {
+                        is DynalistLoadingState.Initial -> {
+                            docCreated.withEffects(
+                                LoadDynalistEffect(
+                                    docCreated.key,
+                                    docCreated.stateDocId
+                                )
                             )
-                        } else {
-                            state.withEffects()
                         }
-                    }
 
-                    is DebugAction.UpdateDynalist -> {
-                        state.withEffects()
-                    }
-
-                    is ClockAction.TickAction,
-                    is DynalistAction.DynalistDatabaseDocCreated,
-                    is DebugAction.ResetDay,
-                    is DynalistAction.DynalistDocsLoaded,
-                    is DynalistAction.DynalistLoaded,
-                    is StateLoadedAction -> {
-                        illegalAction(action, state)
+                        is DynalistLoadingState.Loaded -> {
+                            if (loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
+                                    .isBefore(LocalDateTime.now())
+                            ) {
+                                docCreated.loadingState.withEffects(
+                                    LoadDynalistEffect(
+                                        docCreated.key,
+                                        docCreated.stateDocId
+                                    ) as AppEffect
+                                )
+                            } else {
+                                docCreated.loadingState.withEffects()
+                            }.flatMapState {
+                                DynalistState.optLoaded.set(docCreated, it.newState)
+                            }
+                        }
                     }
                 }
             }
 
-            is DynalistState.DocsLoading -> {
-                // sorting actions by importance
-                when (action) {
-                    is DynalistAction.DynalistDocsLoaded -> {
-                        when (action.docIdResult) {
-                            is Success -> {
-                                val result = action.docIdResult.success
-                                if (result.stateAppDatabaseDocData != null) {
-                                    val (stateDocId, stateDoc) = result.stateAppDatabaseDocData
-                                    DynalistState.DocCreated(
-                                        key = state.key,
-                                        stateDocId = stateDocId,
-                                        loadingState = DynalistLoadingState.Loaded(
-                                            loadedAt = LocalDateTime.now(),
-                                            nodes = stateDoc.children
-                                        )
-                                    ).withEffects()
-                                } else {
-                                    val newState = DynalistState.CreatingDoc(
-                                        key = state.key,
-                                        rootId = action.docIdResult.success.rootId
-                                    )
-                                    newState.withEffects(
-                                        DynalistEffect.CreateDoc(newState)
-                                    )
-                                }
-                            }
+            is DebugAction.ResetDay -> {
+                handleAction(action)
+            }
 
-                            is Failure -> {
-                                state.withEffects()
-                            }
+            is DebugAction.UpdateDynalist -> {
+                withOptic(
+                    action,
+                    state,
+                    DynalistState.optDocCreated,
+                    identityOptional(),
+                    failIfNotApplicable = { true }
+                ) { docCreated ->
+                    docCreated.withEffects(
+                        LoadDynalistEffect(
+                            docCreated.key,
+                            docCreated.stateDocId
+                        )
+                    )
+                }
+            }
+
+            is DynalistAction.DynalistDatabaseDocCreated -> {
+                withOptic(
+                    action as DynalistAction,
+                    state,
+                    DynalistState.optCreatingDoc,
+                    identityOptional(),
+                    failIfNotApplicable = { true }
+                ) { creatingDoc ->
+                    when (action.docResult) {
+                        is Failure -> {
+                            creatingDoc.withEffects()
                         }
-                    }
 
-                    is DebugAction.UpdateDynalist -> {
-                        state.withEffects()
-                    }
-
-                    is DynalistAction.DynalistDatabaseDocCreated,
-                    is DebugAction.ResetDay,
-                    is DynalistAction.DynalistLoaded,
-                    is DynalistAction.OpenGetApiKeyPage,
-                    is DynalistAction.SetApiKey,
-                    is ClockAction.TickAction,
-                    is StateLoadedAction -> {
-                        illegalAction(action, state)
+                        is Success -> {
+                            DynalistState.DocCreated(
+                                key = creatingDoc.key,
+                                stateDocId = action.docResult.success.docId,
+                                loadingState = DynalistLoadingState.Loaded(
+                                    loadedAt = LocalDateTime.now(),
+                                    nodes = action.docResult.success.doc.children
+                                )
+                            ).withEffects()
+                        }
                     }
                 }
             }
 
-            is DynalistState.CreatingDoc -> {
-                // sorting actions by importance
-                when (action) {
-                    is DynalistAction.DynalistDatabaseDocCreated -> {
-                        when (action.docResult) {
-                            is Failure -> {
-                                state.withEffects()
-                            }
-
-                            is Success -> {
-                                DynalistState.DocCreated(
-                                    key = state.key,
-                                    stateDocId = action.docResult.success.docId,
+            is DynalistAction.DynalistDocsLoaded -> {
+                withOptic(
+                    action as DynalistAction,
+                    state,
+                    DynalistState.optDocsLoading,
+                    identityOptional(),
+                    failIfNotApplicable = { true }
+                ) { docsLoading ->
+                    when (action.docsResult) {
+                        is Success -> {
+                            val result = action.docsResult.success
+                            if (result.stateAppDatabaseDocData != null) {
+                                val (stateDocId, stateDoc) = result.stateAppDatabaseDocData
+                                val newState = DynalistState.DocCreated(
+                                    key = docsLoading.key,
+                                    stateDocId = stateDocId,
                                     loadingState = DynalistLoadingState.Loaded(
                                         loadedAt = LocalDateTime.now(),
-                                        nodes = action.docResult.success.doc.children
+                                        nodes = stateDoc.children
                                     )
-                                ).withEffects()
+                                )
+                                newState.withEffects(
+                                    ActionEffect(
+                                        Gtd2Action.DynalistStateUpdated(newState)
+                                    )
+                                )
+                            } else {
+                                val newState = DynalistState.CreatingDoc(
+                                    key = docsLoading.key,
+                                    rootId = action.docsResult.success.rootId
+                                )
+                                newState.withEffects(
+                                    DynalistEffect.CreateDoc(newState)
+                                )
                             }
                         }
-                    }
 
-                    is DebugAction.UpdateDynalist -> {
-                        state.withEffects()
-                    }
-
-                    is DynalistAction.DynalistDocsLoaded,
-                    is DynalistAction.DynalistLoaded,
-                    is DynalistAction.OpenGetApiKeyPage,
-                    is DynalistAction.SetApiKey,
-                    is DebugAction.ResetDay,
-                    is ClockAction.TickAction,
-                    is StateLoadedAction -> {
-                        illegalAction(action, state)
+                        is Failure -> {
+                            docsLoading.withEffects()
+                        }
                     }
                 }
             }
 
-            is DynalistState.DocCreated -> {
-                when (action) {
-                    is ClockAction.TickAction -> {
-                        when (val loadingState = state.loadingState) {
-                            is DynalistLoadingState.Initial -> {
-                                state.withEffects(LoadDynalistEffect(state.key, state.stateDocId))
-                            }
-
-                            is DynalistLoadingState.Loaded -> {
-                                if (loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
-                                        .isBefore(LocalDateTime.now())
-                                ) {
-                                    state.loadingState.withEffects(
-                                        LoadDynalistEffect(
-                                            state.key,
-                                            state.stateDocId
-                                        )
-                                    )
-                                } else {
-                                    state.loadingState.withEffects()
-                                }.flatMapState {
-                                    DynalistState.optLoadedState.set(state, it.newState)
+            is DynalistAction.DynalistLoaded -> {
+                withOptic(
+                    action as DynalistAction,
+                    state,
+                    DynalistState.optDocCreated,
+                    identityOptional(),
+                    failIfNotApplicable = { true }
+                ) { docCreated ->
+                    when (docCreated.loadingState) {
+                        is DynalistLoadingState.Initial -> {
+                            when (action.docResult) {
+                                is Success -> {
+                                    DynalistLoadingState.Loaded(
+                                        loadedAt = LocalDateTime.now(),
+                                        nodes = action.docResult.success.children
+                                    ).withEffects<DynalistLoadingState, AppEffect>()
                                 }
+
+                                is Failure -> {
+                                    DynalistLoadingState.Loaded(
+                                        loadedAt = LocalDateTime.now(),
+                                        nodes = emptyList()
+                                    ).withEffects()
+                                }
+                            }.flatMapState {
+                                DynalistState.optLoaded.set(docCreated, it.newState)
                             }
                         }
-                    }
 
-                    is DynalistAction.DynalistLoaded -> {
-                        when (state.loadingState) {
-                            is DynalistLoadingState.Initial -> {
-                                when (action.docResult) {
-                                    is Success -> {
-                                        DynalistLoadingState.Loaded(
-                                            loadedAt = LocalDateTime.now(),
-                                            nodes = action.docResult.success.children
-                                        ).withEffects<DynalistLoadingState, AppEffect>()
+                        is DynalistLoadingState.Loaded -> {
+                            val newLoadingState = DynalistLoadingState.Loaded(
+                                loadedAt = LocalDateTime.now(),
+                                nodes = action.docResult.let {
+                                    when (it) {
+                                        is Success -> it.success.children
+                                        is Failure -> listOf()
                                     }
-
-                                    is Failure -> {
-                                        DynalistLoadingState.Loaded(
-                                            loadedAt = LocalDateTime.now(),
-                                            nodes = emptyList()
-                                        ).withEffects()
-                                    }
-                                }.flatMapState {
-                                    DynalistState.optLoadedState.set(state, it.newState)
                                 }
-                            }
-
-                            is DynalistLoadingState.Loaded -> {
-                                val oldLoadingState = state.loadingState
-                                val newLoadingState = DynalistLoadingState.Loaded(
-                                    loadedAt = LocalDateTime.now(),
-                                    nodes = action.docResult.let {
-                                        when (it) {
-                                            is Success -> it.success.children
-                                            is Failure -> listOf()
-                                        }
-                                    }
-                                )
-                                val newDynalistState = DynalistState.optLoadedState.set(
-                                    state,
-                                    newLoadingState
-                                )
-                                newDynalistState.withEffects(
-                                    ActionEffect(
-                                        Gtd2Action.DynalistStateUpdated(newDynalistState)
-                                    )
-                                )
-                            }
-                        }
-                    }
-
-                    is DebugAction.UpdateDynalist -> {
-                        state.withEffects(
-                            LoadDynalistEffect(
-                                state.key,
-                                state.stateDocId
                             )
+                            val newDynalistState = DynalistState.optLoaded.set(
+                                docCreated,
+                                newLoadingState
+                            )
+                            newDynalistState.withEffects()
+                        }
+                    }.flatMapEffects {
+                        it.effects + ActionEffect(
+                            Gtd2Action.DynalistStateUpdated(it.newState)
                         )
                     }
+                }
+            }
 
-                    is DynalistAction.DynalistDatabaseDocCreated,
-                    is DynalistAction.DynalistDocsLoaded,
-                    is DynalistAction.OpenGetApiKeyPage,
-                    is DynalistAction.SetApiKey,
-                    is DebugAction.ResetDay,
-                    is StateLoadedAction -> {
-                        illegalAction(action, state)
+            is DynalistAction.OpenGetApiKeyPage -> {
+                withOptic(
+                    action as DynalistAction,
+                    state,
+                    DynalistState.optKeyNotSet,
+                    identityOptional(),
+                    failIfNotApplicable = { true },
+                ) {
+                    state.withEffects(AppEffectNew.OpenUrl(API_KEY_URL))
+                }
+            }
+
+            is DynalistAction.SetApiKey -> {
+                withOptic(
+                    action as DynalistAction,
+                    state,
+                    DynalistState.optKeyNotSet,
+                    identityOptional(),
+                    failIfNotApplicable = { true }
+                ) {
+                    if (action.key.isNotEmpty()) {
+                        val newState = DynalistState.DocsLoading(key = action.key)
+                        newState.withEffects(
+                            DynalistEffect.GetDocs(newState)
+                        )
+                    } else {
+                        state.withEffects()
                     }
                 }
+            }
+
+            is StateLoadedAction -> {
+                handleAction(action)
             }
         }
     }

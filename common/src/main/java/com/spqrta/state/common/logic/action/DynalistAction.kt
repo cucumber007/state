@@ -12,7 +12,7 @@ sealed interface DynalistAction : AppAction {
     }
 
     data class DynalistDocsLoaded(
-        val docIdResult: Res<LoadDocsResult>,
+        val docsResult: Res<LoadDocsResult>,
     ) : Action()
 
     data class DynalistLoaded(
