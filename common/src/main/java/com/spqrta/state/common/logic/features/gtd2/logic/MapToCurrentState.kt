@@ -15,8 +15,6 @@ fun mapToCurrentState(
     tasksState: TasksState,
     tasksDatabaseState: TasksDatabaseState
 ): CurrentState {
-
-
     return when (val activeElement = oldCurrentState.activeElement) {
         is ActiveElement.ActiveQueue -> {
             mapToCurrentStateActiveQueue(
@@ -43,42 +41,48 @@ private fun mapToCurrentStateActiveQueue(
     val optActiveElement = CurrentState.optActiveElement
     val activeTask = oldActiveElement.activeTask
 
-    // todo check if active element still exists
+    val newActiveQueue =
+        tasksState.getElement(oldActiveElement.queue) as Queue?
+    return if (newActiveQueue == null) {
+        mapToCurrentStateNoActiveElement(
+            oldCurrentState,
+            tasksState
+        )
+    } else {
+        var newActiveElement = oldActiveElement.copy(
+            queue = newActiveQueue.name,
+            activeTask = null
+        )
+        val newActiveTask = activeTask?.let {
+            val newStateOfActiveTask =
+                tasksState.getElement(activeTask.task.name) as Task
+            when (newStateOfActiveTask.status) {
+                is TaskStatus.Active -> {
+                    activeTask
+                }
 
-    val newActiveQueue = tasksState.getElement(oldActiveElement.queue.name) as Queue
-    var newActiveElement = oldActiveElement.copy(
-        queue = newActiveQueue,
-        activeTask = null
-    )
-    val newActiveTask = activeTask?.let {
-        val newStateOfActiveTask =
-            tasksState.getElement(activeTask.task.name) as Task
-        when (newStateOfActiveTask.status) {
-            is TaskStatus.Active -> {
-                activeTask
+                is TaskStatus.Done, TaskStatus.Inactive -> {
+                    null
+                }
             }
-
-            is TaskStatus.Done, TaskStatus.Inactive -> {
+        } ?: run {
+            // the previous active task was completed or there wasn't any
+            if (newActiveElement.activeTasksValue(tasksState).isNotEmpty()) {
+                TimeredTask(
+                    newActiveElement.activeTasksValue(tasksState).first(),
+                    TimeredState.Paused.INITIAL
+                )
+            } else {
                 null
             }
         }
-    } ?: run {
-        // the previous active task was completed or there wasn't any
-        if (newActiveElement.activeTasks.isNotEmpty()) {
-            TimeredTask(
-                newActiveElement.activeTasks.first(),
-                TimeredState.Paused.INITIAL
-            )
-        } else {
-            null
-        }
-    }
-    newActiveElement = newActiveElement.copy(activeTask = newActiveTask)
+        newActiveElement = newActiveElement.copy(activeTask = newActiveTask)
 
-    return optActiveElement.set(
-        oldCurrentState,
-        newActiveElement
-    )
+        optActiveElement.set(
+            oldCurrentState,
+            newActiveElement
+        )
+    }
 }
 
 private fun mapToCurrentStateNoActiveElement(
@@ -93,7 +97,8 @@ private fun mapToCurrentStateNoActiveElement(
             if (queues.size == 1) {
                 queues.first().let { queue ->
                     ActiveElement.ActiveQueue(
-                        queue, queue.tasks().firstOrNull()?.let {
+                        queue = queue.name,
+                        activeTask = queue.tasks().firstOrNull()?.let {
                             TimeredTask(
                                 it,
                                 TimeredState.Paused.INITIAL
@@ -108,6 +113,6 @@ private fun mapToCurrentStateNoActiveElement(
     return if (newActiveElement != null) {
         optActiveElement.set(oldCurrentState, newActiveElement)
     } else {
-        oldCurrentState.copy(queuesToChoose = queuesToChoose)
+        oldCurrentState.copy(queuesToChoose = queuesToChoose.map { it.name })
     }
 }

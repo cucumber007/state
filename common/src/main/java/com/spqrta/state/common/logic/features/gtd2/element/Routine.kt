@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.RoutineTrigger
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
@@ -11,7 +12,7 @@ data class Routine(
     override val displayName: String = "${element.name} Routine",
     override val active: Boolean = true,
     val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
-    override val name: String = displayName,
+    override val name: ElementName = ElementName.OtherName(displayName),
 ) : Element {
 
     constructor(name: String) : this(
@@ -24,7 +25,7 @@ data class Routine(
         return innerElement.estimate()
     }
 
-    override fun getElement(name: String): Element? {
+    override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this
         } else {
@@ -56,16 +57,16 @@ data class Routine(
         return innerElement.tasks()
     }
 
-    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
-        return if (estimateName == this.name) {
+    override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
+        return if (name == this.name) {
             action(this)
         } else {
-            innerElement.withElement(estimateName, action)
+            innerElement.withElement(name, action)
         }
     }
 
-    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
-        return copy(element = element.withEstimate(estimateName, estimate))
+    override fun withEstimate(name: ElementName, estimate: TimeValue?): Element {
+        return copy(element = element.withEstimate(name, estimate))
     }
 
     override fun withTaskClicked(clickedTask: Task): Element {

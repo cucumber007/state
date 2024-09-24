@@ -215,7 +215,7 @@ object Current {
             is CurrentViewAction.OnSkipTask -> {
                 val activeTask = activeElement.activeTask
                 if (activeTask != null) {
-                    val tasks = activeElement.activeTasks
+                    val tasks = activeElement.activeTasksValue(state.tasksState)
                     if (tasks.isEmpty()) {
                         // do nothing, it's the only task left
                         state.withEffects()
@@ -255,13 +255,14 @@ object Current {
 
             is CurrentViewAction.OnScrollToActiveClick -> {
                 optActiveTask.get(state)?.let { activeTask ->
-                    state.currentState.tasksToShow.indexOf(activeTask.task).let { index ->
-                        state.withEffects(
-                            ViewEffect.Scroll(
-                                index,
+                    state.currentState.tasksToShowValue(state.tasksState).indexOf(activeTask.task)
+                        .let { index ->
+                            state.withEffects(
+                                ViewEffect.Scroll(
+                                    index,
+                                )
                             )
-                        )
-                    }
+                        }
                 } ?: illegalAction(action, state)
             }
         }
@@ -276,7 +277,7 @@ object Current {
                 state.copy(
                     currentState = state.currentState.copy(
                         activeElement = ActiveElement.ActiveQueue(
-                            action.element,
+                            action.element.name,
                             activeTask = null
                         )
                     )

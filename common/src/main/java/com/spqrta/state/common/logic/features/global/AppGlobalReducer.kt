@@ -19,11 +19,13 @@ import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.chain
 import com.spqrta.state.common.util.state_machine.illegalAction
+import com.spqrta.state.common.util.state_machine.plus
+import com.spqrta.state.common.util.state_machine.stubReducer
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 
 object AppGlobalReducer {
-    val reducer = widen(
+    val reducer = stubReducer<AppAction, AppState, AppEffect>() + widen(
         typeGet(),
         identityOptional(),
         AppGlobalReducer::reduce

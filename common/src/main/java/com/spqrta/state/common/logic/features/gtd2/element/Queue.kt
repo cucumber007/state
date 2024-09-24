@@ -1,17 +1,19 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Queue(
-    override val name: String,
+    override val name: ElementName.QueueName,
     val elements: List<Element> = listOf(),
     override val displayName: String = "$name Queue",
     override val active: Boolean = elements.isNotEmpty(),
 ) : Element {
-
+    constructor(name: String, elements: List<Element>) : this(ElementName.QueueName(name), elements)
+    constructor(name: String) : this(ElementName.QueueName(name))
 
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
@@ -25,7 +27,7 @@ data class Queue(
         return sum.toSeconds()
     }
 
-    override fun getElement(name: String): Element? {
+    override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this
         } else {
@@ -61,15 +63,15 @@ data class Queue(
         }.flatten()
     }
 
-    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
+    override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return copy(elements = elements.map {
-            it.withElement(estimateName, action)
+            it.withElement(name, action)
         })
     }
 
-    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
+    override fun withEstimate(name: ElementName, estimate: TimeValue?): Element {
         return copy(elements = elements.map {
-            it.withEstimate(estimateName, estimate)
+            it.withEstimate(name, estimate)
         })
     }
 

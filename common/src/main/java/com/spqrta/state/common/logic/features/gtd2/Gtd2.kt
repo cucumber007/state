@@ -48,14 +48,15 @@ object Gtd2 {
             )
         }.asOpticSet()
     private val optOnTasksState =
-        { state: Gtd2State, subState: Triple<CurrentState, Gtd2Stats, TinderTuple> ->
-            val (currentState, stats, tinderTuple) = subState
+        { state: Gtd2State, subState: Tuple4<TasksState, CurrentState, Gtd2Stats, TinderTuple> ->
+            val (tasksState, currentState, stats, tinderTuple) = subState
             val (tinderState, tasksDatabase) = tinderTuple
             state.copy(
                 currentState = currentState,
                 stats = stats,
                 tasksDatabase = tasksDatabase,
-                tinderState = tinderState
+                tinderState = tinderState,
+                tasksState = tasksState
             )
         }.asOpticSet()
 
@@ -77,9 +78,10 @@ object Gtd2 {
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is Gtd2Action.ToggleTask -> {
+                val newTasksState = oldGtd2State.tasksState.withTaskToggled(action.task)
                 updateTasksState(
                     oldGtd2State,
-                    oldGtd2State.tasksState.withTaskToggled(action.task)
+                    newTasksState
                 )
             }
 
@@ -165,7 +167,7 @@ object Gtd2 {
                 newTasksState
             ) to oldGtd2State.tasksDatabase
 
-            Triple(newCurrentState, stats, tinderTuple)
+            Tuple4(newTasksState, newCurrentState, stats, tinderTuple)
         }.withEffects()
     }
 }

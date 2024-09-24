@@ -59,13 +59,13 @@ object Tinder {
         return when (action) {
             is TinderAction.OnEstimated -> {
                 val newTasksDatabaseState =
-                    (gtd2State.tasksDatabase[action.element.name] ?: DatabaseTask(
-                        action.element.name
+                    (gtd2State.tasksDatabase[action.element.name.value] ?: DatabaseTask(
+                        action.element.name.value
                     )).let {
                         gtd2State.tasksDatabase.toMutableMap()
                             .also { map ->
                                 map.put(
-                                    action.element.name,
+                                    action.element.name.value,
                                     it.copy(estimate = action.estimate)
                                 )
                             }

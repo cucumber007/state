@@ -62,7 +62,7 @@ fun CurrentView(state: Gtd2State) {
                             fontSize = FontSize.TITLE,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        activeElement.activeTasks.forEach {
+                        activeElement.activeTasksValue(state.tasksState).forEach {
                             ActionButton(action = CurrentViewAction.OnSubElementClick(it)) {
                                 Text(
                                     text = it.displayName,
@@ -77,7 +77,7 @@ fun CurrentView(state: Gtd2State) {
                     Column {
                         Row {
                             Text(
-                                activeElement.queue.displayName,
+                                activeElement.queueValue(state.tasksState).displayName,
                                 fontSize = FontSize.TITLE,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
@@ -131,7 +131,7 @@ fun CurrentView(state: Gtd2State) {
                                 }
                             }
 
-                            state.currentState.tasksToShow.forEach {
+                            state.currentState.tasksToShowValue(state.tasksState).forEach {
                                 if (it.name == activeTask.task.name) {
                                     ActionButton(
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
@@ -182,7 +182,7 @@ fun CurrentView(state: Gtd2State) {
                     fontSize = FontSize.TITLE,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                state.currentState.queuesToChoose.forEach {
+                state.currentState.queuesToChooseValue(state.tasksState).forEach {
                     ActionButton(action = CurrentViewAction.OnElementClick(it)) {
                         Text(
                             text = it.displayName,

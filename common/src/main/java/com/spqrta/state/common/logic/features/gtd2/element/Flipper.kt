@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
@@ -7,18 +8,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Flipper(
-    override val name: String,
     val scheduledElements: List<FlipperSchedule>,
-    override val displayName: String = "$name Flipper",
+    override val name: ElementName.OtherName,
+    override val displayName: String = "${name.value} Flipper",
     override val active: Boolean = scheduledElements.isNotEmpty(),
 ) : Element {
+    constructor(name: String, scheduledElements: List<FlipperSchedule>) : this(
+        scheduledElements,
+        ElementName.OtherName(name)
+    )
 
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
         return 0.toSeconds()
     }
 
-    override fun getElement(name: String): Element? {
+    override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this
         } else {
@@ -48,26 +53,26 @@ data class Flipper(
         return scheduledElements.map { it.element.tasks() }.flatten()
     }
 
-    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
+    override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
                     element = it.element.withElement(
-                        estimateName,
+                        name,
                         action
                     )
                 )
 
                 is FlipperSchedule.TimePeriod -> it.copy(
                     element = it.element.withElement(
-                        estimateName,
+                        name,
                         action
                     )
                 )
 
                 is FlipperSchedule.UntilTime -> it.copy(
                     element = it.element.withElement(
-                        estimateName,
+                        name,
                         action
                     )
                 )
@@ -75,27 +80,27 @@ data class Flipper(
         })
     }
 
-    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
+    override fun withEstimate(name: ElementName, estimate: TimeValue?): Element {
         return copy(
             scheduledElements = scheduledElements.map {
                 when (it) {
                     is FlipperSchedule.TimeLeftPortion -> it.copy(
                         element = it.element.withEstimate(
-                            estimateName,
+                            name,
                             estimate
                         )
                     )
 
                     is FlipperSchedule.TimePeriod -> it.copy(
                         element = it.element.withEstimate(
-                            estimateName,
+                            name,
                             estimate
                         )
                     )
 
                     is FlipperSchedule.UntilTime -> it.copy(
                         element = it.element.withEstimate(
-                            estimateName,
+                            name,
                             estimate
                         )
                     )

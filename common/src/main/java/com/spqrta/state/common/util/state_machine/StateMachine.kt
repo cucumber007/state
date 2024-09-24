@@ -25,12 +25,13 @@ open class StateMachine<A, S, E>(
 
     fun handleAction(action: A) {
         scope.launch {
-            reducer(action, _state.value).let {
-                _state.value = it.newState
-                val effects = stateChangeEffects.invoke(it.newState) + it.effects
+            val oldState = _state.value
+            reducer(action, oldState).let { reduced ->
+                _state.value = reduced.newState
+                val effects = stateChangeEffects.invoke(reduced.newState) + reduced.effects
                 applyEffects(effects)
-                if (shouldLog(action, it.newState, effects)) {
-                    log(format(action, it.newState, effects))
+                if (shouldLog(action, reduced.newState, effects)) {
+                    log(format(action, reduced.newState, effects))
                 }
             }
         }

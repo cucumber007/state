@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toMinutes
@@ -9,21 +10,26 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Task(
     override val active: Boolean = true,
-    override val name: String,
+    override val name: ElementName.TaskName,
     val estimate: TimeValue? = null,
     val done: Boolean = false,
-    override val displayName: String = name,
+    override val displayName: String = name.value,
 ) : Element {
 
     constructor(name: String, taskStatus: TaskStatus = TaskStatus.Active) : this(
         active = taskStatus != TaskStatus.Inactive,
-        name = name,
+        name = ElementName.TaskName(name),
         done = taskStatus == TaskStatus.Done
     )
 
     constructor(name: String, minutes: Int) : this(
-        name = name,
+        name = ElementName.TaskName(name),
         estimate = minutes.toMinutes()
+    )
+
+    constructor(name: String, estimate: TimeValue?) : this(
+        name = ElementName.TaskName(name),
+        estimate = estimate
     )
 
     val status: TaskStatus
@@ -43,7 +49,7 @@ data class Task(
         }
     }
 
-    override fun getElement(name: String): Element? {
+    override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this
         } else {
@@ -75,16 +81,16 @@ data class Task(
         return listOf(this)
     }
 
-    override fun withElement(estimateName: String, action: (element: Element) -> Element): Element {
-        return if (estimateName == this.name) {
+    override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
+        return if (name == this.name) {
             action(this)
         } else {
             this
         }
     }
 
-    override fun withEstimate(estimateName: String, estimate: TimeValue?): Element {
-        return if (estimateName == this.name) {
+    override fun withEstimate(name: ElementName, estimate: TimeValue?): Element {
+        return if (name == this.name) {
             copy(estimate = estimate)
         } else {
             this

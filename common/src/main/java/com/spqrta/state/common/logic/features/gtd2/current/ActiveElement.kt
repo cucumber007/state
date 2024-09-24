@@ -1,7 +1,9 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
+import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.optics.asOpticGet
 import com.spqrta.state.common.util.optics.asOpticOptional
@@ -11,14 +13,23 @@ import kotlinx.serialization.Serializable
 sealed class ActiveElement {
     @Serializable
     data class ActiveQueue(
-        val queue: Queue,
+        val queue: ElementName.QueueName,
         val activeTask: TimeredTask?
     ) : ActiveElement() {
-        val activeTasks: List<Task> = queue.tasks().filter { it.status == TaskStatus.Active }
+
+        fun activeTasksValue(tasksState: TasksState): List<Task> {
+            return queueValue(tasksState).tasks().filter { it.status == TaskStatus.Active }.map {
+                tasksState.getElement(it.name) as Task
+            }
+        }
+
+        fun queueValue(tasksState: TasksState): Queue {
+            return tasksState.queues().find { it.name == queue }!!
+        }
 
         companion object {
-            val optFirstTask = { state: ActiveQueue ->
-                state.queue.tasks().firstOrNull()
+            fun optFirstTask(tasksState: TasksState) = { state: ActiveQueue ->
+                state.queueValue(tasksState).tasks().firstOrNull()
             }.asOpticGet()
         }
     }
@@ -30,6 +41,7 @@ sealed class ActiveElement {
                 is ActiveQueue -> state.activeTask
             }
         } to { state: ActiveElement, subState: TimeredTask? ->
+            @Suppress("USELESS_CAST")
             when (state) {
                 is ActiveQueue -> state.copy(
                     activeTask = subState
