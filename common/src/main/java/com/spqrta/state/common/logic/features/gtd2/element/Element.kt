@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
 
@@ -18,9 +19,10 @@ sealed interface Element {
     fun tasks(): List<Task>
     fun withElement(name: ElementName, action: (element: Element) -> Element): Element
     fun withEstimate(name: ElementName, estimate: TimeValue?): Element
+    fun withTaskStatus(status: TaskStatus): Element
     fun withTaskClicked(clickedTask: Task): Element
     fun withTaskCompleted(completedTask: Task): Element
     fun withTaskLongClicked(clickedTask: Task): Element
     fun withTaskToggled(toggledTask: Task): Element
-    fun withStatus(active: Boolean): Element
+    fun withActive(active: Boolean): Element
 }

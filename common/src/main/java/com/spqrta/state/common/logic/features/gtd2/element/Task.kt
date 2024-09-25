@@ -105,7 +105,7 @@ data class Task(
         }
     }
 
-    override fun withStatus(active: Boolean): Element {
+    override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }
 
@@ -139,6 +139,10 @@ data class Task(
         } else {
             this
         }
+    }
+
+    override fun withTaskStatus(status: TaskStatus): Element {
+        return withStatus(status)
     }
 
     override fun withTaskToggled(toggledTask: Task): Element {

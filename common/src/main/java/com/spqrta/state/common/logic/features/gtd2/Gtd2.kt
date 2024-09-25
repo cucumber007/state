@@ -92,6 +92,7 @@ object Gtd2 {
             is Gtd2Action.DynalistStateUpdated -> {
                 set(optOnDynalistState, oldGtd2State) {
                     val newTasksState = mapToTasksState(
+                        oldGtd2State.tasksState,
                         action.dynalistState,
                         oldGtd2State.tasksDatabase
                     )

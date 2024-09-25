@@ -11,6 +11,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.util.time.toMinutes
 
 fun mapToTasksState(
+    oldTasksState: TasksState,
     dynalistState: DynalistState,
     tasksDatabaseState: TasksDatabaseState
 ): TasksState {
@@ -33,7 +34,28 @@ fun mapToTasksState(
         is DynalistState.KeyNotSet -> {
             emptyQueue()
         }
+    }.let { newTasksState: TasksState ->
+        mergeTaskStates(
+            newTasksState = newTasksState,
+            oldTasksState = oldTasksState
+        )
     }
+}
+
+private fun mergeTaskStates(
+    newTasksState: TasksState,
+    oldTasksState: TasksState
+): TasksState {
+    var mergedTasksState = newTasksState
+    newTasksState.tasks().forEach { task ->
+        val oldTask = oldTasksState.tasks().find { it.name == task.name }
+        if (oldTask != null) {
+            mergedTasksState = mergedTasksState.withElement(task.name) {
+                it.withTaskStatus(oldTask.status)
+            }
+        }
+    }
+    return mergedTasksState
 }
 
 private fun emptyQueue(): Queue {

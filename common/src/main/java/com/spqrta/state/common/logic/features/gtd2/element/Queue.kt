@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
@@ -93,13 +94,19 @@ data class Queue(
         })
     }
 
+    override fun withTaskStatus(status: TaskStatus): Element {
+        return copy(elements = elements.map {
+            it.withTaskStatus(status)
+        })
+    }
+
     override fun withTaskToggled(toggledTask: Task): Element {
         return copy(elements = elements.map {
             it.withTaskToggled(toggledTask)
         })
     }
 
-    override fun withStatus(active: Boolean): Element {
+    override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }
 }

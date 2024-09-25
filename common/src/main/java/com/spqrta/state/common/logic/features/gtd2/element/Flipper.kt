@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
@@ -109,6 +110,30 @@ data class Flipper(
         )
     }
 
+    override fun withTaskStatus(status: TaskStatus): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.withTaskStatus(
+                        status
+                    )
+                )
+
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withTaskStatus(
+                        status
+                    )
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withTaskStatus(
+                        status
+                    )
+                )
+            }
+        })
+    }
+
     override fun withTaskClicked(clickedTask: Task): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
@@ -205,7 +230,7 @@ data class Flipper(
         })
     }
 
-    override fun withStatus(active: Boolean): Element {
+    override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }
 }

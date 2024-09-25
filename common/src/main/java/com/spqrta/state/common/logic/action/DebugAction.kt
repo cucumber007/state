@@ -12,5 +12,7 @@ sealed interface DebugAction : AppAction {
     object FlipResetStateEnabled : AppReadyAction.Action()
     object ResetDay : AppReadyAction.Action(), Gtd2Action, DynalistAction
     object SendTestNotification : AppReadyAction.Action()
-    object UpdateDynalist : DynalistAction
+    object UpdateDynalist : DynalistAction {
+        override fun toString(): String = javaClass.simpleName
+    }
 }

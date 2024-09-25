@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.RoutineTrigger
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -19,7 +20,7 @@ data class Routine(
         Task(name)
     )
 
-    val innerElement = element.withStatus(if (!active) false else element.active)
+    val innerElement = element.withActive(if (!active) false else element.active)
 
     override fun estimate(): TimeValue? {
         return innerElement.estimate()
@@ -99,6 +100,10 @@ data class Routine(
         }
     }
 
+    override fun withTaskStatus(status: TaskStatus): Element {
+        return innerElement.withTaskStatus(status)
+    }
+
     override fun withTaskToggled(toggledTask: Task): Element {
         return if (innerElement.active) {
             this.copy(
@@ -109,7 +114,7 @@ data class Routine(
         }
     }
 
-    override fun withStatus(active: Boolean): Element {
+    override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }
 }

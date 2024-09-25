@@ -97,7 +97,11 @@ object Tinder {
     ): Reduced<out Gtd2State, out AppEffect> {
         val (gtd2State, dynalistState) = state
         return set(optOnTasksDatabase, gtd2State) {
-            val newTasksState = mapToTasksState(dynalistState, newTasksDatabaseState)
+            val newTasksState = mapToTasksState(
+                gtd2State.tasksState,
+                dynalistState,
+                newTasksDatabaseState
+            )
             val currentState =
                 mapToCurrentState(gtd2State.currentState, newTasksState, newTasksDatabaseState)
             val stats = mapToStats(newTasksState, newTasksDatabaseState)
