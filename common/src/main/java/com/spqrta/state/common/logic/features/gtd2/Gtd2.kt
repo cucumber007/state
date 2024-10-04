@@ -86,6 +86,14 @@ object Gtd2 {
             }
 
             is DebugAction.ResetDay -> {
+                val newTasksState = oldGtd2State.tasksState.withDoneReset()
+                updateTasksState(
+                    oldGtd2State,
+                    newTasksState
+                )
+            }
+
+            is DebugAction.ResetState -> {
                 Gtd2State.initial().withEffects()
             }
 

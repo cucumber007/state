@@ -58,6 +58,10 @@ data class Routine(
         return innerElement.tasks()
     }
 
+    override fun withDoneReset(): Element {
+        return copy(element = element.withDoneReset())
+    }
+
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return if (name == this.name) {
             action(this)

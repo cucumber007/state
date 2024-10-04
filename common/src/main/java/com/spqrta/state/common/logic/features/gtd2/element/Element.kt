@@ -17,6 +17,7 @@ sealed interface Element {
     fun nonEstimated(): List<Element>
     fun queues(): List<Queue>
     fun tasks(): List<Task>
+    fun withDoneReset(): Element
     fun withElement(name: ElementName, action: (element: Element) -> Element): Element
     fun withEstimate(name: ElementName, estimate: TimeValue?): Element
     fun withTaskStatus(status: TaskStatus): Element

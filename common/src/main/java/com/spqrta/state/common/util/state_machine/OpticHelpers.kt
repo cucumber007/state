@@ -18,7 +18,7 @@ fun <A : Any, B : Any, C : Any> withOptic(
     state: A,
     optic: OpticOptional<A, B>,
     failIfNotApplicable: Boolean = false,
-    block: (B) -> Reduced<B, AppEffect>
+    block: (B) -> Reduced<B, out AppEffect>
 ): Reduced<out A, out AppEffect> {
     return when (val subState = optic.get(state)) {
         is B -> {

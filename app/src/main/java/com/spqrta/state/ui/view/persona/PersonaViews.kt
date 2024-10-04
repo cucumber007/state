@@ -55,7 +55,7 @@ fun PersonaHeader(dailyState: DailyState, resetStateEnabled: Boolean) {
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = {
-                        App.handleAction(DebugAction.ResetDay)
+                        App.handleAction(DebugAction.ResetState)
                     },
                     onLongPress = {
                         App.handleAction(

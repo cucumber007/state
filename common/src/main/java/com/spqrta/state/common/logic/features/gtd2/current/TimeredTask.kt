@@ -1,5 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
+import com.spqrta.dynalyst.utility.pure.Optional
+import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.time.TimeValue
@@ -24,12 +26,12 @@ data class TimeredTask(
     }
 
     companion object {
-        val optTimeredState = ({ state: TimeredTask ->
-            state.timeredState
-        } to { state: TimeredTask, subState: TimeredState ->
-            state.copy(
+        val optTimeredState = ({ state: Optional<TimeredTask> ->
+            state.toNullable()?.timeredState
+        } to { state: Optional<TimeredTask>, subState: TimeredState ->
+            state.toNullable()?.copy(
                 timeredState = subState
-            )
+            ).toOptional()
         }).asOpticOptional()
     }
 }

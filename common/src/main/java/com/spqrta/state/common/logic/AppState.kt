@@ -77,7 +77,7 @@ data class AppReady(
                     state.copy(resetStateEnabled = !state.resetStateEnabled).withEffects()
                 }
 
-                is DebugAction.ResetDay -> {
+                is DebugAction.ResetState -> {
                     wrap(state, optDailyState, optStats) { oldDailyState, oldStats ->
                         if (state.resetStateEnabled) {
                             resetDay(oldStats, oldDailyState)

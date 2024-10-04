@@ -81,6 +81,10 @@ data class Task(
         return listOf(this)
     }
 
+    override fun withDoneReset(): Element {
+        return copy(done = false)
+    }
+
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return if (name == this.name) {
             action(this)

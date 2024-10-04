@@ -6,6 +6,6 @@ import com.spqrta.state.common.util.state_machine.passActionIf
 
 object Filters {
     val RESET_DAY_FILTER = passActionIf { action, state ->
-        !(action is DebugAction.ResetDay && state is AppReady && !state.resetStateEnabled)
+        !(action is DebugAction.ResetState && state is AppReady && !state.resetStateEnabled)
     }
 }

@@ -64,6 +64,12 @@ data class Queue(
         }.flatten()
     }
 
+    override fun withDoneReset(): Element {
+        return copy(elements = elements.map {
+            it.withDoneReset()
+        })
+    }
+
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return copy(elements = elements.map {
             it.withElement(name, action)

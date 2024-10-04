@@ -20,7 +20,7 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
-class ResetDayFilterTest {
+class ResetStateFilterTest {
     @Test
     fun testDisabled() {
         wrapLog {
@@ -62,7 +62,7 @@ class ResetDayFilterTest {
                     .let { it as AppReady }
                     .resetStateEnabled
             )
-            stateMachine.handleAction(DebugAction.ResetDay)
+            stateMachine.handleAction(DebugAction.ResetState)
             assertNotNull(
                 stateMachine.state
                     .let { it as AppReady }
@@ -118,7 +118,7 @@ class ResetDayFilterTest {
                     .let { it as AppReady }
                     .resetStateEnabled
             )
-            stateMachine.handleAction(DebugAction.ResetDay)
+            stateMachine.handleAction(DebugAction.ResetState)
             assertNull(
                 stateMachine.state
                     .let { it as AppReady }

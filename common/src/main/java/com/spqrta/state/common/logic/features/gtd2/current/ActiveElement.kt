@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
+import com.spqrta.dynalyst.utility.pure.Optional
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
@@ -14,7 +15,7 @@ sealed class ActiveElement {
     @Serializable
     data class ActiveQueue(
         val queue: ElementName.QueueName,
-        val activeTask: TimeredTask?
+        val activeTask: Optional<TimeredTask>
     ) : ActiveElement() {
 
         fun activeTasksValue(tasksState: TasksState): List<Task> {
@@ -40,7 +41,7 @@ sealed class ActiveElement {
             when (state) {
                 is ActiveQueue -> state.activeTask
             }
-        } to { state: ActiveElement, subState: TimeredTask? ->
+        } to { state: ActiveElement, subState: Optional<TimeredTask> ->
             @Suppress("USELESS_CAST")
             when (state) {
                 is ActiveQueue -> state.copy(

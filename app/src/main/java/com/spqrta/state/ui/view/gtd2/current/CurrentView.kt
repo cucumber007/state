@@ -73,7 +73,7 @@ fun CurrentView(state: Gtd2State) {
                         }
                     }
                 } else {
-                    val activeTask = activeElement.activeTask!!
+                    val activeTask = activeElement.activeTask.toNullable()!!
                     Column {
                         Row {
                             Text(

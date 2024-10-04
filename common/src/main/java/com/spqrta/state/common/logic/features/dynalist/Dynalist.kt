@@ -84,7 +84,7 @@ object Dynalist {
                 }
             }
 
-            is DebugAction.ResetDay -> {
+            is DebugAction.ResetState -> {
                 handleAction(action)
             }
 
@@ -266,7 +266,7 @@ object Dynalist {
         }
     }
 
-    private fun handleAction(action: DebugAction.ResetDay): Reduced<out DynalistState, out AppEffect> {
+    private fun handleAction(action: DebugAction.ResetState): Reduced<out DynalistState, out AppEffect> {
         return chain(
             DynalistState.INITIAL.withEffects<DynalistState, AppEffect>()
         ) {

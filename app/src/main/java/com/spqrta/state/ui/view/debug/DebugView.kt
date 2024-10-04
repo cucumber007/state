@@ -2,6 +2,7 @@ package com.spqrta.state.ui.view.debug
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
@@ -17,7 +18,7 @@ fun DebugView(appState: AppReady) {
     Row {
         ImageActionButton(
             imageVector = Icons.Default.Refresh,
-            action = DebugAction.ResetDay,
+            action = DebugAction.ResetState,
             longPressAction = DebugAction.FlipResetStateEnabled,
             backgroundColor = if (appState.resetStateEnabled) Color.Red else null
         )
@@ -32,6 +33,10 @@ fun DebugView(appState: AppReady) {
         ImageActionButton(
             imageVector = Icons.Default.Done,
             action = DebugAction.UpdateDynalist
+        )
+        ImageActionButton(
+            imageVector = Icons.Default.DateRange,
+            action = DebugAction.ResetDay
         )
     }
 }

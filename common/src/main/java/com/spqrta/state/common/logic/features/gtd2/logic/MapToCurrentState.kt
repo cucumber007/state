@@ -1,5 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
+import com.spqrta.dynalyst.utility.pure.Optional
+import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
@@ -39,7 +41,7 @@ private fun mapToCurrentStateActiveQueue(
     oldActiveElement: ActiveElement.ActiveQueue,
 ): CurrentState {
     val optActiveElement = CurrentState.optActiveElement
-    val activeTask = oldActiveElement.activeTask
+    val activeTask = oldActiveElement.activeTask.toNullable()
 
     val newActiveQueue =
         tasksState.getElement(oldActiveElement.queue) as Queue?
@@ -51,7 +53,7 @@ private fun mapToCurrentStateActiveQueue(
     } else {
         var newActiveElement = oldActiveElement.copy(
             queue = newActiveQueue.name,
-            activeTask = null
+            activeTask = Optional.nullValue()
         )
         val newActiveTask = activeTask?.let {
             val newStateOfActiveTask =
@@ -76,7 +78,7 @@ private fun mapToCurrentStateActiveQueue(
                 null
             }
         }
-        newActiveElement = newActiveElement.copy(activeTask = newActiveTask)
+        newActiveElement = newActiveElement.copy(activeTask = newActiveTask.toOptional())
 
         optActiveElement.set(
             oldCurrentState,
@@ -103,7 +105,7 @@ private fun mapToCurrentStateNoActiveElement(
                                 it,
                                 TimeredState.Paused.INITIAL
                             )
-                        }
+                        }.toOptional()
                     )
                 }
             } else {

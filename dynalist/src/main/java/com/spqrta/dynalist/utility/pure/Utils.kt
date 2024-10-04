@@ -1,24 +1,15 @@
 package com.spqrta.dynalyst.utility.pure
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import android.util.Base64
 import android.util.Size
 import android.view.KeyEvent
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
 import androidx.lifecycle.MutableLiveData
-import org.json.JSONArray
-import org.json.JSONObject
+import kotlinx.serialization.Serializable
 import org.threeten.bp.LocalDate
 import java.io.InputStream
 import kotlin.math.pow
@@ -53,6 +44,7 @@ object Utils {
     }
 }
 
+@Serializable
 class Optional<M>(private val optional: M?) {
 
     val isEmpty: Boolean
@@ -72,9 +64,17 @@ class Optional<M>(private val optional: M?) {
         return optional
     }
 
+    fun toNullable(): M? {
+        return optional
+    }
+
     companion object {
         fun <T> nullValue() = Optional<T>(null)
     }
+}
+
+fun <T : Any?> T?.toOptional(): Optional<T> {
+    return Optional(this)
 }
 
 object DatePickerUtil {

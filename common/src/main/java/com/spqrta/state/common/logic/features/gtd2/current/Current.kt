@@ -1,8 +1,11 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
+import com.spqrta.dynalyst.utility.pure.Optional
+import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.action.CurrentViewAction
+import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
@@ -17,9 +20,11 @@ import com.spqrta.state.common.use_case.play_sound.Sound
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.state_machine.Reduced
+import com.spqrta.state.common.util.state_machine.effectIf
 import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
+import com.spqrta.state.common.util.state_machine.withOptic
 import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toSeconds
 import java.time.LocalTime
@@ -49,7 +54,7 @@ object Current {
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is ClockAction.TickAction -> {
-                optActiveTask.get(state)?.let { activeTask ->
+                optActiveTask.get(state)?.toNullable()?.let { activeTask ->
                     when (val timeredState = activeTask.timeredState) {
                         is TimeredState.Running -> {
                             val effects = mutableSetOf<AppEffect>()
@@ -89,6 +94,31 @@ object Current {
                     }
                 } ?: state.withEffects()
             }
+
+            is DebugAction.ResetDay -> {
+                withOptic(
+                    action,
+                    state.currentState,
+                    CurrentState.optActiveElement,
+                ) { activeElement ->
+                    when (activeElement) {
+                        is ActiveElement.ActiveQueue -> {
+                            getNextActiveTask(
+                                activeElement,
+                                activeElement.activeTask.toNullable(),
+                                state
+                            ).flatMapState {
+                                ActiveElement.optActiveTask.set(
+                                    activeElement,
+                                    it.newState
+                                )
+                            }
+                        }
+                    }
+                }.flatMapState {
+                    Gtd2State.optCurrent.set(state, it.newState)
+                }
+            }
         }
     }
 
@@ -113,12 +143,22 @@ object Current {
             }
 
             is CurrentViewAction.OnTaskComplete -> {
-                val activeTask = activeElement.activeTask
+                val activeTask = activeElement.activeTask.toNullable()
                 if (activeTask != null) {
-                    state.withEffects(
-                        ActionEffect(Gtd2Action.ToggleTask(activeTask.task)),
-                        PlaySoundEffect(Sound.Ping)
-                    )
+                    getNextActiveTask(
+                        activeElement,
+                        activeTask,
+                        state,
+                        skip = true
+                    ).flatMapState {
+                        ActiveElement.optActiveTask.set(activeElement, it.newState)
+                    }.flatMapState {
+                        CurrentState.optActiveElement.set(state.currentState, it.newState)
+                    }.flatMapState {
+                        Gtd2State.optCurrent.set(state, it.newState)
+                    }.flatMapEffects {
+                        it.effects + ActionEffect(Gtd2Action.ToggleTask(activeTask.task))
+                    }
                 } else illegalAction(action, state)
             }
 
@@ -143,7 +183,7 @@ object Current {
             }
 
             is CurrentViewAction.OnTimerStart -> {
-                optActiveTask.get(state)?.let { activeTask ->
+                optActiveTask.get(state)?.toNullable()?.let { activeTask ->
                     val oldTimeredState = activeTask.timeredState
                     when (oldTimeredState) {
                         is TimeredState.Paused -> {
@@ -161,7 +201,9 @@ object Current {
                                 )
                                 effects.add(
                                     SendNotificationEffect(
-                                        "Timer is up for ${optActiveTask.get(state)!!.task.name}",
+                                        "Timer is up for ${
+                                            optActiveTask.get(state)!!.toNullable()!!.task.name
+                                        }",
                                     )
                                 )
                             }
@@ -181,7 +223,7 @@ object Current {
             }
 
             is CurrentViewAction.OnTimerReset -> {
-                optActiveTask.get(state)?.let { activeTask ->
+                optActiveTask.get(state)?.toNullable()?.let { activeTask ->
                     val oldTimeredState = activeTask.timeredState
                     val newTimeredState = when (oldTimeredState) {
                         is TimeredState.Paused -> TimeredState.Paused.INITIAL
@@ -201,7 +243,7 @@ object Current {
                         state,
                         TimeredTask(
                             action.element, TimeredState.Paused.INITIAL
-                        )
+                        ).toOptional()
                     ).withEffects()
                 } else {
                     state.withEffects()
@@ -213,32 +255,19 @@ object Current {
             }
 
             is CurrentViewAction.OnSkipTask -> {
-                val activeTask = activeElement.activeTask
+                val activeTask = activeElement.activeTask.toNullable()
                 if (activeTask != null) {
-                    val tasks = activeElement.activeTasksValue(state.tasksState)
-                    if (tasks.isEmpty()) {
-                        // do nothing, it's the only task left
-                        state.withEffects()
-                    } else {
-                        val currentIndex =
-                            tasks.indexOfFirst { it.name == activeTask.task.name }
-                        val newIndex = if (currentIndex < tasks.size - 1) {
-                            currentIndex + 1
-                        } else {
-                            0
-                        }
-                        val nextTask = tasks[newIndex]
-                        optActiveElement.set(
-                            state,
-                            activeElement.copy(
-                                activeTask = TimeredTask(
-                                    nextTask,
-                                    TimeredState.Paused.INITIAL
-                                )
-                            )
-                        ).withEffects(
-                            PlaySoundEffect(Sound.Ping)
-                        )
+                    getNextActiveTask(
+                        activeElement,
+                        activeTask,
+                        state,
+                        skip = true
+                    ).flatMapState {
+                        ActiveElement.optActiveTask.set(activeElement, it.newState)
+                    }.flatMapState {
+                        CurrentState.optActiveElement.set(state.currentState, it.newState)
+                    }.flatMapState {
+                        Gtd2State.optCurrent.set(state, it.newState)
                     }
                 } else {
                     illegalAction(action, state)
@@ -254,7 +283,7 @@ object Current {
             }
 
             is CurrentViewAction.OnScrollToActiveClick -> {
-                optActiveTask.get(state)?.let { activeTask ->
+                optActiveTask.get(state)?.toNullable()?.let { activeTask ->
                     state.currentState.tasksToShowValue(state.tasksState).indexOf(activeTask.task)
                         .let { index ->
                             state.withEffects(
@@ -278,7 +307,7 @@ object Current {
                     currentState = state.currentState.copy(
                         activeElement = ActiveElement.ActiveQueue(
                             action.element.name,
-                            activeTask = null
+                            activeTask = Optional.nullValue()
                         )
                     )
                 ).withEffects()
@@ -299,5 +328,40 @@ object Current {
         }
     }
 
-
+    private fun getNextActiveTask(
+        activeElement: ActiveElement.ActiveQueue,
+        activeTask: TimeredTask?,
+        state: Gtd2State,
+        skip: Boolean = false
+    ): Reduced<Optional<TimeredTask>, out AppEffect> {
+        val tasks = activeElement.activeTasksValue(state.tasksState)
+        return if (tasks.isEmpty()) {
+            // do nothing, it's the only task left
+            Optional.nullValue<TimeredTask>().withEffects<Optional<TimeredTask>, PlaySoundEffect>()
+        } else {
+            val nextTask = if (skip) {
+                if (activeTask != null) {
+                    val currentIndex = tasks.indexOfFirst { it.name == activeTask.task.name }
+                    val newIndex = if (currentIndex < tasks.size - 1) {
+                        currentIndex + 1
+                    } else {
+                        0
+                    }
+                    tasks[newIndex]
+                } else {
+                    tasks[0]
+                }
+            } else {
+                tasks[0]
+            }
+            TimeredTask(
+                nextTask,
+                TimeredState.Paused.INITIAL
+            ).toOptional().withEffects(
+                effectIf(skip) {
+                    PlaySoundEffect(Sound.Ping)
+                }
+            )
+        }
+    }
 }

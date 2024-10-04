@@ -54,6 +54,24 @@ data class Flipper(
         return scheduledElements.map { it.element.tasks() }.flatten()
     }
 
+    override fun withDoneReset(): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.withDoneReset()
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.withDoneReset()
+                )
+
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.withDoneReset()
+                )
+            }
+        })
+    }
+
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
