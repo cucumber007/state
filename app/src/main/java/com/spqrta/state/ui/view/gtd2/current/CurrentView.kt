@@ -73,7 +73,7 @@ fun CurrentView(state: Gtd2State) {
                         }
                     }
                 } else {
-                    val activeTask = activeElement.activeTask.toNullable()!!
+                    val activeTask = activeElement.activeTask.toNullable()
                     Column {
                         Row {
                             Text(
@@ -132,7 +132,7 @@ fun CurrentView(state: Gtd2State) {
                             }
 
                             state.currentState.tasksToShowValue(state.tasksState).forEach {
-                                if (it.name == activeTask.task.name) {
+                                if (it.name == activeTask?.task?.name) {
                                     ActionButton(
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                     ) {

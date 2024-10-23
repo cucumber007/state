@@ -28,7 +28,7 @@ fun PortraitView(state: AppReady) {
                 imageVector = Icons.Default.Build,
                 action = AppGlobalAction.OnDebugMenuButtonClick,
                 tint = Color.LightGray,
-                size = 16.dp
+                size = 32.dp
             )
         }
         Column(

@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 data class ConfigState(
     val tabs: List<FrameState> = if (BuildConfig.DEBUG) {
         listOf(
-            FrameState.TabGtd2,
-            FrameState.TabAlarms,
+            FrameState.TabCurrent,
             FrameState.TabStats,
             FrameState.TabDynalist,
+            FrameState.TabGtd2,
+            FrameState.TabAlarms,
             FrameState.TabTinder,
-            FrameState.TabCurrent,
             FrameState.TabMeta,
         )
     } else {
@@ -25,6 +25,6 @@ data class ConfigState(
     }
 ) {
     companion object {
-        val INITIAL = ConfigState()
+        val INITIAL by lazy { ConfigState() }
     }
 }

@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.frame
 
+import com.spqrta.state.common.logic.features.config.ConfigState
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -28,6 +29,10 @@ sealed class FrameState {
     object TabMeta : FrameState()
 
     companion object {
-        val INITIAL = TabMeta
+        val INITIAL = ConfigState.INITIAL.tabs.let { tabs ->
+            tabs.firstOrNull {
+                it == TabCurrent
+            } ?: tabs.first()
+        }
     }
 }
