@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.SendNotificationEffect
 import com.spqrta.state.common.logic.effect.ShowToastEffect
 import com.spqrta.state.common.logic.features.alarms.AlarmsState
+import com.spqrta.state.common.logic.features.config.ConfigState
 import com.spqrta.state.common.logic.features.daily.DailyState
 import com.spqrta.state.common.logic.features.daily.clock_mode.ClockMode
 import com.spqrta.state.common.logic.features.daily.routine.CleanTeeth
@@ -45,6 +46,7 @@ data class AppReady(
     @Contextual val timers: Timers = Timers(),
     val alarmsState: AlarmsState = AlarmsState(),
     val clockMode: ClockMode = ClockMode.INITIAL,
+    val config: ConfigState = ConfigState.INITIAL,
     val dynalistState: DynalistState = DynalistState.INITIAL,
     val frameState: FrameState = FrameState.INITIAL,
     val gtd2State: Gtd2State = Gtd2State.initial(),

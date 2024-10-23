@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import com.spqrta.state.ui.view.gtd2.tinder.TinderView
 @Composable
 fun TabsFrameView(appState: AppReady) {
     val frameState = appState.frameState
+    val tabs = appState.config.tabs
     Column {
         Box(
             Modifier
@@ -51,19 +53,20 @@ fun TabsFrameView(appState: AppReady) {
             }
         }
         Tabs(
-            listOf(
-                FrameState.TabCurrent to Icons.Default.PlayArrow,
-                FrameState.TabStats to Icons.Default.Info,
-                FrameState.TabGtd2 to Icons.Default.AccountBox,
-//                FrameState.TabAlarms to Icons.Default.Notifications,
-                FrameState.TabDynalist to Icons.Default.Home,
-                FrameState.TabTinder to Icons.Default.ArrowForward,
-                FrameState.TabMeta to Icons.Default.Info,
-            ).map {
+            tabs.map {
+                val icon = when(it) {
+                    FrameState.TabAlarms -> Icons.Default.Notifications
+                    FrameState.TabCurrent -> Icons.Default.PlayArrow
+                    FrameState.TabDynalist -> Icons.Default.Home
+                    FrameState.TabGtd2 -> Icons.Default.AccountBox
+                    FrameState.TabMeta -> Icons.Default.Info
+                    FrameState.TabStats -> Icons.Default.Info
+                    FrameState.TabTinder -> Icons.Default.ArrowForward
+                }
                 TabItem(
-                    image = it.second,
-                    action = FrameTabsAction.OnTabClicked(it.first),
-                    active = frameState == it.first
+                    image = icon,
+                    action = FrameTabsAction.OnTabClicked(it),
+                    active = frameState == it
                 )
             }
         )
