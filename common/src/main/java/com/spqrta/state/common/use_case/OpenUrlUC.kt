@@ -13,7 +13,12 @@ class OpenUrlUC(
     private val context: Context
 ) {
     fun flow(url: String): Flow<List<AppAction>> {
-        return { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }.asFlow()
+        return {
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            )
+        }.asFlow()
             .noActions()
 
     }
