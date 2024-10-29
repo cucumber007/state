@@ -1,8 +1,11 @@
 package com.spqrta.state.common.use_case
 
 import com.spqrta.state.common.AppScope
-import com.spqrta.state.common.use_case.dynalist.CreateDynalistDocU
+import com.spqrta.state.common.use_case.dynalist.CreateDemoTaskTreeUC
+import com.spqrta.state.common.use_case.dynalist.CreateDynalistDocUC
+import com.spqrta.state.common.use_case.dynalist.CreateDynalistNodeUC
 import com.spqrta.state.common.use_case.dynalist.GetDynalistDocsUC
+import com.spqrta.state.common.use_case.dynalist.InitDynalistDocUC
 import com.spqrta.state.common.use_case.dynalist.LoadDynalistUC
 import com.spqrta.state.common.use_case.foreground_service.StartFgsUC
 import com.spqrta.state.common.use_case.foreground_service.StopFgsUC
@@ -12,9 +15,17 @@ class UseCases(
     val appScope: AppScope
 ) {
     val showToastUC = ShowToastUC(appScope)
+    val createDynalistNodeUC = CreateDynalistNodeUC(appScope.dynalistApi)
 
-    val createDynalistDocUC = CreateDynalistDocU(appScope.dynalistApi)
+    val createDemoTaskTreeUC = CreateDemoTaskTreeUC(createDynalistNodeUC)
+    val createDynalistDocUC = CreateDynalistDocUC(appScope.dynalistApi)
     val getDynalistDocsUC = GetDynalistDocsUC(appScope.dynalistApi)
+    val initDynalistDocUC = InitDynalistDocUC(
+        dynalistApi = appScope.dynalistApi,
+        createDemoTaskTreeUC = createDemoTaskTreeUC,
+        createDynalistDocUC = createDynalistDocUC,
+        createDynalistNodeUC = createDynalistNodeUC,
+    )
     val loadDynalistUC = LoadDynalistUC(appScope.dynalistApi)
     val loadStateUC = LoadStateUC(appScope)
     val openUrlUC = OpenUrlUC(appScope.appContext)

@@ -4,7 +4,7 @@ import com.spqrta.state.common.logic.features.dynalist.DynalistState
 
 sealed interface DynalistEffect : AppEffect {
     data class GetDocs(val dynalistState: DynalistState.DocsLoading) : DynalistEffect
-    data class CreateDoc(val dynalistState: DynalistState.CreatingDoc) : DynalistEffect
+    data class InitDoc(val dynalistState: DynalistState.CreatingDoc) : DynalistEffect
 }
 
 data class LoadDynalistEffect(val apiKey: String, val docId: String) : DynalistEffect {

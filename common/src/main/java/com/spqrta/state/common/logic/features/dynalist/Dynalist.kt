@@ -164,7 +164,7 @@ object Dynalist {
                                     rootId = action.docsResult.success.rootId
                                 )
                                 newState.withEffects(
-                                    DynalistEffect.CreateDoc(newState)
+                                    DynalistEffect.InitDoc(newState)
                                 )
                             }
                         }
@@ -282,7 +282,7 @@ object Dynalist {
         return when (dynalistState) {
             is DynalistState.CreatingDoc -> {
                 dynalistState.withEffects(
-                    DynalistEffect.CreateDoc(
+                    DynalistEffect.InitDoc(
                         dynalistState
                     )
                 )

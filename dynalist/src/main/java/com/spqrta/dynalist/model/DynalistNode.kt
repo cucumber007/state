@@ -13,6 +13,9 @@ data class DynalistNode(
             doc: DynalistDocRemote,
             dynalistNodeRemote: DynalistNodeRemote
         ): DynalistNode {
+            if(doc.errorMessage != null) {
+                throw RuntimeException(doc.errorMessage)
+            }
             return DynalistNode(
                 children = dynalistNodeRemote.children?.map { id ->
                     doc.nodes.first { it.id == id }.let {

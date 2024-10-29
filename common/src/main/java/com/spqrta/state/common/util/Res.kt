@@ -1,10 +1,12 @@
-@file:Suppress("ComplexRedundantLet")
+@file:Suppress("ComplexRedundantLet", "OPT_IN_USAGE")
 
 package com.spqrta.state.common.util
 
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.AppErrorAction
 import com.spqrta.state.common.util.collections.asList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
 typealias ResUnit = Res<Unit>
 
@@ -129,6 +131,14 @@ suspend fun <T> tryResSuspend(code: suspend () -> T): Res<T> {
     } catch (e: Exception) {
         Failure(e)
     }
+}
+
+fun <T> tryResFlow(code: suspend () -> T): Flow<Res<T>> {
+    return suspend {
+        tryResSuspend {
+            code.invoke()
+        }
+    }.asFlow()
 }
 
 fun tryResUnit(code: () -> Unit): ResUnit {

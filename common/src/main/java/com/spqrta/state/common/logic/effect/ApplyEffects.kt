@@ -95,8 +95,8 @@ private fun getFlow(effect: DynalistEffect, useCases: UseCases): Flow<List<AppAc
             useCases.getDynalistDocsUC.flow(effect.dynalistState.key)
         }
 
-        is DynalistEffect.CreateDoc -> {
-            useCases.createDynalistDocUC.flow(
+        is DynalistEffect.InitDoc -> {
+            useCases.initDynalistDocUC.flow(
                 apiKey = effect.dynalistState.key,
                 rootId = effect.dynalistState.rootId
             )
