@@ -3,6 +3,7 @@ package com.spqrta.state.common.use_case.foreground_service
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.content.ContextCompat
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.AppReadyAction
@@ -20,7 +21,9 @@ class StartFgsUC(
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                context.startForegroundService(StateService.createStartIntent(context))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(StateService.createStartIntent(context))
+                }
                 listOf()
             } else {
                 listOf(AppReadyAction.ShowErrorAction(Exception("Notifications permission is not granted")))

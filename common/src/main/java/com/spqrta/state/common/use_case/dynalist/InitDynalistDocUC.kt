@@ -4,6 +4,7 @@ import com.spqrta.dynalist.DynalistApi
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.features.dynalist.DocCreatedResult
+import com.spqrta.state.common.logic.features.dynalist.DynalistStateAppDatabase
 import com.spqrta.state.common.util.flatMapSuccess
 import com.spqrta.state.common.util.mapSuccess
 import com.spqrta.state.common.util.mapSuccessSuspend
@@ -24,12 +25,11 @@ class InitDynalistDocUC(
             apiKey = apiKey,
             rootId = rootId,
         ).flatMapSuccess { docId ->
-            val root = "root"
             createDynalistNodeUC.flow(
                 apiKey = apiKey,
                 docId = docId,
-                parentId = root,
-                title = "__Task Trees__",
+                parentId = ID_ROOT,
+                title = TITLE_TASK_TREES,
             ).flatMapSuccess {
                 createDemoTaskTreeUC.flow(
                     apiKey = apiKey,
@@ -40,9 +40,16 @@ class InitDynalistDocUC(
                 createDynalistNodeUC.flow(
                     apiKey = apiKey,
                     docId = docId,
-                    parentId = root,
-                    title = "__Storage__",
-                )
+                    parentId = ID_ROOT,
+                    title = TITLE_STORAGE,
+                ).flatMapSuccess {
+                    createDynalistNodeUC.flow(
+                        apiKey = apiKey,
+                        docId = docId,
+                        parentId = it,
+                        title = TITLE_COMPLETED,
+                    )
+                }
             }.mapSuccess {
                 docId
             }
@@ -50,20 +57,26 @@ class InitDynalistDocUC(
             docId to loadStateDoc(
                 apiKey = apiKey,
                 dynalistApi = dynalistApi,
-                rootId = rootId,
                 stateAppDatabaseDocId = docId
             )
-        }.map {
+        }.map { result ->
             listOf(
                 DynalistAction.DynalistDatabaseDocCreated(
-                    it.mapSuccess {(docId, stateAppDatabaseDoc) ->
+                    result.mapSuccess {(docId, database) ->
                         DocCreatedResult(
-                            docId = docId,
-                            doc = stateAppDatabaseDoc
+                            databaseDocId = docId,
+                            database = database,
                         )
                     }
                 )
             )
         }
+    }
+
+    companion object {
+        const val ID_ROOT = "root"
+        const val TITLE_COMPLETED = "__Completed__"
+        const val TITLE_STORAGE = "__Storage__"
+        const val TITLE_TASK_TREES = "__Task Trees__"
     }
 }

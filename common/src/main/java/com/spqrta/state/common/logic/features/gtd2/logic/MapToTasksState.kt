@@ -65,7 +65,7 @@ private fun emptyQueue(): Queue {
 private fun DynalistLoadingState.Loaded.toElement(): Element {
     return Queue(
         name = "Main",
-        elements = this.nodes.map { it.toElement() }
+        elements = this.database.root.children.map { it.toElement() }
     )
 }
 

@@ -65,7 +65,7 @@ fun DynalistView(state: DynalistState) {
                     }
 
                     is DynalistLoadingState.Loaded -> {
-                        loadingState.nodes.forEach {
+                        loadingState.database.root.children.forEach {
                             ElementView(element = it.toElement())
                         }
                     }

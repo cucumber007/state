@@ -17,20 +17,21 @@ class GetDynalistDocsUC(
     private val dynalistApi: DynalistApi,
 ) {
 
+    @Suppress("SimpleRedundantLet")
     fun flow(apiKey: String): Flow<List<AppAction>> {
-        return suspend { dynalistApi.getDocs(GetDocsBody(token = apiKey)) }.asFlow()
-            .map { dynalistDocsRemote ->
+        return suspend {
+            dynalistApi.getDocs(GetDocsBody(token = apiKey))
+        }.asFlow().map { dynalistDocsRemote ->
                 dynalistDocsRemote.files?.let { docMinis ->
                     docMinis.firstOrNull { it.title == "State App Database" }?.id.let {
                         dynalistDocsRemote.rootId!! to it
                     }.asSuccess()
                 } ?: Exception(dynalistDocsRemote.message).asFailure()
-            }.mapSuccessSuspend { (rootId, stateAppDatabaseDocId) ->
-                rootId to stateAppDatabaseDocId?.let {
+            }.mapSuccessSuspend { (userRootId, stateAppDatabaseDocId) ->
+                userRootId to stateAppDatabaseDocId?.let {
                     it to loadStateDoc(
                         apiKey = apiKey,
                         dynalistApi = dynalistApi,
-                        rootId = rootId,
                         stateAppDatabaseDocId = it
                     )
                 }

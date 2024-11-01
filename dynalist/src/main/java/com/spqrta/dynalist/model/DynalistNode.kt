@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DynalistNode(
+    val id: String,
     val title: String,
     val children: List<DynalistNode> = listOf(),
     val note: String? = null,
@@ -17,6 +18,7 @@ data class DynalistNode(
                 throw RuntimeException(doc.errorMessage)
             }
             return DynalistNode(
+                id = dynalistNodeRemote.id,
                 children = dynalistNodeRemote.children?.map { id ->
                     doc.nodes.first { it.id == id }.let {
                         create(doc, it)

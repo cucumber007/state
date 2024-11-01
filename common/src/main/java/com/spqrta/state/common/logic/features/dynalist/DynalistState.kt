@@ -19,13 +19,13 @@ sealed class DynalistState {
     @Serializable
     data class CreatingDoc(
         val key: String,
-        val rootId: String,
+        val dynalistUserRootId: String,
     ) : DynalistState()
 
     @Serializable
     data class DocCreated(
         val key: String,
-        val stateDocId: String,
+        val databaseDocId: String,
         val loadingState: DynalistLoadingState,
     ) : DynalistState()
 

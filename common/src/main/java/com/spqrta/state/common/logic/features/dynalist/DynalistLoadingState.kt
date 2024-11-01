@@ -15,7 +15,7 @@ sealed class DynalistLoadingState {
     data class Loaded(
         @Serializable(with = LocalDateTimeSerializer::class)
         val loadedAt: LocalDateTime,
-        val nodes: List<DynalistNode>,
+        val database: DynalistStateAppDatabase,
     ) : DynalistLoadingState()
 
     companion object {

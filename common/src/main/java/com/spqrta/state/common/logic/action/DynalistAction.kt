@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.action
 
 import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.state.common.logic.features.dynalist.DocCreatedResult
+import com.spqrta.state.common.logic.features.dynalist.DynalistStateAppDatabase
 import com.spqrta.state.common.logic.features.dynalist.LoadDocsResult
 import com.spqrta.state.common.util.Res
 
@@ -16,7 +17,7 @@ sealed interface DynalistAction : AppAction {
     ) : Action()
 
     data class DynalistLoaded(
-        val docResult: Res<DynalistNode>,
+        val docResult: Res<DynalistStateAppDatabase>,
     ) : Action()
 
     data class DynalistDatabaseDocCreated(
