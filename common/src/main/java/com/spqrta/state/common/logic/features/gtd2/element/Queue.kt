@@ -82,36 +82,6 @@ data class Queue(
         })
     }
 
-    override fun withTaskClicked(clickedTask: Task): Element {
-        return copy(elements = elements.map {
-            it.withTaskClicked(clickedTask)
-        })
-    }
-
-    override fun withTaskCompleted(completedTask: Task): Element {
-        return copy(elements = elements.map {
-            it.withTaskCompleted(completedTask)
-        })
-    }
-
-    override fun withTaskLongClicked(clickedTask: Task): Element {
-        return copy(elements = elements.map {
-            it.withTaskLongClicked(clickedTask)
-        })
-    }
-
-    override fun withTaskStatus(status: TaskStatus): Element {
-        return copy(elements = elements.map {
-            it.withTaskStatus(status)
-        })
-    }
-
-    override fun withTaskToggled(toggledTask: Task): Element {
-        return copy(elements = elements.map {
-            it.withTaskToggled(toggledTask)
-        })
-    }
-
     override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }

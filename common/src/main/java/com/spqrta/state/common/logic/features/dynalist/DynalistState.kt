@@ -54,7 +54,7 @@ sealed class DynalistState {
             subState
         }).asOpticOptional()
 
-        val optLoaded = ({ state: DynalistState ->
+        val optLoadingState = ({ state: DynalistState ->
             (state as? DocCreated)?.loadingState
         } to { state: DynalistState, loadingState: DynalistLoadingState ->
             (state as? DocCreated)?.copy(loadingState = loadingState) ?: state

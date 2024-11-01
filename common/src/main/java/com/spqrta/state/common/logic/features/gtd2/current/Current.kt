@@ -184,8 +184,7 @@ object Current {
 
             is CurrentViewAction.OnTimerStart -> {
                 optActiveTask.get(state)?.toNullable()?.let { activeTask ->
-                    val oldTimeredState = activeTask.timeredState
-                    when (oldTimeredState) {
+                    when (val oldTimeredState = activeTask.timeredState) {
                         is TimeredState.Paused -> {
                             val effects = mutableSetOf<AppEffect>()
                             var newTimeredState = TimeredState.Running(

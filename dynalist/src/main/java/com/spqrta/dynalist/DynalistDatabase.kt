@@ -79,7 +79,8 @@ class DynalistDatabase(
                     Insert(
                         parent_id = nodeId,
                         content = content,
-                        note = note
+                        note = note,
+                        index = 0
                     )
                 ),
                 token = apiKey

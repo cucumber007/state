@@ -8,6 +8,7 @@ import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.util.time.toMinutes
 
 fun mapToTasksState(
@@ -50,8 +51,8 @@ private fun mergeTaskStates(
     newTasksState.tasks().forEach { task ->
         val oldTask = oldTasksState.tasks().find { it.name == task.name }
         if (oldTask != null) {
-            mergedTasksState = mergedTasksState.withElement(task.name) {
-                it.withTaskStatus(oldTask.status)
+            mergedTasksState = mergedTasksState.withTask(task.name) {
+                it.withStatus(oldTask.status)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
+import android.util.Log
 import com.spqrta.dynalyst.utility.pure.Optional
 import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
@@ -49,7 +50,9 @@ private fun mapToCurrentStateActiveQueue(
         mapToCurrentStateNoActiveElement(
             oldCurrentState,
             tasksState
-        )
+        ).also {
+            Log.v("Gtd2", "Active queue not found")
+        }
     } else {
         var newActiveElement = oldActiveElement.copy(
             queue = newActiveQueue.name,
@@ -115,6 +118,6 @@ private fun mapToCurrentStateNoActiveElement(
     return if (newActiveElement != null) {
         optActiveElement.set(oldCurrentState, newActiveElement)
     } else {
-        oldCurrentState.copy(queuesToChoose = queuesToChoose.map { it.name })
+        oldCurrentState.copy(activeElement = null, queuesToChoose = queuesToChoose.map { it.name })
     }
 }

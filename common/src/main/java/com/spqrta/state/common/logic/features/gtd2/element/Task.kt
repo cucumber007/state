@@ -85,6 +85,10 @@ data class Task(
         return copy(done = false)
     }
 
+    override fun withActive(active: Boolean): Element {
+        return copy(active = active)
+    }
+
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return if (name == this.name) {
             action(this)
@@ -106,58 +110,6 @@ data class Task(
             TaskStatus.Active -> copy(active = true, done = false)
             TaskStatus.Done -> copy(active = true, done = true)
             TaskStatus.Inactive -> copy(active = false, done = false)
-        }
-    }
-
-    override fun withActive(active: Boolean): Element {
-        return copy(active = active)
-    }
-
-    override fun withTaskClicked(clickedTask: Task): Element {
-        return if (this.name == clickedTask.name) {
-            when (status) {
-                TaskStatus.Active -> withStatus(TaskStatus.Done)
-                TaskStatus.Done -> withStatus(TaskStatus.Done)
-                TaskStatus.Inactive -> withStatus(TaskStatus.Inactive)
-            }
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskCompleted(completedTask: Task): Element {
-        return if (this.name == completedTask.name) {
-            withStatus(TaskStatus.Done)
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskLongClicked(clickedTask: Task): Element {
-        return if (this.name == clickedTask.name) {
-            when (status) {
-                TaskStatus.Active -> withStatus(TaskStatus.Inactive)
-                TaskStatus.Done -> withStatus(TaskStatus.Active)
-                TaskStatus.Inactive -> withStatus(TaskStatus.Active)
-            }
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskStatus(status: TaskStatus): Element {
-        return withStatus(status)
-    }
-
-    override fun withTaskToggled(toggledTask: Task): Element {
-        return if (this.name == toggledTask.name) {
-            when (status) {
-                TaskStatus.Active -> withStatus(TaskStatus.Done)
-                TaskStatus.Done -> withStatus(TaskStatus.Active)
-                TaskStatus.Inactive -> withStatus(TaskStatus.Inactive)
-            }
-        } else {
-            this
         }
     }
 

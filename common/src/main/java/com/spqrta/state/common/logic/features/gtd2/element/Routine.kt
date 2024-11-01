@@ -74,50 +74,6 @@ data class Routine(
         return copy(element = element.withEstimate(name, estimate))
     }
 
-    override fun withTaskClicked(clickedTask: Task): Element {
-        return if (innerElement.active) {
-            this.copy(
-                element = element.withTaskClicked(clickedTask)
-            )
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskCompleted(completedTask: Task): Element {
-        return if (innerElement.active) {
-            this.copy(
-                element = element.withTaskCompleted(completedTask)
-            )
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskLongClicked(clickedTask: Task): Element {
-        return if (innerElement.active) {
-            this.copy(
-                element = element.withTaskLongClicked(clickedTask)
-            )
-        } else {
-            this
-        }
-    }
-
-    override fun withTaskStatus(status: TaskStatus): Element {
-        return innerElement.withTaskStatus(status)
-    }
-
-    override fun withTaskToggled(toggledTask: Task): Element {
-        return if (innerElement.active) {
-            this.copy(
-                element = element.withTaskToggled(toggledTask)
-            )
-        } else {
-            this
-        }
-    }
-
     override fun withActive(active: Boolean): Element {
         return copy(active = active)
     }

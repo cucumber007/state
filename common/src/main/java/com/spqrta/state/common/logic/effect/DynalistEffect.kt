@@ -3,6 +3,11 @@ package com.spqrta.state.common.logic.effect
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 
 sealed interface DynalistEffect : AppEffect {
+    data class AddNode(
+        val dynalistState: DynalistState.DocCreated,
+        val node: String,
+        val parentId: String
+    ) : DynalistEffect
     data class GetDocs(val dynalistState: DynalistState.DocsLoading) : DynalistEffect
     data class InitDoc(val dynalistState: DynalistState.CreatingDoc) : DynalistEffect
 }

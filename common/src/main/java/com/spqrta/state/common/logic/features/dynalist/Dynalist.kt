@@ -21,6 +21,7 @@ import com.spqrta.state.common.util.Success
 import com.spqrta.state.common.util.optics.identityOptional
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
+import com.spqrta.state.common.util.optics.withSubState
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.chain
@@ -28,6 +29,7 @@ import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.state_machine.withOptic
 import com.spqrta.state.common.util.time.toDays
+import com.spqrta.state.common.util.toIso
 import java.time.LocalDateTime
 
 object Dynalist {
@@ -80,7 +82,7 @@ object Dynalist {
                             } else {
                                 docCreated.loadingState.withEffects()
                             }.flatMapState {
-                                DynalistState.optLoaded.set(docCreated, it.newState)
+                                DynalistState.optLoadingState.set(docCreated, it.newState)
                             }
                         }
                     }
@@ -203,7 +205,7 @@ object Dynalist {
                                     )
                                 }
                             }.flatMapState {
-                                DynalistState.optLoaded.set(docCreated, it.newState)
+                                DynalistState.optLoadingState.set(docCreated, it.newState)
                             }
                         }
 
@@ -219,7 +221,7 @@ object Dynalist {
                                         loadedAt = LocalDateTime.now(),
                                         database = action.docResult.success
                                     )
-                                    val newDynalistState = DynalistState.optLoaded.set(
+                                    val newDynalistState = DynalistState.optLoadingState.set(
                                         docCreated,
                                         newLoadingState
                                     )
@@ -232,6 +234,23 @@ object Dynalist {
                             Gtd2Action.DynalistStateUpdated(it.newState)
                         )
                     }
+                }
+            }
+
+            is DynalistAction.OnTaskCompleted -> {
+                withSubState(
+                    state,
+                    DynalistState.optDocCreated,
+                    DynalistState.optLoadingState + DynalistLoadingState.optLoaded,
+                    onNull = state.withEffects()
+                ) { docCreated, loaded ->
+                    docCreated.withEffects(
+                        DynalistEffect.AddNode(
+                            dynalistState = docCreated,
+                            node = "${LocalDateTime.now().toIso()} - ${action.task.name}",
+                            parentId = loaded.database.completedStorage.id
+                        )
+                    )
                 }
             }
 

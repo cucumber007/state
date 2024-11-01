@@ -54,6 +54,10 @@ data class Flipper(
         return scheduledElements.map { it.element.tasks() }.flatten()
     }
 
+    override fun withActive(active: Boolean): Element {
+        return copy(active = active)
+    }
+
     override fun withDoneReset(): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
@@ -126,129 +130,5 @@ data class Flipper(
                 }
             }
         )
-    }
-
-    override fun withTaskStatus(status: TaskStatus): Element {
-        return copy(scheduledElements = scheduledElements.map {
-            when (it) {
-                is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.withTaskStatus(
-                        status
-                    )
-                )
-
-                is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.withTaskStatus(
-                        status
-                    )
-                )
-
-                is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.withTaskStatus(
-                        status
-                    )
-                )
-            }
-        })
-    }
-
-    override fun withTaskClicked(clickedTask: Task): Element {
-        return copy(scheduledElements = scheduledElements.map {
-            when (it) {
-                is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.withTaskClicked(
-                        clickedTask
-                    )
-                )
-
-                is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.withTaskClicked(
-                        clickedTask
-                    )
-                )
-
-                is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.withTaskClicked(
-                        clickedTask
-                    )
-                )
-            }
-        })
-    }
-
-    override fun withTaskCompleted(completedTask: Task): Element {
-        return copy(scheduledElements = scheduledElements.map {
-            when (it) {
-                is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.withTaskCompleted(
-                        completedTask
-                    )
-                )
-
-                is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.withTaskCompleted(
-                        completedTask
-                    )
-                )
-
-                is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.withTaskCompleted(
-                        completedTask
-                    )
-                )
-            }
-        })
-    }
-
-    override fun withTaskLongClicked(clickedTask: Task): Element {
-        return copy(scheduledElements = scheduledElements.map {
-            when (it) {
-                is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.withTaskLongClicked(
-                        clickedTask
-                    )
-                )
-
-                is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.withTaskLongClicked(
-                        clickedTask
-                    )
-                )
-
-                is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.withTaskLongClicked(
-                        clickedTask
-                    )
-                )
-            }
-        })
-    }
-
-    override fun withTaskToggled(toggledTask: Task): Element {
-        return copy(scheduledElements = scheduledElements.map {
-            when (it) {
-                is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.withTaskToggled(
-                        toggledTask
-                    )
-                )
-
-                is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.withTaskToggled(
-                        toggledTask
-                    )
-                )
-
-                is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.withTaskToggled(
-                        toggledTask
-                    )
-                )
-            }
-        })
-    }
-
-    override fun withActive(active: Boolean): Element {
-        return copy(active = active)
     }
 }

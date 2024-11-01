@@ -25,7 +25,7 @@ sealed class ActiveElement {
         }
 
         fun queueValue(tasksState: TasksState): Queue {
-            return tasksState.queues().find { it.name == queue }!!
+            return tasksState.queues().find { it.name == queue } ?: Queue("Error")
         }
 
         companion object {

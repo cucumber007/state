@@ -1,11 +1,15 @@
 package com.spqrta.state.common.logic.features.gtd2
 
 import com.spqrta.state.common.logic.action.DebugAction
+import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.action.Gtd2Action
 import com.spqrta.state.common.logic.action.Gtd2ViewAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
+import com.spqrta.state.common.logic.action.asEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTasksState
@@ -78,11 +82,25 @@ object Gtd2 {
     ): Reduced<out Gtd2State, out AppEffect> {
         return when (action) {
             is Gtd2Action.ToggleTask -> {
-                val newTasksState = oldGtd2State.tasksState.withTaskToggled(action.task)
+                val effects = mutableSetOf<AppEffect>()
+                val newTasksState = oldGtd2State.tasksState.withTask(action.task) {
+                    when (it.status) {
+                        TaskStatus.Active -> {
+                            effects.add(DynalistAction.OnTaskCompleted(it).asEffect())
+                            it.withStatus(TaskStatus.Done)
+                        }
+                        TaskStatus.Done -> {
+                            it.withStatus(TaskStatus.Active)
+                        }
+                        TaskStatus.Inactive -> {
+                            it.withStatus(TaskStatus.Inactive)
+                        }
+                    }
+                }
                 updateTasksState(
                     oldGtd2State,
                     newTasksState
-                )
+                ).addEffects(effects)
             }
 
             is DebugAction.ResetDay -> {
@@ -123,16 +141,37 @@ object Gtd2 {
             }
 
             is Gtd2Action.OnTaskClick -> {
+                val effects = mutableSetOf<AppEffect>()
                 updateTasksState(
                     oldGtd2State,
-                    oldGtd2State.tasksState.withTaskClicked(action.task)
-                )
+                    oldGtd2State.tasksState.withTask(action.task) {
+                        when (it.status) {
+                            TaskStatus.Active -> {
+                                effects.add(DynalistAction.OnTaskCompleted(it).asEffect())
+                                it.withStatus(TaskStatus.Done)
+                            }
+                            TaskStatus.Done -> {
+                                it.withStatus(TaskStatus.Done)
+                            }
+                            TaskStatus.Inactive -> {
+                                it.withStatus(TaskStatus.Inactive)
+                            }
+                        }
+                    }
+                ).addEffects(effects)
             }
 
             is Gtd2Action.OnTaskLongClick -> {
                 updateTasksState(
                     oldGtd2State,
-                    oldGtd2State.tasksState.withTaskLongClicked(action.task)
+                    oldGtd2State.tasksState.withTask(action.task) {
+                        when (it.status) {
+                            TaskStatus.Active -> it.withStatus(TaskStatus.Inactive)
+                            TaskStatus.Done -> it.withStatus(TaskStatus.Active)
+                            TaskStatus.Inactive -> it.withStatus(TaskStatus.Active)
+                        }
+
+                    }
                 )
             }
 

@@ -1,7 +1,6 @@
 package com.spqrta.state.common.use_case.dynalist
 
 import com.spqrta.dynalist.DynalistApi
-import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.dynalist.model.EditBody
 import com.spqrta.dynalist.model.Insert
 import com.spqrta.state.common.logic.action.AppAction
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.map
 class AddNodesUC(
     private val dynalistApi: DynalistApi
 ) {
-    fun execute(
+    fun flow(
         apiKey: String,
         docId: String,
         parentId: String,

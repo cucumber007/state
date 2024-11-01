@@ -1,6 +1,7 @@
 package com.spqrta.state.common.use_case
 
 import com.spqrta.state.common.AppScope
+import com.spqrta.state.common.use_case.dynalist.AddNodesUC
 import com.spqrta.state.common.use_case.dynalist.CreateDemoTaskTreeUC
 import com.spqrta.state.common.use_case.dynalist.CreateDynalistDocUC
 import com.spqrta.state.common.use_case.dynalist.CreateDynalistNodeUC
@@ -17,6 +18,7 @@ class UseCases(
     val showToastUC = ShowToastUC(appScope)
     val createDynalistNodeUC = CreateDynalistNodeUC(appScope.dynalistApi)
 
+    val addNodesUC = AddNodesUC(appScope.dynalistApi)
     val createDemoTaskTreeUC = CreateDemoTaskTreeUC(createDynalistNodeUC)
     val createDynalistDocUC = CreateDynalistDocUC(appScope.dynalistApi)
     val getDynalistDocsUC = GetDynalistDocsUC(appScope.dynalistApi)

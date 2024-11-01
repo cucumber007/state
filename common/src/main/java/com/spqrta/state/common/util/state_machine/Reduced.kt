@@ -1,5 +1,8 @@
 package com.spqrta.state.common.util.state_machine
 
+import com.spqrta.state.common.logic.effect.ActionEffect
+import com.spqrta.state.common.logic.effect.AppEffect
+
 open class Reduced<State, Effect>(val newState: State, val effects: Set<Effect>) {
     override fun toString(): String {
         return "${javaClass.simpleName}(newState=$newState, effects=$effects)"
@@ -15,6 +18,10 @@ open class Reduced<State, Effect>(val newState: State, val effects: Set<Effect>)
 
     fun <NewEffect> flatMapEffects(mapFunction: (Reduced<State, Effect>) -> Set<NewEffect>): Reduced<State, NewEffect> {
         return Reduced(this.newState, mapFunction(this))
+    }
+
+    fun addEffects(effects: Set<Effect>): Reduced<State, Effect> {
+        return flatMapEffects { it.effects + effects }
     }
 
     override fun hashCode(): Int {

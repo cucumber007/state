@@ -101,5 +101,14 @@ private fun getFlow(effect: DynalistEffect, useCases: UseCases): Flow<List<AppAc
                 rootId = effect.dynalistState.dynalistUserRootId
             )
         }
+
+        is DynalistEffect.AddNode -> {
+            useCases.addNodesUC.flow(
+                apiKey = effect.dynalistState.key,
+                docId = effect.dynalistState.databaseDocId,
+                parentId = effect.parentId,
+                nodes = effect.node.asList()
+            )
+        }
     }
 }
