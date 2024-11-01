@@ -4,7 +4,7 @@ class Insert(
     val parent_id: String,
     val content: String,
     val note: String?,
-    val index: Int = 0,
+    val index: Int,
 ) : Change(
     "insert"
 )
