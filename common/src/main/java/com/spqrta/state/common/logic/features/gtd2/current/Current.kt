@@ -142,6 +142,18 @@ object Current {
                 illegalAction(action, state)
             }
 
+            is CurrentViewAction.OnResetActiveElementClick -> {
+                withOptic(
+                    action,
+                    state,
+                    Gtd2State.optCurrent,
+                ) {
+                    it.copy(
+                        activeElement = null
+                    ).withEffects()
+                }
+            }
+
             is CurrentViewAction.OnTaskComplete -> {
                 val activeTask = activeElement.activeTask.toNullable()
                 if (activeTask != null) {
@@ -312,6 +324,7 @@ object Current {
                 ).withEffects()
             }
 
+            is CurrentViewAction.OnResetActiveElementClick,
             is CurrentViewAction.OnScrollToActiveClick,
             is CurrentViewAction.OnSkipTask,
             is CurrentViewAction.OnSubElementClick,

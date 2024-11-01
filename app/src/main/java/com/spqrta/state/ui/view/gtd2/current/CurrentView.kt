@@ -39,6 +39,7 @@ import com.spqrta.state.common.util.time.toSeconds
 import com.spqrta.state.ui.theme.FontSize
 import com.spqrta.state.ui.view.common.controls.ActionButton
 import com.spqrta.state.ui.view.common.controls.ImageActionButton
+import com.spqrta.state.ui.view.common.controls.TextActionButton
 import java.time.LocalTime
 
 @Composable
@@ -76,11 +77,16 @@ fun CurrentView(state: Gtd2State) {
                     val activeTask = activeElement.activeTask.toNullable()
                     Column {
                         Row {
-                            Text(
-                                activeElement.queueValue(state.tasksState).displayName,
-                                fontSize = FontSize.TITLE,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                            ActionButton(
+                                longPressAction = CurrentViewAction.OnResetActiveElementClick,
+                            ) {
+                                Text(
+                                    activeElement.queueValue(state.tasksState).displayName,
+                                    fontSize = FontSize.TITLE,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                            }
+
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
