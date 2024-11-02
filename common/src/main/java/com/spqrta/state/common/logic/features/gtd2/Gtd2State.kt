@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2
 
-import com.spqrta.state.common.environments.tasks_database.DatabaseTask
+import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
@@ -14,7 +14,7 @@ import com.spqrta.state.common.util.optics.asOptic
 import com.spqrta.state.common.util.optics.asOpticGet
 import kotlinx.serialization.Serializable
 
-typealias TasksDatabaseState = Map<String, DatabaseTask>
+typealias TasksDatabaseState = Map<String, TasksDatabaseEntry>
 typealias TasksState = Element
 
 @Serializable
@@ -22,6 +22,10 @@ data class Gtd2State(
     val currentState: CurrentState,
     val metaState: MetaState,
     val tasksState: TasksState,
+    /**
+     * TasksDatabase is a local storage of task status and estimates, to avoid mutating Dynalist
+     * state. It also contains completed history from Dynalist.
+     */
     val tasksDatabase: TasksDatabaseState,
     val tinderState: TinderState,
     val stats: Gtd2Stats = Gtd2Stats.INITIAL
@@ -58,6 +62,10 @@ data class Gtd2State(
                 }
             }
         }.asOpticGet()
+        val optTasksDatabase =
+            ({ state: Gtd2State -> state.tasksDatabase } to { state: Gtd2State, subState: TasksDatabaseState ->
+                state.copy(tasksDatabase = subState)
+            }).asOptic()
         val optTaskTree =
             ({ state: Gtd2State -> state.tasksState } to { state: Gtd2State, subState: Element ->
                 state.copy(tasksState = subState)

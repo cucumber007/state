@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.tinder
 
-import com.spqrta.state.common.environments.tasks_database.DatabaseTask
+import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.action.TinderAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
@@ -58,18 +58,15 @@ object Tinder {
         val (gtd2State, dynalistState) = state
         return when (action) {
             is TinderAction.OnEstimated -> {
-                val newTasksDatabaseState =
-                    (gtd2State.tasksDatabase[action.element.name.value] ?: DatabaseTask(
-                        action.element.name.value
-                    )).let {
-                        gtd2State.tasksDatabase.toMutableMap()
-                            .also { map ->
-                                map.put(
-                                    action.element.name.value,
-                                    it.copy(estimate = action.estimate)
-                                )
-                            }
-                    }
+                val newTasksDatabaseState = gtd2State.tasksDatabase.toMutableMap().also { map ->
+                    map.put(
+                        action.element.name.value,
+                        TasksDatabaseEntry.Estimate(
+                            action.element.name.value,
+                            action.estimate
+                        )
+                    )
+                }
                 updateTasksDatabase(state, newTasksDatabaseState)
             }
 
@@ -93,7 +90,7 @@ object Tinder {
 
     private fun updateTasksDatabase(
         state: Pair<Gtd2State, DynalistState>,
-        newTasksDatabaseState: Map<String, DatabaseTask>
+        newTasksDatabaseState: Map<String, TasksDatabaseEntry>
     ): Reduced<out Gtd2State, out AppEffect> {
         val (gtd2State, dynalistState) = state
         return set(optOnTasksDatabase, gtd2State) {

@@ -237,7 +237,7 @@ object Dynalist {
                 }
             }
 
-            is DynalistAction.OnTaskCompleted -> {
+            is DynalistAction.OnTaskCompletedDynalist -> {
                 withSubState(
                     state,
                     DynalistState.optDocCreated,

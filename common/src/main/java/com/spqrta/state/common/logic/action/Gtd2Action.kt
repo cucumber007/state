@@ -1,6 +1,8 @@
 package com.spqrta.state.common.logic.action
 
+import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
+import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 
 
@@ -10,11 +12,13 @@ sealed interface Gtd2Action : AppAction {
     }
 
     data class DynalistStateUpdated(val dynalistState: DynalistState) : Action()
+    // action to group all the logic that is performed on task completion in one place
+    data class OnTaskCompleted(val task: Task) : Action()
+    // action to group all the logic that is performed on task database state update in one place
+    data class OnTasksDatabaseStateUpdated(val tasksDatabaseState: TasksDatabaseState) : Action()
 
-    // not in View action because used in TaskView on multiple screens
+    // those actions are not in View action because used in TaskView on multiple screens
     data class OnTaskClick(val task: Task) : Action()
-
-    // not in View action because used in TaskView on multiple screens
     data class OnTaskLongClick(val task: Task) : Action()
     data class ToggleTask(val task: Task) : Action()
 
