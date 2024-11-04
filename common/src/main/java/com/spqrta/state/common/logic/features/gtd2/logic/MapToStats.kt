@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
+import android.annotation.SuppressLint
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
@@ -18,6 +19,7 @@ fun mapToStats(
     )
 }
 
+@SuppressLint("NewApi")
 private fun calculateTimeLeft(): TimeValue {
     return (LocalTime.MAX.toSecondOfDay() - LocalTime.now()
         .toSecondOfDay()).let { PositiveSeconds(it) }

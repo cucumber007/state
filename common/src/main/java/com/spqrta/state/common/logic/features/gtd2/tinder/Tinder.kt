@@ -97,7 +97,8 @@ object Tinder {
             val newTasksState = mapToTasksState(
                 gtd2State.tasksState,
                 dynalistState,
-                newTasksDatabaseState
+                newTasksDatabaseState,
+                gtd2State.metaState
             )
             val currentState =
                 mapToCurrentState(gtd2State.currentState, newTasksState, newTasksDatabaseState)

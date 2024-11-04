@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 sealed class TinderPrompt {
 
     @Serializable
-    data class NonEstimatedRoutine(val routine: Routine) : TinderPrompt()
+    data class NonEstimatedRoutine(val routine: Routine<*>) : TinderPrompt()
 
     @Serializable
     data class NonEstimatedTask(val task: Task) : TinderPrompt()

@@ -8,13 +8,16 @@ import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.withNewContext
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.toMinutes
 
 fun mapToTasksState(
     oldTasksState: TasksState,
     dynalistState: DynalistState,
-    tasksDatabaseState: TasksDatabaseState
+    tasksDatabaseState: TasksDatabaseState,
+    metaState: MetaState,
 ): TasksState {
     // todo get estimates from database
     return when (dynalistState) {
@@ -37,13 +40,15 @@ fun mapToTasksState(
         }
     }.let { newTasksState: TasksState ->
         mergeTaskStates(
+            metaState = metaState,
             newTasksState = newTasksState,
-            oldTasksState = oldTasksState
+            oldTasksState = oldTasksState,
         )
     }
 }
 
 private fun mergeTaskStates(
+    metaState: MetaState,
     newTasksState: TasksState,
     oldTasksState: TasksState
 ): TasksState {
@@ -51,12 +56,13 @@ private fun mergeTaskStates(
     newTasksState.tasks().forEach { task ->
         val oldTask = oldTasksState.tasks().find { it.name == task.name }
         if (oldTask != null) {
+            // update statuses for the new task state to preserve tasks that are done etc.
             mergedTasksState = mergedTasksState.withTask(task.name) {
                 it.withStatus(oldTask.status)
             }
         }
     }
-    return mergedTasksState
+    return mergedTasksState.withNewContext(metaState)
 }
 
 private fun emptyQueue(): Queue {

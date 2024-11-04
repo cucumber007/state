@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 import com.spqrta.state.common.util.time.toMinutes
 import java.time.LocalTime
 
@@ -13,10 +14,10 @@ object MainQueue {
     val VALUE = Queue(
         "Main",
         listOf(
-            Routine(
+            Routine<RoutineContext.NoContext>(
                 element = Task("Time Control")
             ),
-            Routine(
+            Routine<RoutineContext.NoContext>(
                 element = Task("Calendar Control")
             ),
             Queue(
@@ -26,25 +27,25 @@ object MainQueue {
                         name = "Force majeure",
                         elements = listOf(),
                     ),
-                    Routine(
+                    Routine<RoutineContext.NoContext>(
                         element = Task("Commute Preparation"),
                         active = false
                     ),
-                    Routine(
+                    Routine<RoutineContext.NoContext>(
                         element = Task("Planned Commute"),
                         active = false
                     ),
                     Queue(
                         name = "Work Planned",
                         elements = listOf(
-                            Routine(
+                            Routine<RoutineContext.NoContext>(
                                 element = Task("Slack Check"),
                             ),
                             Task(
                                 name = "Call",
                                 taskStatus = TaskStatus.Inactive
                             ),
-                            Routine(
+                            Routine<RoutineContext.NoContext>(
                                 element = Task("Daily Call"),
                                 active = false
                             ),
@@ -65,7 +66,7 @@ object MainQueue {
                                 element = Queue(
                                     name = "Routines",
                                     elements = listOf(
-                                        Routine(
+                                        Routine<RoutineContext.NoContext>(
                                             element = Queue(
                                                 name = "Base Morning",
                                                 elements = listOf(
@@ -76,11 +77,11 @@ object MainQueue {
                                                 ),
                                             ),
                                         ),
-                                        Routine(
+                                        Routine<RoutineContext.NoContext>(
                                             element = Task("Clean Bothering"),
                                             active = false
                                         ),
-                                        Routine(
+                                        Routine<RoutineContext.NoContext>(
                                             element = Queue(
                                                 name = "RoutineFlow App",
                                                 elements = listOf()
@@ -92,7 +93,7 @@ object MainQueue {
                             ),
                             FlipperSchedule.TimePeriod(
                                 duration = 15.toMinutes(),
-                                element = Routine(
+                                element = Routine<RoutineContext.NoContext>(
                                     element = Task("Personal Task")
                                 ),
                             ),
@@ -109,7 +110,7 @@ object MainQueue {
                                         ),
                                         FlipperSchedule.TimePeriod(
                                             duration = 15.toMinutes(),
-                                            element = Routine(
+                                            element = Routine<RoutineContext.NoContext>(
                                                 element = Task("Fiz")
                                             ),
                                         ),
@@ -119,7 +120,7 @@ object MainQueue {
                             ),
                             FlipperSchedule.TimePeriod(
                                 duration = 60.toMinutes(),
-                                element = Routine(
+                                element = Routine<RoutineContext.NoContext>(
                                     element = Task("Rest")
                                 ),
                             ),

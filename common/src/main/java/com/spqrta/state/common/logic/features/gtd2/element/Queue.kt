@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
@@ -44,6 +45,12 @@ data class Queue(
         return elements.all {
             it.isLeaf()
         }
+    }
+
+    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+        return copy(elements = elements.map {
+            it.mapRoutines(mapper)
+        })
     }
 
     override fun nonEstimated(): List<Element> {

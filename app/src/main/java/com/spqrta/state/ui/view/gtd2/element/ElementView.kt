@@ -6,6 +6,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 
 @Composable
 fun ElementView(element: Element, displayName: String? = null) {
@@ -17,7 +18,7 @@ fun ElementView(element: Element, displayName: String? = null) {
             )
         }
 
-        is Routine -> {
+        is Routine<*> -> {
             RoutineView(
                 routine = element,
                 displayName = displayName,

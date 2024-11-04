@@ -3,9 +3,10 @@ package com.spqrta.state.common.logic.features.gtd2.data
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 
 object RoutineFlowQueue {
-    val value = Routine(
+    val value = Routine<RoutineContext.NoContext>(
         Queue(
             "Morning",
             listOf(

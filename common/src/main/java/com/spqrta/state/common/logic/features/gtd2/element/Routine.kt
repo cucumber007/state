@@ -1,18 +1,21 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import android.annotation.SuppressLint
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
-import com.spqrta.state.common.logic.features.gtd2.element.misc.RoutineTrigger
-import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+@SuppressLint("NewApi")
 @Serializable
-data class Routine(
+data class Routine<Context : RoutineContext>(
     private val element: Element,
     override val displayName: String = "${element.name} Routine",
     override val active: Boolean = true,
-    val trigger: RoutineTrigger = RoutineTrigger.Day(LocalDate.now()),
+    private val trigger: RoutineTrigger<Context>? = null,
     override val name: ElementName = ElementName.OtherName(displayName),
 ) : Element {
 
@@ -40,6 +43,10 @@ data class Routine(
 
     override fun isLeafGroup(): Boolean {
         return innerElement.isLeafGroup()
+    }
+
+    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+        return mapper(this)
     }
 
     override fun nonEstimated(): List<Element> {
@@ -76,5 +83,12 @@ data class Routine(
 
     override fun withActive(active: Boolean): Element {
         return copy(active = active)
+    }
+
+    fun withNewContext(context: MetaState): Routine<Context> {
+        return if (trigger != null) {
+            val (newTrigger, newActive) = trigger.updateContext(context)
+            copy(trigger = newTrigger, active = newActive)
+        } else this
     }
 }

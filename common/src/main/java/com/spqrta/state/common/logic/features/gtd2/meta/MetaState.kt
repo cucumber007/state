@@ -1,16 +1,22 @@
 package com.spqrta.state.common.logic.features.gtd2.meta
 
+import android.annotation.SuppressLint
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderPrompt
+import com.spqrta.state.common.util.serialization.LocalDateSerializer
 import kotlinx.serialization.Serializable
 import java.lang.reflect.Field
+import java.time.LocalDate
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 // environment conditions that affects GTD
+@SuppressLint("NewApi")
 @Serializable
 data class MetaState(
     val goalFunction: GoalFunctionState,
     val workdayStarted: Boolean,
+    @Serializable(with = LocalDateSerializer::class)
+    val date: LocalDate,
 ) {
     val prompts: Collection<TinderPrompt> by lazy {
         getNullProperties(goalFunction).map {
@@ -89,7 +95,8 @@ data class MetaState(
                 body = BodyState(
                     isTeethClean = null
                 )
-            )
+            ),
+            date = LocalDate.now()
         )
 
         val SERVICE_PROPERTIES = listOf(

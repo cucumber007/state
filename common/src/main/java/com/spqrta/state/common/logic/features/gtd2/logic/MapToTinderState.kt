@@ -19,7 +19,7 @@ fun mapToTinderState(
     prompts.addAll(tasksState.nonEstimated().map {
         when (it) {
             is Task -> TinderPrompt.NonEstimatedTask(it)
-            is Routine -> TinderPrompt.NonEstimatedRoutine(it)
+            is Routine<*> -> TinderPrompt.NonEstimatedRoutine(it)
             else -> throw IllegalStateException("Unexpected element type")
         }
     }.filter {

@@ -8,6 +8,8 @@ import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTasksState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
+import com.spqrta.state.common.logic.features.gtd2.meta.Meta
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.util.tuple.Tuple4
@@ -15,6 +17,7 @@ import com.spqrta.state.common.util.tuple.Tuple4
 /**
  * (Changed State) -> (Affected States):
  *
+ * (Meta) -> (Tasks)
  * (Dynalist) -> (TasksDatabase, Tasks)
  * (TasksDatabase) -> (Tasks, Current, GtdStats, Tinder)
  * (Tasks) -> (Current, GtdStats, Tinder)
@@ -23,7 +26,41 @@ import com.spqrta.state.common.util.tuple.Tuple4
  * (Tinder) -> ()
  */
 
-fun updateDynalistStateWithDeps(
+fun updateMetaWithDeps(
+    oldParentState: Gtd2State,
+    newMetaState: MetaState,
+    dynalistState: DynalistState,
+): Gtd2State {
+    return updateMetaStateSyncronized(
+        oldParentState,
+        newMetaState,
+        dynalistState
+    ) { newParentState, newTasksState ->
+        updateTasksWithDeps(
+            newParentState,
+            newTasksState
+        )
+    }
+}
+
+fun updateMetaStateSyncronized(
+    parentState: Gtd2State,
+    updatedState: MetaState,
+    dynalistState: DynalistState,
+    updateDeps: (Gtd2State, TasksState) -> Gtd2State,
+): Gtd2State {
+    return parentState.copy(metaState = updatedState).let { newParentState ->
+        val newTasksState = mapToTasksState(
+            newParentState.tasksState,
+            dynalistState,
+            newParentState.tasksDatabase,
+            newParentState.metaState
+        )
+        updateDeps(newParentState, newTasksState)
+    }
+}
+
+fun updateDynalistWithDeps(
     oldParentState: Gtd2State,
     dynalistState: DynalistState
 ): Gtd2State {
@@ -53,7 +90,8 @@ fun updateDynalistStateSyncronized(
         val newTasksState = mapToTasksState(
             it.tasksState,
             updatedState,
-            it.tasksDatabase
+            it.tasksDatabase,
+            it.metaState
         )
         val newTasksDatabaseState = it.tasksDatabase
         updateDeps(parentState, newTasksState to newTasksDatabaseState)
@@ -118,7 +156,8 @@ private fun updateTasksDatabaseStateSyncronized(
         val newTasksState = mapToTasksState(
             newParentState.tasksState,
             dynalistState,
-            newParentState.tasksDatabase
+            newParentState.tasksDatabase,
+            newParentState.metaState
         )
         val newCurrentState = mapToCurrentState(
             newParentState.currentState,

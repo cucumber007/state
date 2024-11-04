@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
+import android.annotation.SuppressLint
 import com.spqrta.dynalyst.utility.pure.Optional
 import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.action.ClockAction
@@ -29,6 +30,7 @@ import com.spqrta.state.common.util.testLog
 import com.spqrta.state.common.util.time.toSeconds
 import java.time.LocalTime
 
+@SuppressLint("NewApi")
 object Current {
     private val optActiveElement = Gtd2State.optCurrent + CurrentState.optActiveElement
     private val optActiveTask = optActiveElement + ActiveElement.optActiveTask
@@ -334,7 +336,7 @@ object Current {
             is CurrentViewAction.OnTimerReset,
             is CurrentViewAction.OnTimerStart,
             is CurrentViewAction.OnToggleShowDoneClick,
-            -> {
+                -> {
                 illegalAction(action, state)
             }
         }

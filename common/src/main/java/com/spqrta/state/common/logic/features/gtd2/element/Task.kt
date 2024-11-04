@@ -65,6 +65,10 @@ data class Task(
         return false
     }
 
+    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+        return this
+    }
+
     override fun nonEstimated(): List<Element> {
         return if (estimate == null && status == TaskStatus.Active) {
             listOf(this)

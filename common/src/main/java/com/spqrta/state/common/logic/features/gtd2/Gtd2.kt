@@ -1,7 +1,9 @@
 package com.spqrta.state.common.logic.features.gtd2
 
+import android.annotation.SuppressLint
 import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.AppReady
+import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.action.Gtd2Action
@@ -14,19 +16,16 @@ import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
-import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
-import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.asOpticGet
-import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.optics.asOpticSet
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
+import com.spqrta.state.common.util.optics.withSubState
 import com.spqrta.state.common.util.state_machine.Reduced
-import com.spqrta.state.common.util.state_machine.set
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.state_machine.withOptic
@@ -34,6 +33,7 @@ import com.spqrta.state.common.util.tuple.Tuple4
 
 typealias TinderTuple = Pair<TinderState, TasksDatabaseState>
 
+@SuppressLint("NewApi")
 object Gtd2 {
 
     // See Gtd2Logic.kt
@@ -111,7 +111,7 @@ object Gtd2 {
             }
 
             is Gtd2Action.DynalistStateUpdated -> {
-                updateDynalistStateWithDeps(oldGtd2State, action.dynalistState).withEffects()
+                updateDynalistWithDeps(oldGtd2State, action.dynalistState).withEffects()
             }
 
             is Gtd2Action.OnTaskClick -> {
@@ -185,6 +185,26 @@ object Gtd2 {
                     action.tasksDatabaseState,
                     dynalistState
                 ).withEffects()
+            }
+
+            is ClockAction.TickAction -> {
+                withSubState(
+                    oldGtd2State,
+                    Gtd2State.optMeta
+                ) { oldMetaState ->
+                    val newMetaState = oldMetaState.copy(
+                        date = action.time.toLocalDate()
+                    )
+                    if (newMetaState != oldMetaState) {
+                        updateMetaWithDeps(
+                            oldGtd2State,
+                            newMetaState,
+                            dynalistState
+                        ).withEffects()
+                    } else {
+                        oldGtd2State.withEffects()
+                    }
+                }
             }
         }
     }

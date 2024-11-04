@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
@@ -40,6 +41,24 @@ data class Flipper(
         return scheduledElements.all {
             it.element.isLeaf() && it.element !is Queue && it.element !is Flipper
         }
+    }
+
+    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+        return copy(scheduledElements = scheduledElements.map {
+            when (it) {
+                is FlipperSchedule.TimeLeftPortion -> it.copy(
+                    element = it.element.mapRoutines(mapper) as Element
+                )
+
+                is FlipperSchedule.TimePeriod -> it.copy(
+                    element = it.element.mapRoutines(mapper) as Element
+                )
+
+                is FlipperSchedule.UntilTime -> it.copy(
+                    element = it.element.mapRoutines(mapper) as Element
+                )
+            }
+        })
     }
 
     override fun nonEstimated(): List<Element> {
