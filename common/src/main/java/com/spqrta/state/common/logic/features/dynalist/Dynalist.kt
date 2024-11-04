@@ -16,8 +16,8 @@ import com.spqrta.state.common.logic.effect.DynalistEffect
 import com.spqrta.state.common.logic.effect.LoadDynalistEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
-import com.spqrta.state.common.util.Failure
-import com.spqrta.state.common.util.Success
+import com.spqrta.state.common.util.result.Failure
+import com.spqrta.state.common.util.result.Success
 import com.spqrta.state.common.util.optics.identityOptional
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
@@ -210,12 +210,13 @@ object Dynalist {
                         }
 
                         is DynalistLoadingState.Loaded -> {
-                            when(action.docResult) {
+                            when (action.docResult) {
                                 is Failure -> {
                                     docCreated.withEffects(
                                         ActionEffect(AppReadyAction.ShowErrorAction(action.docResult.failure))
                                     )
                                 }
+
                                 is Success -> {
                                     val newLoadingState = DynalistLoadingState.Loaded(
                                         loadedAt = LocalDateTime.now(),

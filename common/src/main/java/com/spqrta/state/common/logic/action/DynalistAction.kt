@@ -4,7 +4,7 @@ import com.spqrta.state.common.logic.features.dynalist.DocCreatedResult
 import com.spqrta.state.common.logic.features.dynalist.DynalistStateAppDatabase
 import com.spqrta.state.common.logic.features.dynalist.LoadDocsResult
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.util.Res
+import com.spqrta.state.common.util.result.Res
 
 
 sealed interface DynalistAction : AppAction {

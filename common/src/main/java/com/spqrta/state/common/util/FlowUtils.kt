@@ -3,6 +3,9 @@
 package com.spqrta.state.common.util
 
 import com.spqrta.state.common.logic.action.AppAction
+import com.spqrta.state.common.util.result.Failure
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.Success
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapConcat
@@ -36,7 +39,7 @@ fun <T, K> Flow<Res<T>>.mapSuccessSuspend(mapper: suspend (T) -> K): Flow<Res<K>
 
 fun <T, K> Flow<Res<T>>.flatMapSuccess(mapper: (T) -> Flow<Res<K>>): Flow<Res<K>> {
     return this.flatMapConcat {
-        when(it) {
+        when (it) {
             is Success -> mapper(it.success)
             is Failure -> Failure<K>(it.failure).toFlow()
         }

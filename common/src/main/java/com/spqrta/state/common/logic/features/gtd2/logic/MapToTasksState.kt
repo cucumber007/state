@@ -1,17 +1,24 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
 import com.spqrta.dynalist.model.DynalistNode
+import com.spqrta.state.common.R
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
+import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
 import com.spqrta.state.common.logic.features.gtd2.element.withNewContext
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.toNullable
 import com.spqrta.state.common.util.time.toMinutes
+import com.spqrta.state.common.util.result.tryRes
 
 fun mapToTasksState(
     oldTasksState: TasksState,
@@ -83,10 +90,43 @@ fun DynalistNode.toElement(): Element {
             elements = this.children.map { it.toElement() }
         )
     } else {
-        Task(
-            name = this.title,
-            estimate = this.note.parseEstimate()?.toMinutes()
-        )
+        val note = this.note?.let { parseNote(it) }?.toNullable()
+        when {
+            note?.trigger != null -> {
+                Routine(
+                    element = Task(
+                        name = this.title,
+                        estimate = note.estimate?.toMinutes()
+                    ),
+                    trigger = note.trigger
+                )
+            }
+
+            else -> {
+                Task(
+                    name = this.title,
+                    estimate = this.note.parseEstimate()?.toMinutes()
+                )
+            }
+        }
+    }
+}
+
+private fun parseNote(note: String): Res<DynalistNoteParams> {
+    return tryRes {
+        try {
+            mapOf(
+                DynalistNoteParams.KEY_ESTIMATE to note.toInt().toString()
+            )
+        } catch (e: NumberFormatException) {
+            note.split(",").map { paramString ->
+                paramString.split("=").let {
+                    it.first() to it[1]!!
+                }
+            }.toMap()
+        }
+    }.flatMapSuccess {
+        DynalistNoteParams.parse(it)
     }
 }
 

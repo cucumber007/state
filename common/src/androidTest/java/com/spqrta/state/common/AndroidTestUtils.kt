@@ -14,7 +14,7 @@ import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.applyEffects
 import com.spqrta.state.common.logic.features.dynalist.LoadDocsResult
 import com.spqrta.state.common.use_case.UseCases
-import com.spqrta.state.common.util.asSuccess
+import com.spqrta.state.common.util.result.asSuccess
 import com.spqrta.state.common.util.collections.asList
 import com.spqrta.state.common.util.state_machine.StateMachine
 import com.spqrta.state.common.util.toFlow

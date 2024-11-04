@@ -3,8 +3,8 @@ package com.spqrta.state.common.external.preferences
 import android.content.Context
 import android.preference.PreferenceManager
 import com.spqrta.state.common.logic.AppReady
-import com.spqrta.state.common.util.Res
-import com.spqrta.state.common.util.asSuccess
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.asSuccess
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

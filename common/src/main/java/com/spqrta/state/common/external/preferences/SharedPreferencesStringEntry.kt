@@ -1,12 +1,12 @@
 package com.spqrta.state.common.external.preferences
 
 import android.content.SharedPreferences
-import com.spqrta.state.common.util.Failure
-import com.spqrta.state.common.util.Res
-import com.spqrta.state.common.util.ResUnit
-import com.spqrta.state.common.util.Success
-import com.spqrta.state.common.util.failure
-import com.spqrta.state.common.util.success
+import com.spqrta.state.common.util.result.Failure
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.ResUnit
+import com.spqrta.state.common.util.result.Success
+import com.spqrta.state.common.util.result.failure
+import com.spqrta.state.common.util.result.success
 
 abstract class SharedPreferencesStringEntry<T>(
     private val key: String,

@@ -3,8 +3,8 @@ package com.spqrta.state.common.use_case.dynalist
 import com.spqrta.dynalist.DynalistApi
 import com.spqrta.dynalist.model.EditBody
 import com.spqrta.dynalist.model.Insert
-import com.spqrta.state.common.util.Res
-import com.spqrta.state.common.util.tryResSuspend
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.tryResSuspend
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 

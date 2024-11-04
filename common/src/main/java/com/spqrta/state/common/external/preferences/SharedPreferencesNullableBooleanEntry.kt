@@ -1,10 +1,10 @@
 package com.spqrta.state.common.external.preferences
 
 import android.content.SharedPreferences
-import com.spqrta.state.common.util.Res
-import com.spqrta.state.common.util.ResUnit
-import com.spqrta.state.common.util.tryRes
-import com.spqrta.state.common.util.tryResUnit
+import com.spqrta.state.common.util.result.Res
+import com.spqrta.state.common.util.result.ResUnit
+import com.spqrta.state.common.util.result.tryRes
+import com.spqrta.state.common.util.result.tryResUnit
 
 open class SharedPreferencesNullableBooleanEntry(
     private val key: String,

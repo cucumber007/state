@@ -1,11 +1,15 @@
 package com.spqrta.state.common.logic.features.gtd2.element.routine
 
+import android.annotation.SuppressLint
 import android.content.Context
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext.Day
+import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext.NoContext
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.optics.OpticGet
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+@SuppressLint("NewApi")
 @Serializable
 sealed class RoutineTrigger<Context : RoutineContext> {
     data class Day(val context: RoutineContext.Day) : RoutineTrigger<RoutineContext.Day>() {
@@ -19,6 +23,10 @@ sealed class RoutineTrigger<Context : RoutineContext> {
         override fun getContext(state: MetaState): RoutineContext.Day {
             return RoutineContext.Day(state.date)
         }
+
+        companion object {
+            val INITIAL = Day(RoutineContext.Day(LocalDate.now()))
+        }
     }
 
     abstract fun getContext(state: MetaState): Context
@@ -27,6 +35,18 @@ sealed class RoutineTrigger<Context : RoutineContext> {
         return when (this) {
             is Day -> updateContextDelegate(getContext(metaState)).let {
                 Pair(it.first as RoutineTrigger<Context>, it.second)
+            }
+        }
+    }
+
+    companion object {
+        fun fromString(data: String): RoutineTrigger<*>? {
+            return when (data) {
+                Day::class.simpleName -> {
+                    RoutineTrigger.Day.INITIAL
+                }
+
+                else -> null
             }
         }
     }

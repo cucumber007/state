@@ -50,9 +50,7 @@ private fun mapToCurrentStateActiveQueue(
         mapToCurrentStateNoActiveElement(
             oldCurrentState,
             tasksState
-        ).also {
-            Log.v("Gtd2", "Active queue not found")
-        }
+        )
     } else {
         var newActiveElement = oldActiveElement.copy(
             queue = newActiveQueue.name,

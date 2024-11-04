@@ -1,6 +1,6 @@
 @file:Suppress("ComplexRedundantLet", "OPT_IN_USAGE")
 
-package com.spqrta.state.common.util
+package com.spqrta.state.common.util.result
 
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.AppErrorAction
