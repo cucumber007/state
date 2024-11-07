@@ -1,7 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
-import com.spqrta.dynalyst.utility.pure.Optional
-import com.spqrta.dynalyst.utility.pure.toOptional
+import com.spqrta.dynalist.utility.pure.Optional
+import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.util.optics.asOpticOptional

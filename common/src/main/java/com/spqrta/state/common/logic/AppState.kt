@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.OnResumeAction
@@ -75,6 +76,11 @@ data class AppReady(
             return when (action) {
                 is AppReadyAction.ShowErrorAction -> {
                     state.withEffects(ShowToastEffect(action.exception.message ?: "Unknown error"))
+                }
+
+                is DebugAction.BumpDate -> {
+                    DateTimeEnvironment.bumpDebugDateCompensation()
+                    state.withEffects()
                 }
 
                 is DebugAction.FlipResetStateEnabled -> {

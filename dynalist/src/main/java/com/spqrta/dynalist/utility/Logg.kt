@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility
+package com.spqrta.dynalist.utility
 
 import android.util.Log
 

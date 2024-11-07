@@ -1,6 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
-import com.spqrta.dynalyst.utility.pure.Optional
+import com.spqrta.dynalist.utility.pure.Optional
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task

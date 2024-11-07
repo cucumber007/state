@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility.pure
+package com.spqrta.dynalist.utility.pure
 
 import android.content.ContentResolver
 import android.provider.Settings

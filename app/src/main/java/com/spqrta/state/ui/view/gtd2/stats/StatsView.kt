@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.util.time.formatWithoutSeconds
 import com.spqrta.state.common.util.time.toSeconds
@@ -23,6 +24,10 @@ val json = Json {
 @Composable
 fun StatsView(state: Gtd2Stats) {
     Column {
+        Text(
+            text = DateTimeEnvironment.dateNow.format(DateTimeEnvironment.displayFormatter),
+            fontSize = FontSize.SMALL,
+        )
         Text(
             text = "Time left for this day",
             fontSize = FontSize.TITLE

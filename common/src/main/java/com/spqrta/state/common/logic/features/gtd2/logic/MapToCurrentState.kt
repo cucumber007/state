@@ -1,8 +1,8 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
 import android.util.Log
-import com.spqrta.dynalyst.utility.pure.Optional
-import com.spqrta.dynalyst.utility.pure.toOptional
+import com.spqrta.dynalist.utility.pure.Optional
+import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement

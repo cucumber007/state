@@ -47,5 +47,11 @@ fun DebugView(appState: AppReady) {
                 action = DebugAction.ResetDay
             )
         }
+        Box(Modifier.padding(bottom = padding)) {
+            TextActionButton(
+                text = "Bump Date",
+                action = DebugAction.BumpDate
+            )
+        }
     }
 }

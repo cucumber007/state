@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element.routine
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import kotlinx.serialization.Serializable
@@ -34,7 +35,7 @@ sealed class RoutineTrigger<Context : RoutineContext> {
         }
 
         companion object {
-            val INITIAL = Day(RoutineContext.Day(LocalDate.now()))
+            val INITIAL = Day(RoutineContext.Day(DateTimeEnvironment.dateNow))
         }
     }
 

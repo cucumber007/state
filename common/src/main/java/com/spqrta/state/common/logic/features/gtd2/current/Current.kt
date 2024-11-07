@@ -1,8 +1,8 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
 import android.annotation.SuppressLint
-import com.spqrta.dynalyst.utility.pure.Optional
-import com.spqrta.dynalyst.utility.pure.toOptional
+import com.spqrta.dynalist.utility.pure.Optional
+import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.action.CurrentViewAction

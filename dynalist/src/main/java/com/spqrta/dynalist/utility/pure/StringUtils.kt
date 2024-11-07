@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility.pure
+package com.spqrta.dynalist.utility.pure
 
 fun String?.emptyIfNull(): String {
     return this ?: ""

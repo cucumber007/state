@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.base.network
+package com.spqrta.dynalist.base.network
 
 import com.spqrta.dynalist.BuildConfig
 import okhttp3.OkHttpClient

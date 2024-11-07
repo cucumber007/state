@@ -1,6 +1,6 @@
-package com.spqrta.dynalyst.utility.utils
+package com.spqrta.dynalist.utility.utils
 
-import com.spqrta.dynalyst.utility.pure.Stub
+import com.spqrta.dynalist.utility.pure.Stub
 import retrofit2.Response
 import java.net.ConnectException
 import java.net.SocketTimeoutException

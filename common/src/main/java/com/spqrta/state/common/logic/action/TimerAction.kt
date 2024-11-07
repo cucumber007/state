@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.action
 
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.features.daily.timers.TimerId
 import com.spqrta.state.common.util.time.TimeValue
 import java.time.LocalDateTime
@@ -8,7 +9,7 @@ sealed interface TimerAction : AppAction {
     sealed class Action : TimerAction
     data class StartTimer(
         val id: TimerId,
-        val startDateTime: LocalDateTime = LocalDateTime.now()
+        val startDateTime: LocalDateTime = DateTimeEnvironment.dateTimeNow
     ) : Action()
 
     data class TimerEnded(

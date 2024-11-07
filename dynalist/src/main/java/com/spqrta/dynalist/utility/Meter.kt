@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility
+package com.spqrta.dynalist.utility
 
 class Meter(
     private val tag: String = "",

@@ -1,6 +1,7 @@
 package com.spqrta.state.common.util
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -34,7 +35,7 @@ fun ZonedDateTime.toLocalDateTimeOnThisZone(): LocalDateTime {
 fun LocalTime.toLocalTimeUtc(): LocalTime {
     val zone = ZoneId.systemDefault()
     val local = ZonedDateTime.ofLocal(
-        LocalDateTime.of(LocalDate.now(), this),
+        LocalDateTime.of(DateTimeEnvironment.dateNow, this),
         zone,
         null
     )
@@ -44,7 +45,7 @@ fun LocalTime.toLocalTimeUtc(): LocalTime {
 
 fun LocalTime.utcToLocalTime(): LocalTime {
     val local = ZonedDateTime.ofLocal(
-        LocalDateTime.of(LocalDate.now(), this),
+        LocalDateTime.of(DateTimeEnvironment.dateNow, this),
         ZoneId.ofOffset("", ZoneOffset.UTC),
         null
     )

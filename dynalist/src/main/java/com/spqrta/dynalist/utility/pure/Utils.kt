@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility.pure
+package com.spqrta.dynalist.utility.pure
 
 import android.app.DatePickerDialog
 import android.content.Context

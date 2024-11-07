@@ -2,7 +2,7 @@ package com.spqrta.dynalist.model
 
 import com.google.gson.annotations.SerializedName
 import com.spqrta.dynalist.utility.pure.nullIfEmpty
-import com.spqrta.dynalyst.utility.pure.nullIfEmpty
+import com.spqrta.dynalist.utility.pure.nullIfEmpty
 
 data class DynalistNodeRemote(
     val id: String,

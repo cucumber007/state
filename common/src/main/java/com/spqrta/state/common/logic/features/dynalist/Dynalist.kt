@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.dynalist
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.AppState
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.AppReadyAction
@@ -71,7 +72,7 @@ object Dynalist {
 
                         is DynalistLoadingState.Loaded -> {
                             if (loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
-                                    .isBefore(LocalDateTime.now())
+                                    .isBefore(DateTimeEnvironment.dateTimeNow)
                             ) {
                                 docCreated.loadingState.withEffects(
                                     LoadDynalistEffect(
@@ -128,7 +129,7 @@ object Dynalist {
                                 key = creatingDoc.key,
                                 databaseDocId = action.docResult.success.databaseDocId,
                                 loadingState = DynalistLoadingState.Loaded(
-                                    loadedAt = LocalDateTime.now(),
+                                    loadedAt = DateTimeEnvironment.dateTimeNow,
                                     database = action.docResult.success.database
                                 )
                             ).withEffects()
@@ -154,7 +155,7 @@ object Dynalist {
                                     key = docsLoading.key,
                                     databaseDocId = databaseDocId,
                                     loadingState = DynalistLoadingState.Loaded(
-                                        loadedAt = LocalDateTime.now(),
+                                        loadedAt = DateTimeEnvironment.dateTimeNow,
                                         database = database
                                     )
                                 )
@@ -194,7 +195,7 @@ object Dynalist {
                             when (action.docResult) {
                                 is Success -> {
                                     DynalistLoadingState.Loaded(
-                                        loadedAt = LocalDateTime.now(),
+                                        loadedAt = DateTimeEnvironment.dateTimeNow,
                                         database = action.docResult.success
                                     ).withEffects<DynalistLoadingState, AppEffect>()
                                 }
@@ -219,7 +220,7 @@ object Dynalist {
 
                                 is Success -> {
                                     val newLoadingState = DynalistLoadingState.Loaded(
-                                        loadedAt = LocalDateTime.now(),
+                                        loadedAt = DateTimeEnvironment.dateTimeNow,
                                         database = action.docResult.success
                                     )
                                     val newDynalistState = DynalistState.optLoadingState.set(
@@ -248,7 +249,7 @@ object Dynalist {
                     docCreated.withEffects(
                         DynalistEffect.AddNode(
                             dynalistState = docCreated,
-                            node = "${LocalDateTime.now().toIso()} - ${action.task.name}",
+                            node = "${DateTimeEnvironment.dateTimeNow.toIso()} - ${action.task.name}",
                             parentId = loaded.database.completedStorage.id
                         )
                     )

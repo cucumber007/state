@@ -1,6 +1,6 @@
 package com.spqrta.dynalist
 
-import com.spqrta.dynalyst.base.network.BaseRequestManager
+import com.spqrta.dynalist.base.network.BaseRequestManager
 
 object DynalistApiClient : BaseRequestManager() {
 

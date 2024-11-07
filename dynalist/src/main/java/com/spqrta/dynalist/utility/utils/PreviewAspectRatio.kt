@@ -1,7 +1,7 @@
-package com.spqrta.dynalyst.utility.utils
+package com.spqrta.dynalist.utility.utils
 
-import com.spqrta.dynalyst.utility.pure.DeviceInfoUtils.HUAWEI_ELE_L29
-import com.spqrta.dynalyst.utility.pure.DeviceInfoUtils.SAMSUNG_A20_A207
+import com.spqrta.dynalist.utility.pure.DeviceInfoUtils.HUAWEI_ELE_L29
+import com.spqrta.dynalist.utility.pure.DeviceInfoUtils.SAMSUNG_A20_A207
 
 object PreviewAspectRatio {
 

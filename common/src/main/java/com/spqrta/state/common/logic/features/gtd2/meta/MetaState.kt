@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.meta
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderPrompt
 import com.spqrta.state.common.util.serialization.LocalDateSerializer
 import kotlinx.serialization.Serializable
@@ -96,7 +97,7 @@ data class MetaState(
                     isTeethClean = null
                 )
             ),
-            date = LocalDate.now()
+            date = DateTimeEnvironment.dateNow
         )
 
         val SERVICE_PROPERTIES = listOf(

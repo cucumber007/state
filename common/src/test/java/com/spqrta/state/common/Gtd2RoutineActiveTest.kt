@@ -1,8 +1,8 @@
 package com.spqrta.state.common
 
 import com.spqrta.dynalist.model.DynalistNode
-import com.spqrta.dynalyst.utility.pure.Optional
-import com.spqrta.dynalyst.utility.pure.toOptional
+import com.spqrta.dynalist.utility.pure.Optional
+import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
@@ -46,7 +46,7 @@ class Gtd2RoutineActiveTest {
                     "key",
                     "databaseDocId",
                     DynalistLoadingState.Loaded(
-                        LocalDateTime.now(),
+                        DateTimeEnvironment.dateTimeNow,
                         DynalistStateAppDatabase(
                             completedStorage = DynalistNode.STUB,
                             root = DynalistNode.STUB.copy(

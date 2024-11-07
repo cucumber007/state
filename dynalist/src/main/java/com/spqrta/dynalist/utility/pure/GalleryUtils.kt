@@ -1,4 +1,4 @@
-package com.spqrta.dynalyst.utility.pure
+package com.spqrta.dynalist.utility.pure
 
 import android.app.Activity
 import android.database.Cursor
@@ -28,7 +28,7 @@ object GalleryUtils {
     }
 
     fun addToGallery(bitmap: Bitmap, title: String? = null) {
-//        val filename = title ?: LocalDateTime.now().format(
+//        val filename = title ?: DateTimeEnvironment.dateTimeNow.format(
 //            DateTimeFormatter.ISO_DATE_TIME
 //        ) + ".jpg"
 //        val filePath = CustomApplication.context.externalCacheDir?.absolutePath + "/" + filename

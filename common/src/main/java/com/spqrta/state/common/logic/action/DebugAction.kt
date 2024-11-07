@@ -8,6 +8,7 @@ sealed interface DebugAction : AppAction {
 
     // The actions extend AppReadyAction because it's legacy (they were handled in AppReady
     // reducer). Create a separate DebugReducer?
+    object BumpDate : AppReadyAction.Action()
     object FlipClockMode : Action(), ClockAction
     object FlipResetStateEnabled : AppReadyAction.Action()
     object ResetState : AppReadyAction.Action(), Gtd2Action, DynalistAction
