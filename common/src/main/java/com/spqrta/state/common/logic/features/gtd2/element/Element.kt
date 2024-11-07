@@ -13,6 +13,7 @@ sealed interface Element {
     val active: Boolean
     fun estimate(): TimeValue?
     fun getElement(name: ElementName): Element?
+    fun getToBeDone(name: ElementName): ToBeDone?
 
     // is Task or Routine with Task
     fun isLeaf(): Boolean
@@ -23,6 +24,7 @@ sealed interface Element {
     fun nonEstimated(): List<Element>
     fun queues(): List<Queue>
     fun tasks(): List<Task>
+    fun toBeDone(): List<ToBeDone>
 
     // update active status of the element
     fun withActive(active: Boolean): Element
@@ -46,6 +48,20 @@ fun Element.withTask(name: ElementName.TaskName, action: (task: Task) -> Task): 
 
 fun Element.withTask(task: Task, action: (task: Task) -> Task): Element {
     return withTask(task.name, action)
+}
+
+fun Element.withToBeDone(name: ElementName, action: (toBeDone: ToBeDone) -> ToBeDone): Element {
+    return withElement(name) {
+        if (it is ToBeDone) {
+            action(it) as Element
+        } else {
+            it
+        }
+    }
+}
+
+fun Element.withToBeDone(toBeDone: ToBeDone, action: (toBeDone: ToBeDone) -> ToBeDone): Element {
+    return withToBeDone(toBeDone.name, action)
 }
 
 fun Element.withNewContext(context: MetaState): Element {

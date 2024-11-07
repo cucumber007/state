@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic
 
+import android.annotation.SuppressLint
 import com.spqrta.state.common.logic.action.AppReadyAction
 import com.spqrta.state.common.logic.action.DebugAction
 import com.spqrta.state.common.logic.action.OnResumeAction
@@ -41,6 +42,7 @@ sealed class AppState {
 
 object AppNotInitialized : AppState()
 
+@SuppressLint("NewApi")
 @Serializable
 data class AppReady(
     @Contextual val timers: Timers = Timers(),

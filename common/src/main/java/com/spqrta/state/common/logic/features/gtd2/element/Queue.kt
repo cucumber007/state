@@ -37,6 +37,10 @@ data class Queue(
         }
     }
 
+    override fun getToBeDone(name: ElementName): ToBeDone? {
+        return elements.firstNotNullOfOrNull { it.getToBeDone(name) }
+    }
+
     override fun isLeaf(): Boolean {
         return false
     }
@@ -68,6 +72,12 @@ data class Queue(
     override fun tasks(): List<Task> {
         return elements.map {
             it.tasks()
+        }.flatten()
+    }
+
+    override fun toBeDone(): List<ToBeDone> {
+        return elements.map {
+            it.toBeDone()
         }.flatten()
     }
 

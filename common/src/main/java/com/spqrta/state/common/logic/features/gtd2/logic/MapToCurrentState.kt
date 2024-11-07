@@ -58,7 +58,7 @@ private fun mapToCurrentStateActiveQueue(
         )
         val newActiveTask = activeTask?.let {
             val newStateOfActiveTask =
-                tasksState.getElement(activeTask.task.name) as Task
+                tasksState.getToBeDone(activeTask.task.name)!!
             when (newStateOfActiveTask.status) {
                 is TaskStatus.Active -> {
                     activeTask
@@ -101,7 +101,7 @@ private fun mapToCurrentStateNoActiveElement(
                 queues.first().let { queue ->
                     ActiveElement.ActiveQueue(
                         queue = queue.name,
-                        activeTask = queue.tasks().firstOrNull()?.let {
+                        activeTask = queue.toBeDone().firstOrNull()?.let {
                             TimeredTask(
                                 it,
                                 TimeredState.Paused.INITIAL

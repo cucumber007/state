@@ -2,22 +2,31 @@ package com.spqrta.state.common.logic.features.gtd2.element.routine
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext.Day
-import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext.NoContext
+import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
-import com.spqrta.state.common.util.optics.OpticGet
 import kotlinx.serialization.Serializable
+import java.security.AccessController.getContext
 import java.time.LocalDate
 
 @SuppressLint("NewApi")
 @Serializable
 sealed class RoutineTrigger<Context : RoutineContext> {
-    data class Day(val context: RoutineContext.Day) : RoutineTrigger<RoutineContext.Day>() {
-        fun updateContextDelegate(context: RoutineContext.Day): Pair<RoutineTrigger<RoutineContext.Day>, Boolean> {
+    @Serializable
+    data class Day(val context: RoutineContext.Day) :
+        RoutineTrigger<RoutineContext.Day>() {
+        @Suppress("KotlinConstantConditions")
+        fun updateContextDelegate(
+            context: RoutineContext.Day,
+            routine: Routine<RoutineContext.Day>
+        ): Pair<RoutineTrigger<RoutineContext.Day>, Boolean> {
             val oldContext = this.context
-            return copy(context = context).let {
-                Pair(it, it.context.day != oldContext.day)
-            }
+            return Pair(
+                copy(context = context), if (!routine.active) {
+                    context.day != oldContext.day
+                } else {
+                    routine.active
+                }
+            )
         }
 
         override fun getContext(state: MetaState): RoutineContext.Day {
@@ -31,13 +40,21 @@ sealed class RoutineTrigger<Context : RoutineContext> {
 
     abstract fun getContext(state: MetaState): Context
 
-    fun updateContext(metaState: MetaState): Pair<RoutineTrigger<Context>, Boolean> {
+    @Suppress("UNCHECKED_CAST")
+    fun <Context : RoutineContext> updateContext(
+        metaState: MetaState,
+        routine: Routine<Context>,
+    ): Pair<RoutineTrigger<Context>, Boolean> {
         return when (this) {
-            is Day -> updateContextDelegate(getContext(metaState)).let {
-                Pair(it.first as RoutineTrigger<Context>, it.second)
+            is Day -> {
+                this.updateContextDelegate(
+                    getContext(metaState),
+                    routine.castContext { it as RoutineContext.Day }
+                ) as Pair<RoutineTrigger<Context>, Boolean>
             }
         }
     }
+
 
     companion object {
         fun fromString(data: String): RoutineTrigger<*>? {

@@ -14,6 +14,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContex
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
 import com.spqrta.state.common.logic.features.gtd2.element.withNewContext
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
+import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.result.Res
 import com.spqrta.state.common.util.result.toNullable
@@ -60,11 +61,11 @@ private fun mergeTaskStates(
     oldTasksState: TasksState
 ): TasksState {
     var mergedTasksState = newTasksState
-    newTasksState.tasks().forEach { task ->
-        val oldTask = oldTasksState.tasks().find { it.name == task.name }
+    newTasksState.toBeDone().forEach { task ->
+        val oldTask = oldTasksState.toBeDone().find { it.name == task.name }
         if (oldTask != null) {
             // update statuses for the new task state to preserve tasks that are done etc.
-            mergedTasksState = mergedTasksState.withTask(task.name) {
+            mergedTasksState = mergedTasksState.withToBeDone(task.name) {
                 it.withStatus(oldTask.status)
             }
         }
@@ -77,10 +78,7 @@ private fun emptyQueue(): Queue {
 }
 
 private fun DynalistLoadingState.Loaded.toElement(): Element {
-    return Queue(
-        name = "Main",
-        elements = this.database.root.children.map { it.toElement() }
-    )
+    return this.database.root.toElement()
 }
 
 fun DynalistNode.toElement(): Element {
@@ -121,7 +119,7 @@ private fun parseNote(note: String): Res<DynalistNoteParams> {
         } catch (e: NumberFormatException) {
             note.split(",").map { paramString ->
                 paramString.split("=").let {
-                    it.first() to it[1]!!
+                    it.first() to it[1]
                 }
             }.toMap()
         }

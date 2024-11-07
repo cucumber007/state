@@ -33,7 +33,7 @@ class CurrentDoneTest {
         assertNotNull(optActiveElement.get(stateMachine.state))
         stateMachine.handleAction(
             CurrentViewAction.OnSubElementLongClick(
-                optActiveTask.get(stateMachine.state)!!.task
+                optActiveTask.get(stateMachine.state)?.toNullable()!!.task
             )
         )
         assertEquals(

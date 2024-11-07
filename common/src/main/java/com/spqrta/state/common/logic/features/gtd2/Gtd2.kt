@@ -15,6 +15,7 @@ import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
+import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
@@ -76,7 +77,7 @@ object Gtd2 {
         return when (action) {
             is Gtd2Action.ToggleTask -> {
                 val effects = mutableSetOf<AppEffect>()
-                val newTasksState = oldGtd2State.tasksState.withTask(action.task) {
+                val newTasksState = oldGtd2State.tasksState.withToBeDone(action.task) {
                     when (it.status) {
                         TaskStatus.Active -> {
                             effects.add(Gtd2Action.OnTaskCompleted(it).asEffect())
@@ -118,7 +119,7 @@ object Gtd2 {
                 val effects = mutableSetOf<AppEffect>()
                 updateTasksWithDeps(
                     oldGtd2State,
-                    oldGtd2State.tasksState.withTask(action.task) {
+                    oldGtd2State.tasksState.withToBeDone(action.task) {
                         when (it.status) {
                             TaskStatus.Active -> {
                                 effects.add(Gtd2Action.OnTaskCompleted(it).asEffect())
@@ -157,7 +158,7 @@ object Gtd2 {
             is Gtd2Action.OnTaskLongClick -> {
                 updateTasksWithDeps(
                     oldGtd2State,
-                    oldGtd2State.tasksState.withTask(action.task) {
+                    oldGtd2State.tasksState.withToBeDone(action.task) {
                         when (it.status) {
                             TaskStatus.Active -> it.withStatus(TaskStatus.Inactive)
                             TaskStatus.Done -> it.withStatus(TaskStatus.Active)

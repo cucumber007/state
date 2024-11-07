@@ -7,7 +7,9 @@ import com.spqrta.state.common.logic.AppState
 import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.InitAppAction
 import com.spqrta.state.common.logic.action.StateLoadedAction
+import com.spqrta.state.common.logic.effect.ActionEffect
 import com.spqrta.state.common.logic.effect.AppEffect
+import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.LoadStateEffect
 import com.spqrta.state.common.logic.effect.SaveStateEffect
 import com.spqrta.state.common.logic.effect.TickEffect
@@ -59,6 +61,10 @@ fun loadedStateMachine(
                 is SaveStateEffect -> listOf()
 
                 is TickEffect -> listOf()
+
+                is ActionEffect -> listOf(effect.action)
+
+                is AppEffectNew.StartFgs -> listOf()
 
                 else -> throw IllegalStateException("Unexpected effect: $effect")
             }

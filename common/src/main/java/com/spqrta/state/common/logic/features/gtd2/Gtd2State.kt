@@ -57,7 +57,7 @@ data class Gtd2State(
         val optFirstTask = { state: Gtd2State ->
             state.currentState.activeElement?.let {
                 when (it) {
-                    is ActiveElement.ActiveQueue -> it.queueValue(state.tasksState).tasks()
+                    is ActiveElement.ActiveQueue -> it.queueValue(state.tasksState).toBeDone()
                         .firstOrNull()
                 }
             }

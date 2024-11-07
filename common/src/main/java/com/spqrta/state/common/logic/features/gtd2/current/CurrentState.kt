@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2.current
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.optics.asOpticOptional
@@ -14,14 +15,15 @@ data class CurrentState(
     val queuesToChoose: List<ElementName.QueueName>,
     val showDone: Boolean
 ) {
-    fun tasksToShowValue(tasksState: TasksState): List<Task> {
+    fun tasksToShowValue(tasksState: TasksState): List<ToBeDone> {
         return when (activeElement) {
             is ActiveElement.ActiveQueue -> {
                 if (showDone) {
-                    activeElement.queueValue(tasksState).tasks()
+                    activeElement.queueValue(tasksState).toBeDone()
+                        .filter { it.status != TaskStatus.Inactive }
                 } else {
-                    activeElement.queueValue(tasksState).tasks()
-                        .filter { it.status != TaskStatus.Done }
+                    activeElement.queueValue(tasksState).toBeDone()
+                        .filter { it.status != TaskStatus.Done && it.status != TaskStatus.Inactive }
                 }
             }
 

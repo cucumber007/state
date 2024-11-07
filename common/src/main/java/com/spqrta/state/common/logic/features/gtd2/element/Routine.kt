@@ -1,29 +1,37 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import android.annotation.SuppressLint
+import android.content.Context
+import com.spqrta.dynalist.utility.pure.nullIfEmpty
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 
 @SuppressLint("NewApi")
 @Serializable
 data class Routine<Context : RoutineContext>(
     private val element: Element,
-    override val displayName: String = "${element.name} Routine",
+    override val displayName: String = "(R) ${element.name}",
     override val active: Boolean = true,
-    private val trigger: RoutineTrigger<Context>? = null,
-    override val name: ElementName = ElementName.OtherName(displayName),
-) : Element {
+    val trigger: RoutineTrigger<Context>? = null,
+    override val name: ElementName = ElementName.OtherName(element.name.value),
+) : Element, ToBeDone {
 
     constructor(name: String) : this(
         Task(name)
     )
 
     val innerElement = element.withActive(if (!active) false else element.active)
+    override val estimate: TimeValue =
+        innerElement.toBeDone().nullIfEmpty()?.firstOrNull()?.estimate
+            ?: 1.toSeconds()
+    override val status: TaskStatus = innerElement.toBeDone().nullIfEmpty()?.firstOrNull()?.status
+        ?: TaskStatus.Inactive
 
     override fun estimate(): TimeValue? {
         return innerElement.estimate()
@@ -33,7 +41,15 @@ data class Routine<Context : RoutineContext>(
         return if (this.name == name) {
             this
         } else {
-            element.getElement(name)
+            innerElement.getElement(name)
+        }
+    }
+
+    override fun getToBeDone(name: ElementName): ToBeDone? {
+        return if (this.name == name) {
+            this
+        } else {
+            innerElement.getToBeDone(name)
         }
     }
 
@@ -65,8 +81,24 @@ data class Routine<Context : RoutineContext>(
         return innerElement.tasks()
     }
 
+    override fun toBeDone(): List<ToBeDone> {
+        return when (innerElement) {
+            is Flipper -> innerElement.toBeDone()
+            is Queue -> innerElement.toBeDone()
+            is Task,
+            is Routine<*> -> listOf(this)
+        }
+    }
+
+    override fun withActive(active: Boolean): Element {
+        return copy(active = active)
+    }
+
     override fun withDoneReset(): Element {
-        return copy(element = element.withDoneReset())
+        return copy(
+            element = element.withDoneReset(),
+            active = true
+        )
     }
 
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
@@ -81,13 +113,27 @@ data class Routine<Context : RoutineContext>(
         return copy(element = element.withEstimate(name, estimate))
     }
 
-    override fun withActive(active: Boolean): Element {
-        return copy(active = active)
+    override fun withStatus(status: TaskStatus): ToBeDone {
+        return when (element) {
+            is Task -> copy(element = element.withStatus(status))
+            is Routine<*> -> element.withStatus(status)
+            else -> this
+        }
+    }
+
+    fun <T : RoutineContext> castContext(castFun: (Context) -> T): Routine<T> {
+        return Routine(
+            element = element,
+            displayName = displayName,
+            active = active,
+            trigger = trigger as RoutineTrigger<T>?,
+            name = name
+        )
     }
 
     fun withNewContext(context: MetaState): Routine<Context> {
         return if (trigger != null) {
-            val (newTrigger, newActive) = trigger.updateContext(context)
+            val (newTrigger, newActive) = trigger.updateContext(context, this)
             copy(trigger = newTrigger, active = newActive)
         } else this
     }

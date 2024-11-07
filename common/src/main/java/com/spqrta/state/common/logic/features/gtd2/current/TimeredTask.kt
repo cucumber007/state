@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2.current
 import com.spqrta.dynalyst.utility.pure.Optional
 import com.spqrta.dynalyst.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.util.optics.asOpticOptional
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toSeconds
@@ -10,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TimeredTask(
-    val task: Task,
+    val task: ToBeDone,
     val timeredState: TimeredState
 ) {
     val isTimerOverdue: Boolean by lazy {
@@ -18,7 +19,7 @@ data class TimeredTask(
     }
 
     val remainingTime: TimeValue by lazy {
-        (task.estimate()!!.totalSeconds - timeredState.timePassed.totalSeconds).toSeconds()
+        (task.estimate!!.totalSeconds - timeredState.timePassed.totalSeconds).toSeconds()
     }
 
     val passedTime: TimeValue by lazy {

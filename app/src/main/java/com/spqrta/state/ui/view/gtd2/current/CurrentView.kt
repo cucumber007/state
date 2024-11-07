@@ -56,7 +56,8 @@ fun CurrentView(state: Gtd2State) {
                     fontSize = FontSize.BASE,
                     modifier = Modifier.padding(start = 8.dp)
                 )
-                if (activeElement.activeTask == null) {
+                val activeTask = activeElement.activeTask.toNullable()
+                if (activeTask == null) {
                     Column {
                         Text(
                             "Choose active task:",
@@ -74,7 +75,6 @@ fun CurrentView(state: Gtd2State) {
                         }
                     }
                 } else {
-                    val activeTask = activeElement.activeTask.toNullable()
                     Column {
                         Row {
                             ActionButton(
@@ -138,7 +138,7 @@ fun CurrentView(state: Gtd2State) {
                             }
 
                             state.currentState.tasksToShowValue(state.tasksState).forEach {
-                                if (it.name == activeTask?.task?.name) {
+                                if (it.name == activeTask.task.name) {
                                     ActionButton(
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                     ) {

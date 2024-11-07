@@ -33,6 +33,10 @@ data class Flipper(
         }
     }
 
+    override fun getToBeDone(name: ElementName): ToBeDone? {
+        return scheduledElements.firstNotNullOfOrNull { it.element.getToBeDone(name) }
+    }
+
     override fun isLeaf(): Boolean {
         return false
     }
@@ -71,6 +75,10 @@ data class Flipper(
 
     override fun tasks(): List<Task> {
         return scheduledElements.map { it.element.tasks() }.flatten()
+    }
+
+    override fun toBeDone(): List<ToBeDone> {
+        return scheduledElements.map { it.element.toBeDone() }.flatten()
     }
 
     override fun withActive(active: Boolean): Element {

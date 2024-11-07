@@ -12,7 +12,7 @@ data class DynalistNoteParams(
 ) {
     companion object {
         const val KEY_ESTIMATE = "estimate"
-        private const val KEY_CONTEXT = "context"
+        private const val KEY_CONTEXT = "trigger"
 
         fun parse(map: Map<String, String>): Res<DynalistNoteParams> {
             return zip(

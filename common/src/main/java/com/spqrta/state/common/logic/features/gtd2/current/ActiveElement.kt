@@ -4,6 +4,7 @@ import com.spqrta.dynalyst.utility.pure.Optional
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.optics.asOpticGet
@@ -18,10 +19,8 @@ sealed class ActiveElement {
         val activeTask: Optional<TimeredTask>
     ) : ActiveElement() {
 
-        fun activeTasksValue(tasksState: TasksState): List<Task> {
-            return queueValue(tasksState).tasks().filter { it.status == TaskStatus.Active }.map {
-                tasksState.getElement(it.name) as Task
-            }
+        fun activeTasksValue(tasksState: TasksState): List<ToBeDone> {
+            return queueValue(tasksState).toBeDone().filter { it.active }
         }
 
         fun queueValue(tasksState: TasksState): Queue {

@@ -11,10 +11,10 @@ import kotlinx.serialization.Serializable
 data class Task(
     override val active: Boolean = true,
     override val name: ElementName.TaskName,
-    val estimate: TimeValue? = null,
+    override val estimate: TimeValue? = null,
     val done: Boolean = false,
     override val displayName: String = name.value,
-) : Element {
+) : Element, ToBeDone {
 
     constructor(name: String, taskStatus: TaskStatus = TaskStatus.Active) : this(
         active = taskStatus != TaskStatus.Inactive,
@@ -32,7 +32,7 @@ data class Task(
         estimate = estimate
     )
 
-    val status: TaskStatus
+    override val status: TaskStatus
         get() {
             return when {
                 !active -> TaskStatus.Inactive
@@ -50,6 +50,14 @@ data class Task(
     }
 
     override fun getElement(name: ElementName): Element? {
+        return if (this.name == name) {
+            this
+        } else {
+            null
+        }
+    }
+
+    override fun getToBeDone(name: ElementName): ToBeDone? {
         return if (this.name == name) {
             this
         } else {
@@ -85,6 +93,10 @@ data class Task(
         return listOf(this)
     }
 
+    override fun toBeDone(): List<ToBeDone> {
+        return listOf(this)
+    }
+
     override fun withDoneReset(): Element {
         return copy(done = false)
     }
@@ -109,7 +121,7 @@ data class Task(
         }
     }
 
-    fun withStatus(status: TaskStatus): Task {
+    override fun withStatus(status: TaskStatus): Task {
         return when (status) {
             TaskStatus.Active -> copy(active = true, done = false)
             TaskStatus.Done -> copy(active = true, done = true)

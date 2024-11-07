@@ -2,6 +2,7 @@ package com.spqrta.state.common.environments.tasks_database
 
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.Serializable
 
@@ -16,6 +17,6 @@ sealed class TasksDatabaseEntry {
 
     @Serializable
     data class Completed(
-        val routine: Task,
+        val routine: ToBeDone,
     ) : TasksDatabaseEntry()
 }

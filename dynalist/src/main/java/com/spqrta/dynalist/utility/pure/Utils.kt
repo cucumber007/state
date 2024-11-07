@@ -9,7 +9,6 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.MutableLiveData
-import kotlinx.serialization.Serializable
 import org.threeten.bp.LocalDate
 import java.io.InputStream
 import kotlin.math.pow
@@ -44,38 +43,6 @@ object Utils {
     }
 }
 
-@Serializable
-class Optional<M>(private val optional: M?) {
-
-    val isEmpty: Boolean
-        get() = this.optional == null
-
-    val isNotEmpty: Boolean
-        get() = !isEmpty
-
-    fun get(): M {
-        if (optional == null) {
-            throw NoSuchElementException("No value present")
-        }
-        return optional
-    }
-
-    fun getNullable(): M? {
-        return optional
-    }
-
-    fun toNullable(): M? {
-        return optional
-    }
-
-    companion object {
-        fun <T> nullValue() = Optional<T>(null)
-    }
-}
-
-fun <T : Any?> T?.toOptional(): Optional<T> {
-    return Optional(this)
-}
 
 object DatePickerUtil {
     fun createDatePicker(

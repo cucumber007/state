@@ -1,9 +1,7 @@
-package com.spqrta.dynalyst.utility.pure
+package com.spqrta.dynalist.utility.pure
 
-fun <T : Any?> List<T>.nullIfEmpty(): List<T>? = if (this.isEmpty()) {
+fun <T : Any?> List<T>.nullIfEmpty(): List<T>? = this.ifEmpty {
     null
-} else {
-    this
 }
 
 fun <T> List<T>?.emptyIfNull(): List<T> {
