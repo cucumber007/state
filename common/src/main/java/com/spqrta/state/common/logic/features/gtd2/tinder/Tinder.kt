@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.action.TinderAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
+import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.TinderTuple
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
@@ -58,15 +59,13 @@ object Tinder {
         val (gtd2State, dynalistState) = state
         return when (action) {
             is TinderAction.OnEstimated -> {
-                val newTasksDatabaseState = gtd2State.tasksDatabase.toMutableMap().also { map ->
-                    map.put(
-                        action.element.name.value,
+                val newTasksDatabaseState =
+                    gtd2State.tasksDatabase.withUpdatedEntry(action.element.name.value) {
                         TasksDatabaseEntry.Estimate(
                             action.element.name.value,
                             action.estimate
                         )
-                    )
-                }
+                    }
                 updateTasksDatabase(state, newTasksDatabaseState)
             }
 
@@ -90,7 +89,7 @@ object Tinder {
 
     private fun updateTasksDatabase(
         state: Pair<Gtd2State, DynalistState>,
-        newTasksDatabaseState: Map<String, TasksDatabaseEntry>
+        newTasksDatabaseState: TasksDatabaseState
     ): Reduced<out Gtd2State, out AppEffect> {
         val (gtd2State, dynalistState) = state
         return set(optOnTasksDatabase, gtd2State) {

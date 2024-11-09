@@ -21,8 +21,10 @@ import com.spqrta.state.common.logic.features.global.AppGlobalState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.stats.StatsState
 import com.spqrta.state.common.logic.features.storage.Storage
+import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppReadyOptics.optDailyState
 import com.spqrta.state.common.logic.optics.AppReadyOptics.optStats
+import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.Optic
 import com.spqrta.state.common.util.optics.asOptic
 import com.spqrta.state.common.util.optics.identityOptional
@@ -68,6 +70,8 @@ data class AppReady(
             identityOptional(),
             Companion::reduce,
         )
+
+        val optGtd2State = AppReadyOptics.optGtd2State
 
         private fun reduce(
             action: AppReadyAction,

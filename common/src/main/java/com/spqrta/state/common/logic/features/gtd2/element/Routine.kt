@@ -105,7 +105,7 @@ data class Routine<Context : RoutineContext>(
         return if (name == this.name) {
             action(this)
         } else {
-            innerElement.withElement(name, action)
+            copy(element = element.withElement(name, action))
         }
     }
 
@@ -116,7 +116,7 @@ data class Routine<Context : RoutineContext>(
     override fun withStatus(status: TaskStatus): ToBeDone {
         return when (element) {
             is Task -> copy(element = element.withStatus(status))
-            is Routine<*> -> element.withStatus(status)
+            is Routine<*> -> copy(element = element.withStatus(status) as Element)
             else -> this
         }
     }

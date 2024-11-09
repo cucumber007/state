@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.ClockAction
@@ -13,8 +14,8 @@ import com.spqrta.state.common.logic.action.asEffect
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
-import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
@@ -145,9 +146,11 @@ object Gtd2 {
                     Gtd2State.optTasksDatabase,
                 ) { oldTaskDatabase ->
                     val newTaskDatabase =
-                        oldTaskDatabase + (action.task.name.value to TasksDatabaseEntry.Completed(
-                            action.task
-                        ))
+                        oldTaskDatabase.withNewEntry(
+                            action.task.name.value, TasksDatabaseEntry.Completed(
+                                action.task
+                            )
+                        )
                     newTaskDatabase.withEffects(
                         DynalistAction.OnTaskCompletedDynalist(action.task).asEffect(),
                         Gtd2Action.OnTasksDatabaseStateUpdated(newTaskDatabase).asEffect()

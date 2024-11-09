@@ -33,4 +33,6 @@ data class DynalistNode(
             )
         }
     }
+
+    override fun toString(): String = "${javaClass.simpleName}"
 }

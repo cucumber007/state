@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import android.util.Log
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState

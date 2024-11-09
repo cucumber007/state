@@ -58,13 +58,17 @@ private fun mapToCurrentStateActiveQueue(
         )
         val newActiveTask = activeTask?.let {
             val newStateOfActiveTask =
-                tasksState.getToBeDone(activeTask.task.name)!!
-            when (newStateOfActiveTask.status) {
+                tasksState.getToBeDone(activeTask.task.name)
+            when (newStateOfActiveTask?.status) {
                 is TaskStatus.Active -> {
                     activeTask
                 }
 
                 is TaskStatus.Done, TaskStatus.Inactive -> {
+                    null
+                }
+
+                null -> {
                     null
                 }
             }

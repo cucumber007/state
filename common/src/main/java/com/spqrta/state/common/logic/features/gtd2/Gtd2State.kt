@@ -5,6 +5,7 @@ import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
@@ -14,7 +15,6 @@ import com.spqrta.state.common.util.optics.asOptic
 import com.spqrta.state.common.util.optics.asOpticGet
 import kotlinx.serialization.Serializable
 
-typealias TasksDatabaseState = Map<String, TasksDatabaseEntry>
 typealias TasksState = Element
 
 @Serializable
@@ -86,7 +86,7 @@ data class Gtd2State(
             currentState = CurrentState.INITIAL,
             metaState = MetaState.INITIAL,
             tasksState = INITIAL_TASK_TREE,
-            tasksDatabase = mapOf(),
+            tasksDatabase = TasksDatabaseState(mapOf()),
             tinderState = TinderState.INITIAL,
         )
     }

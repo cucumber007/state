@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
+import android.util.Log
 import com.spqrta.dynalist.model.DynalistNode
 import com.spqrta.state.common.R
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
@@ -10,6 +11,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
 import com.spqrta.state.common.logic.features.gtd2.element.withNewContext
@@ -55,6 +57,7 @@ fun mapToTasksState(
     }
 }
 
+// migrate task statuses from old state to new state
 private fun mergeTaskStates(
     metaState: MetaState,
     newTasksState: TasksState,
@@ -62,7 +65,9 @@ private fun mergeTaskStates(
 ): TasksState {
     var mergedTasksState = newTasksState
     newTasksState.toBeDone().forEach { task ->
-        val oldTask = oldTasksState.toBeDone().find { it.name == task.name }
+        val oldTask = oldTasksState.toBeDone().find {
+            it.name == task.name
+        }
         if (oldTask != null) {
             // update statuses for the new task state to preserve tasks that are done etc.
             mergedTasksState = mergedTasksState.withToBeDone(task.name) {
