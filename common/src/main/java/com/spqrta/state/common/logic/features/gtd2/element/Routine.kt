@@ -121,6 +121,7 @@ data class Routine<Context : RoutineContext>(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : RoutineContext> castContext(castFun: (Context) -> T): Routine<T> {
         return Routine(
             element = element,
@@ -131,10 +132,17 @@ data class Routine<Context : RoutineContext>(
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun withNewContext(context: MetaState): Routine<Context> {
         return if (trigger != null) {
-            val (newTrigger, newActive) = trigger.updateContext(context, this)
-            copy(trigger = newTrigger, active = newActive)
+            trigger.updateContext(context, this).let { result ->
+                copy(trigger = result.newTrigger).let {
+                    if (result.shouldReset) {
+                        withDoneReset() as Routine<Context>
+                    } else it
+                }
+            }
+
         } else this
     }
 }

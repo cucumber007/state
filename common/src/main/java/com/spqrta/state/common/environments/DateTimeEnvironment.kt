@@ -22,7 +22,11 @@ object DateTimeEnvironment {
         }
 
     val dateTimeNow: LocalDateTime
-        get() = LocalDateTime.now()
+        get() = if (debugDateCompensation == 0L) {
+            LocalDateTime.now()
+        } else {
+            LocalDateTime.now().plusDays(debugDateCompensation)
+        }
 
     val displayFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
