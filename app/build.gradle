@@ -113,7 +113,7 @@ tasks.register('releaseDesktop', Copy) {
     // def apkPath = "${buildDir}/outputs/apk/debug/"
     def apkPath = "${buildDir}/outputs/apk/release/"
     def apkName = "app-release.apk"
-    def newApkName = "State_PRIVATE_v${versionName}.apk"
+    def newApkName = "State_v${versionName}.apk"
 
     println("\nCopying: ${apkPath + apkName}")
     println("To: ${destPath + newApkName}\n")
