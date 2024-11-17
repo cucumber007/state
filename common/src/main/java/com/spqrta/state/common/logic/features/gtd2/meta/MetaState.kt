@@ -2,8 +2,11 @@ package com.spqrta.state.common.logic.features.gtd2.meta
 
 import android.annotation.SuppressLint
 import com.spqrta.state.common.environments.DateTimeEnvironment
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderPrompt
 import com.spqrta.state.common.util.serialization.LocalDateSerializer
+import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
 import java.lang.reflect.Field
 import java.time.LocalDate
@@ -14,10 +17,12 @@ import kotlin.reflect.full.memberProperties
 @SuppressLint("NewApi")
 @Serializable
 data class MetaState(
-    val goalFunction: GoalFunctionState,
-    val workdayStarted: Boolean,
+    val tasksLastCompleted: Map<String, @Serializable(with = LocalDateSerializer::class) LocalDate>,
     @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
+    val goalFunction: GoalFunctionState,
+    val timeLeft: TimeValue,
+    val workdayStarted: Boolean,
 ) {
     val prompts: Collection<TinderPrompt> by lazy {
         getNullProperties(goalFunction).map {
@@ -51,7 +56,6 @@ data class MetaState(
         return copi
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun walkAndSet(instance: Any, property: MetaProperty, propertyValue: Boolean) {
         instance::class.memberProperties.map {
             val value = it.call(instance)
@@ -89,15 +93,21 @@ data class MetaState(
         field.set(instance, newValue)
     }
 
+    fun lastCompletedDate(element: Task): LocalDate {
+        return tasksLastCompleted[element.name.value] ?: LocalDate.MIN
+    }
+
     companion object {
         val INITIAL = MetaState(
-            workdayStarted = false,
+            date = DateTimeEnvironment.dateNow,
             goalFunction = GoalFunctionState(
                 body = BodyState(
                     isTeethClean = null
                 )
             ),
-            date = DateTimeEnvironment.dateNow
+            tasksLastCompleted = mapOf(),
+            timeLeft = Int.MAX_VALUE.toSeconds(),
+            workdayStarted = false,
         )
 
         val SERVICE_PROPERTIES = listOf(

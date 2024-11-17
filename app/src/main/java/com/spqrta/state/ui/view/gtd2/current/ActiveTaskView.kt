@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
@@ -133,7 +134,7 @@ fun ActiveTaskViewTimerRunningPreview() {
             ),
             timeredState = TimeredState.Running(
                 passed = 15.toMinutes(),
-                updatedAt = LocalTime.now(),
+                updatedAt = DateTimeEnvironment.timeNow,
                 notificationSent = false
             )
         )
@@ -168,7 +169,7 @@ fun ActiveTaskViewOverduePreview() {
             ),
             timeredState = TimeredState.Running(
                 passed = 25.toMinutes(),
-                updatedAt = LocalTime.now(),
+                updatedAt = DateTimeEnvironment.timeNow,
                 notificationSent = false
             )
         )

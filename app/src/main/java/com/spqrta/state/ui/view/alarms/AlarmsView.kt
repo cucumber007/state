@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.AlarmAction
 import com.spqrta.state.common.logic.features.alarms.AlarmsState
 import com.spqrta.state.common.ui.view.control.Button
@@ -31,7 +32,7 @@ fun AlarmsView(state: AlarmsState) {
         ControlView(
             control = Button(
                 text = "Add alarm",
-                action = AlarmAction.CreateAlarm(LocalTime.now().plusSeconds(10))
+                action = AlarmAction.CreateAlarm(DateTimeEnvironment.timeNow.plusSeconds(10))
             )
         )
         ControlView(

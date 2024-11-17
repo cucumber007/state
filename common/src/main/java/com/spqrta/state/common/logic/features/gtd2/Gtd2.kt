@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2
 
 import android.annotation.SuppressLint
+import android.icu.util.TimeUnit
 import android.util.Log
 import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.AppReady
@@ -18,20 +19,26 @@ import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
+import com.spqrta.state.common.logic.features.gtd2.meta.Meta
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.asOpticGet
 import com.spqrta.state.common.util.optics.asOpticSet
+import com.spqrta.state.common.util.optics.identityGet
 import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.optics.typeGet
 import com.spqrta.state.common.util.optics.withSubState
 import com.spqrta.state.common.util.state_machine.Reduced
+import com.spqrta.state.common.util.state_machine.plus
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.state_machine.withOptic
+import com.spqrta.state.common.util.time.toSeconds
 import com.spqrta.state.common.util.tuple.Tuple4
+import java.time.Duration
+import kotlin.time.DurationUnit
 
 typealias TinderTuple = Pair<TinderState, TasksDatabaseState>
 
@@ -44,18 +51,7 @@ object Gtd2 {
         (it.gtd2State to it.dynalistState)
     }).asOpticGet()
     private val optGtd2State = AppStateOptics.optReady + AppReadyOptics.optGtd2State
-    private val optOnTasksStateUpdated =
-        { state: Gtd2State, subState: Tuple4<TasksState, CurrentState, Gtd2Stats, TinderTuple> ->
-            val (tasksState, currentState, stats, tinderTuple) = subState
-            val (tinderState, tasksDatabase) = tinderTuple
-            state.copy(
-                currentState = currentState,
-                stats = stats,
-                tasksDatabase = tasksDatabase,
-                tinderState = tinderState,
-                tasksState = tasksState
-            )
-        }.asOpticSet()
+    private val optMeta = AppStateOptics.optReady + AppReadyOptics.optGtd2State + Gtd2State.optMeta
 
     val viewReducer = widen(
         typeGet(),
@@ -63,7 +59,7 @@ object Gtd2 {
         ::viewReduce,
     )
 
-    val reducer = widen(
+    val reducer = Meta.reducer + widen(
         typeGet(),
         optDeps,
         optGtd2State,
@@ -197,7 +193,8 @@ object Gtd2 {
                     Gtd2State.optMeta
                 ) { oldMetaState ->
                     val newMetaState = oldMetaState.copy(
-                        date = action.time.toLocalDate()
+                        date = action.time.toLocalDate(),
+                        timeLeft = oldGtd2State.stats.timeLeft
                     )
                     if (newMetaState != oldMetaState) {
                         updateMetaWithDeps(

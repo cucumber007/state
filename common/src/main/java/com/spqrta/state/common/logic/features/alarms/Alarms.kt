@@ -1,5 +1,6 @@
 package com.spqrta.state.common.logic.features.alarms
 
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.AlarmAction
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.effect.AppEffect
@@ -36,7 +37,7 @@ object Alarms {
             is ClockAction.TickAction -> {
                 val firedAlarms = state.alarms.filter { it.time <= action.time.toLocalTime() }
                 state.copy(
-                    currentTime = LocalTime.now(),
+                    currentTime = DateTimeEnvironment.timeNow,
                     alarms = state.alarms.filter { !firedAlarms.contains(it) }
                 ).withEffects()
             }

@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2.current
 import android.annotation.SuppressLint
 import com.spqrta.dynalist.utility.pure.Optional
 import com.spqrta.dynalist.utility.pure.toOptional
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.action.CurrentAction
 import com.spqrta.state.common.logic.action.CurrentViewAction
@@ -203,7 +204,7 @@ object Current {
                             val effects = mutableSetOf<AppEffect>()
                             var newTimeredState = TimeredState.Running(
                                 passed = oldTimeredState.timePassed,
-                                updatedAt = LocalTime.now(),
+                                updatedAt = DateTimeEnvironment.timeNow,
                                 notificationSent = oldTimeredState.notificationSent
                             )
 
@@ -242,7 +243,7 @@ object Current {
                         is TimeredState.Paused -> TimeredState.Paused.INITIAL
                         is TimeredState.Running -> TimeredState.Running(
                             passed = 0.toSeconds(),
-                            updatedAt = LocalTime.now(),
+                            updatedAt = DateTimeEnvironment.timeNow,
                             notificationSent = false
                         )
                     }

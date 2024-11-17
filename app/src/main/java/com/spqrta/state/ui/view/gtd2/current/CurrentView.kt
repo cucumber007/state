@@ -29,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.spqrta.state.Effects
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.effect.ViewEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
@@ -39,7 +40,6 @@ import com.spqrta.state.common.util.time.toSeconds
 import com.spqrta.state.ui.theme.FontSize
 import com.spqrta.state.ui.view.common.controls.ActionButton
 import com.spqrta.state.ui.view.common.controls.ImageActionButton
-import com.spqrta.state.ui.view.common.controls.TextActionButton
 import java.time.LocalTime
 
 @Composable
@@ -47,12 +47,12 @@ fun CurrentView(state: Gtd2State) {
     when (val activeElement: ActiveElement? = state.currentState.activeElement) {
         is ActiveElement.ActiveQueue -> {
             val estimate = state.tasksState.estimate() ?: 0.toSeconds()
-            val finishTime = LocalTime.now()
+            val finishTime = DateTimeEnvironment.timeNow
                 .plusSeconds(estimate.totalSeconds)
                 .formatWithoutSeconds()
             Column {
                 Text(
-                    text = "${LocalTime.now().formatWithoutSeconds()} | Finish at: $finishTime",
+                    text = "${DateTimeEnvironment.timeNow.formatWithoutSeconds()} | Finish at: $finishTime",
                     fontSize = FontSize.BASE,
                     modifier = Modifier.padding(start = 8.dp)
                 )
@@ -81,7 +81,7 @@ fun CurrentView(state: Gtd2State) {
                                 longPressAction = CurrentViewAction.OnResetActiveElementClick,
                             ) {
                                 Text(
-                                    activeElement.queueValue(state.tasksState).displayName,
+                                    activeElement.groupValue(state.tasksState).displayName,
                                     fontSize = FontSize.TITLE,
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
@@ -188,7 +188,7 @@ fun CurrentView(state: Gtd2State) {
                     fontSize = FontSize.TITLE,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                state.currentState.queuesToChooseValue(state.tasksState).forEach {
+                state.currentState.groupsToChooseValue(state.tasksState).forEach {
                     ActionButton(action = CurrentViewAction.OnElementClick(it)) {
                         Text(
                             text = it.displayName,

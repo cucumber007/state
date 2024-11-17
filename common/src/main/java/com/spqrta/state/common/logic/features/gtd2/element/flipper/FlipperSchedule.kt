@@ -1,6 +1,7 @@
-package com.spqrta.state.common.logic.features.gtd2.element.misc
+package com.spqrta.state.common.logic.features.gtd2.element.flipper
 
 import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.util.serialization.LocalTimeSerializer
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.SerialName
@@ -11,6 +12,10 @@ import java.time.LocalTime
 sealed class FlipperSchedule(
     open val element: Element
 ) {
+    @Serializable
+    data class Just(
+        @SerialName("element_Just") override val element: Element
+    ) : FlipperSchedule(element)
 
     @Serializable
     data class TimePeriod(
@@ -29,4 +34,28 @@ sealed class FlipperSchedule(
         @SerialName("element_TimeLeftPortion") override val element: Element,
         val portion: Float
     ) : FlipperSchedule(element)
+
+    @Serializable
+    data class Squeeze(
+        @SerialName("element_Squeeze") override val element: Task
+    ) : FlipperSchedule(element) {
+
+        override fun toString(): String {
+            return "${javaClass.simpleName}($element)"
+        }
+    }
+
+    companion object {
+        fun parse(data: String, element: Element): FlipperSchedule? {
+            return when (data.lowercase()) {
+                Squeeze::class.simpleName?.lowercase() -> {
+                    Squeeze(element as Task)
+                }
+
+                else -> {
+                    null
+                }
+            }
+        }
+    }
 }

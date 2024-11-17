@@ -20,9 +20,11 @@ sealed interface Element {
 
     // is Queue or Flipper that contains only leafs
     fun isLeafGroup(): Boolean
-    fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element
+
+    fun map(mapper: (Element) -> Element): Element
+
+    fun groups(): List<Group>
     fun nonEstimated(): List<Element>
-    fun queues(): List<Queue>
     fun tasks(): List<Task>
     fun toBeDone(): List<ToBeDone>
 
@@ -34,6 +36,7 @@ sealed interface Element {
 
     fun withElement(name: ElementName, action: (element: Element) -> Element): Element
     fun withEstimate(name: ElementName, estimate: TimeValue?): Element
+    fun withNewContext(metaState: MetaState): Element
 }
 
 fun Element.withTask(name: ElementName.TaskName, action: (task: Task) -> Task): Element {
@@ -62,10 +65,4 @@ fun Element.withToBeDone(name: ElementName, action: (toBeDone: ToBeDone) -> ToBe
 
 fun Element.withToBeDone(toBeDone: ToBeDone, action: (toBeDone: ToBeDone) -> ToBeDone): Element {
     return withToBeDone(toBeDone.name, action)
-}
-
-fun Element.withNewContext(context: MetaState): Element {
-    return mapRoutines {
-        it.withNewContext(context)
-    }
 }

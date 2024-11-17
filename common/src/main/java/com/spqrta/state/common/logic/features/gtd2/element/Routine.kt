@@ -1,7 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import android.annotation.SuppressLint
-import android.content.Context
 import com.spqrta.dynalist.utility.pure.nullIfEmpty
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
@@ -61,8 +60,12 @@ data class Routine<Context : RoutineContext>(
         return innerElement.isLeafGroup()
     }
 
-    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+    override fun map(mapper: (Element) -> Element): Element {
         return mapper(this)
+    }
+
+    override fun groups(): List<Group> {
+        return innerElement.groups()
     }
 
     override fun nonEstimated(): List<Element> {
@@ -71,10 +74,6 @@ data class Routine<Context : RoutineContext>(
         } else {
             listOf()
         }
-    }
-
-    override fun queues(): List<Queue> {
-        return innerElement.queues()
     }
 
     override fun tasks(): List<Task> {
@@ -133,16 +132,21 @@ data class Routine<Context : RoutineContext>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun withNewContext(context: MetaState): Routine<Context> {
-        return if (trigger != null) {
-            trigger.updateContext(context, this).let { result ->
-                copy(trigger = result.newTrigger).let {
-                    if (result.shouldReset) {
-                        withDoneReset() as Routine<Context>
-                    } else it
-                }
+    override fun withNewContext(metaState: MetaState): Routine<Context> {
+        return when (trigger) {
+            null -> {
+                copy(element = element.withNewContext(metaState))
             }
 
-        } else this
+            else -> {
+                trigger?.updateContext(metaState, this)?.let { result ->
+                    copy(trigger = result.newTrigger).let {
+                        if (result.shouldReset) {
+                            withDoneReset() as Routine<Context>
+                        } else it
+                    }
+                } ?: this
+            }
+        }
     }
 }

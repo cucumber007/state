@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlin.math.abs
 
 @Serializable
-open class TimeValue(val totalSeconds: Long) {
+open class TimeValue(val totalSeconds: Long) : Comparable<TimeValue> {
     val totalMinutes: Long = totalSeconds / SECONDS_IN_MINUTE
     val justSeconds: Int = (totalSeconds % SECONDS_IN_MINUTE).toInt()
     val justMinutes: Int = ((totalSeconds - justSeconds) / SECONDS_IN_MINUTE)
@@ -24,6 +24,10 @@ open class TimeValue(val totalSeconds: Long) {
 
     fun formatWithoutSeconds(): String {
         return TimeValueFormatter.formatTimeValueWithoutSeconds(this)
+    }
+
+    override fun compareTo(other: TimeValue): Int {
+        return totalSeconds.compareTo(other.totalSeconds)
     }
 
     companion object {
@@ -46,3 +50,27 @@ fun Long.toSeconds() = Seconds(this)
 fun Int.toSeconds() = Seconds(this)
 fun Int.toMinutes() = Seconds(this * 60)
 fun Int.toDays() = Seconds(this * 24 * 60 * 60)
+
+operator fun TimeValue.plus(other: TimeValue): TimeValue {
+    return TimeValue(this.totalSeconds + other.totalSeconds)
+}
+
+operator fun TimeValue.plus(other: Int): TimeValue {
+    return TimeValue(this.totalSeconds + other)
+}
+
+operator fun TimeValue.minus(other: TimeValue): TimeValue {
+    return TimeValue(this.totalSeconds - other.totalSeconds)
+}
+
+operator fun TimeValue.minus(other: Int): TimeValue {
+    return TimeValue(this.totalSeconds - other)
+}
+
+operator fun TimeValue.compareTo(other: Int): Int {
+    return this.totalSeconds.compareTo(other)
+}
+
+operator fun Long.compareTo(other: TimeValue): Int {
+    return this.compareTo(other.totalSeconds)
+}

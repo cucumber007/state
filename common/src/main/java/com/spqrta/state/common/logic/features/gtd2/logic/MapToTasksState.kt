@@ -8,13 +8,14 @@ import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.TasksState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
+import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
-import com.spqrta.state.common.logic.features.gtd2.element.withNewContext
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
@@ -38,7 +39,9 @@ fun mapToTasksState(
                 }
 
                 is DynalistLoadingState.Loaded -> {
-                    dynalistState.loadingState.toElement()
+                    dynalistState.loadingState.toElement().also {
+                        println()
+                    }
                 }
             }
         }
@@ -88,10 +91,26 @@ private fun DynalistLoadingState.Loaded.toElement(): Element {
 
 fun DynalistNode.toElement(): Element {
     return if (this.children.isNotEmpty()) {
-        Queue(
-            name = this.title,
-            elements = this.children.map { it.toElement() }
-        )
+        val note = this.note?.let { parseNote(it) }?.toNullable()
+        when {
+            note?.flipper == true -> {
+                Flipper(
+                    name = this.title,
+                    scheduledElements = this.children.map { dynalistNode ->
+                        val subtaskNote = dynalistNode.note?.let { parseNote(it) }?.toNullable()
+                        FlipperSchedule.parse(subtaskNote?.schedule ?: "", dynalistNode.toElement())
+                            ?: FlipperSchedule.Just(dynalistNode.toElement())
+                    }
+                )
+            }
+
+            else -> {
+                Queue(
+                    name = this.title,
+                    elements = this.children.map { it.toElement() }
+                )
+            }
+        }
     } else {
         val note = this.note?.let { parseNote(it) }?.toNullable()
         when {
@@ -108,10 +127,12 @@ fun DynalistNode.toElement(): Element {
             else -> {
                 Task(
                     name = this.title,
-                    estimate = this.note.parseEstimate()?.toMinutes()
+                    estimate = note?.estimate?.toMinutes()
                 )
             }
         }
+    }.also {
+        println(it)
     }
 }
 

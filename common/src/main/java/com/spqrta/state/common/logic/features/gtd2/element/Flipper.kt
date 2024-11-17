@@ -1,20 +1,24 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
+import android.annotation.SuppressLint
+import com.spqrta.dynalist.utility.pure.nullIfEmpty
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
-import com.spqrta.state.common.logic.features.gtd2.element.misc.FlipperSchedule
-import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
+import com.spqrta.state.common.util.time.minus
 import com.spqrta.state.common.util.time.toSeconds
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
+@SuppressLint("NewApi")
 @Serializable
 data class Flipper(
     val scheduledElements: List<FlipperSchedule>,
     override val name: ElementName.OtherName,
     override val displayName: String = "${name.value} Flipper",
     override val active: Boolean = scheduledElements.isNotEmpty(),
-) : Element {
+) : Element, Group {
     constructor(name: String, scheduledElements: List<FlipperSchedule>) : this(
         scheduledElements,
         ElementName.OtherName(name)
@@ -47,30 +51,38 @@ data class Flipper(
         }
     }
 
-    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+    override fun map(mapper: (Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
+                is FlipperSchedule.Just -> it.copy(
+                    element = it.element.map(mapper)
+                )
+
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
-                    element = it.element.mapRoutines(mapper) as Element
+                    element = it.element.map(mapper)
                 )
 
                 is FlipperSchedule.TimePeriod -> it.copy(
-                    element = it.element.mapRoutines(mapper) as Element
+                    element = it.element.map(mapper)
                 )
 
                 is FlipperSchedule.UntilTime -> it.copy(
-                    element = it.element.mapRoutines(mapper) as Element
+                    element = it.element.map(mapper)
+                )
+
+                is FlipperSchedule.Squeeze -> it.copy(
+                    element = it.element.map(mapper) as Task
                 )
             }
         })
     }
 
-    override fun nonEstimated(): List<Element> {
-        return scheduledElements.map { it.element.nonEstimated() }.flatten()
+    override fun groups(): List<Group> {
+        return listOf(this)
     }
 
-    override fun queues(): List<Queue> {
-        return scheduledElements.map { it.element.queues() }.flatten()
+    override fun nonEstimated(): List<Element> {
+        return scheduledElements.map { it.element.nonEstimated() }.flatten()
     }
 
     override fun tasks(): List<Task> {
@@ -88,6 +100,10 @@ data class Flipper(
     override fun withDoneReset(): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
+                is FlipperSchedule.Just -> it.copy(
+                    element = it.element.withDoneReset()
+                )
+
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
                     element = it.element.withDoneReset()
                 )
@@ -98,6 +114,10 @@ data class Flipper(
 
                 is FlipperSchedule.UntilTime -> it.copy(
                     element = it.element.withDoneReset()
+                )
+
+                is FlipperSchedule.Squeeze -> it.copy(
+                    element = it.element.withDoneReset() as Task
                 )
             }
         })
@@ -106,6 +126,13 @@ data class Flipper(
     override fun withElement(name: ElementName, action: (element: Element) -> Element): Element {
         return copy(scheduledElements = scheduledElements.map {
             when (it) {
+                is FlipperSchedule.Just -> it.copy(
+                    element = it.element.withElement(
+                        name,
+                        action
+                    )
+                )
+
                 is FlipperSchedule.TimeLeftPortion -> it.copy(
                     element = it.element.withElement(
                         name,
@@ -125,6 +152,13 @@ data class Flipper(
                         name,
                         action
                     )
+                )
+
+                is FlipperSchedule.Squeeze -> it.copy(
+                    element = it.element.withElement(
+                        name,
+                        action
+                    ) as Task
                 )
             }
         })
@@ -134,6 +168,13 @@ data class Flipper(
         return copy(
             scheduledElements = scheduledElements.map {
                 when (it) {
+                    is FlipperSchedule.Just -> it.copy(
+                        element = it.element.withEstimate(
+                            name,
+                            estimate
+                        )
+                    )
+
                     is FlipperSchedule.TimeLeftPortion -> it.copy(
                         element = it.element.withEstimate(
                             name,
@@ -154,8 +195,110 @@ data class Flipper(
                             estimate
                         )
                     )
+
+                    is FlipperSchedule.Squeeze -> it.copy(
+                        element = it.element.withEstimate(
+                            name,
+                            estimate
+                        ) as Task
+                    )
                 }
             }
+        )
+    }
+
+    override fun withNewContext(metaState: MetaState): Element {
+        val timeLeft = metaState.timeLeft
+
+        val nonSqueeze = scheduledElements.filter { it !is FlipperSchedule.Squeeze }
+        val squeeze = scheduledElements.filterIsInstance<FlipperSchedule.Squeeze>()
+
+        val nonSqueezeEstimate = nonSqueeze.sumOf {
+            it.element.estimate()?.totalSeconds ?: 0
+        }.toSeconds()
+        val timeLeftForSqueeze = timeLeft - nonSqueezeEstimate
+
+        val newScheduledElements =
+            if (timeLeftForSqueeze < (squeeze.mapNotNull { it.element.estimate() }.nullIfEmpty()
+                    ?.min() ?: 0.toSeconds())
+            ) {
+                scheduledElements.map {
+                    when (it) {
+                        is FlipperSchedule.Squeeze -> {
+                            it.copy(element = it.element.withActive(false) as Task)
+                        }
+
+                        else -> it
+                    }
+                }
+            } else {
+                /**
+                 * Minimal amount of days between today and last routine completion to include it
+                 * in active values
+                 */
+                var squeezeValue = 0;
+                var newSqueeze = emptyList<FlipperSchedule.Squeeze>()
+                var newSqueezeEstimate = 0.toSeconds()
+                do {
+                    if (squeezeValue > 5) {
+                        var sumEstimate = 0
+                        newSqueeze = squeeze.map {
+                            // estimate for inactive is 0
+                            val element = it.element.withActive(true)
+                            val estimate = element.estimate()?.totalSeconds ?: 0
+                            it.copy(
+                                element = it.element.withActive(
+                                    if ((sumEstimate + estimate) < timeLeft.totalSeconds) {
+                                        sumEstimate += (it.element.estimate()?.totalSeconds
+                                            ?: 0).toInt()
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                ) as Task
+                            )
+                        }
+                        break
+                    }
+                    newSqueeze = squeeze.map {
+                        it.copy(
+                            element = it.element.withSqueezeValue(
+                                squeezeValue,
+                                metaState.lastCompletedDate(it.element)
+                            )
+                        )
+                    }
+                    squeezeValue++
+                    newSqueezeEstimate = newSqueeze.sumOf {
+                        it.element.estimate()?.totalSeconds ?: 0
+                    }.toSeconds()
+                    println()
+                } while (newSqueezeEstimate > timeLeft)
+
+                scheduledElements.map { schedule ->
+                    when (schedule) {
+                        is FlipperSchedule.Squeeze -> {
+                            schedule.copy(
+                                element = schedule.element.withActive(
+                                    newSqueeze.first { it.element.name == schedule.element.name }.element.active
+                                ) as Task
+                            )
+                        }
+
+                        else -> schedule
+                    }
+                }
+            }
+
+        return this.copy(scheduledElements = newScheduledElements).also {
+            val a = it.tasks().count { it.active }
+            println(a)
+        }
+    }
+
+    private fun Task.withSqueezeValue(squeezeValue: Int, lastCompleted: LocalDate): Task {
+        return this.copy(
+            active = lastCompleted.plusDays(squeezeValue.toLong()) <= LocalDate.now()
         )
     }
 }

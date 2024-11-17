@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
 import com.spqrta.state.common.logic.features.gtd2.element.Task
@@ -20,7 +21,7 @@ import java.time.LocalTime
 fun TaskTimerView(activeTask: TimeredTask, paused: Boolean) {
     val timeHeight = 36.dp
     val estimate = activeTask.task.estimate
-    if(estimate != null) {
+    if (estimate != null) {
         Column {
             Row(
                 Modifier.height(timeHeight)
@@ -65,7 +66,7 @@ fun TimerRunningViewPreview() {
                 ),
                 timeredState = TimeredState.Running(
                     passed = 10.toSeconds(),
-                    updatedAt = LocalTime.now(),
+                    updatedAt = DateTimeEnvironment.timeNow,
                     notificationSent = false
                 )
             ),

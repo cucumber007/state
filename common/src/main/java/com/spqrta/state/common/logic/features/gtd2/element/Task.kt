@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.element
 
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
+import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.TimeValue
 import com.spqrta.state.common.util.time.toMinutes
 import com.spqrta.state.common.util.time.toSeconds
@@ -73,8 +74,12 @@ data class Task(
         return false
     }
 
-    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
-        return this
+    override fun map(mapper: (Element) -> Element): Element {
+        return mapper(this)
+    }
+
+    override fun groups(): List<Group> {
+        return listOf()
     }
 
     override fun nonEstimated(): List<Element> {
@@ -83,10 +88,6 @@ data class Task(
         } else {
             listOf()
         }
-    }
-
-    override fun queues(): List<Queue> {
-        return listOf()
     }
 
     override fun tasks(): List<Task> {
@@ -119,6 +120,10 @@ data class Task(
         } else {
             this
         }
+    }
+
+    override fun withNewContext(metaState: MetaState): Element {
+        return this
     }
 
     override fun withStatus(status: TaskStatus): Task {

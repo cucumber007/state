@@ -1,8 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.current
 
 import com.spqrta.state.common.logic.features.gtd2.TasksState
-import com.spqrta.state.common.logic.features.gtd2.element.Queue
-import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.Group
 import com.spqrta.state.common.logic.features.gtd2.element.ToBeDone
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
@@ -12,17 +11,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CurrentState(
     val activeElement: ActiveElement?,
-    val queuesToChoose: List<ElementName.QueueName>,
+    val groupsToChoose: List<ElementName>,
     val showDone: Boolean
 ) {
     fun tasksToShowValue(tasksState: TasksState): List<ToBeDone> {
         return when (activeElement) {
             is ActiveElement.ActiveQueue -> {
                 if (showDone) {
-                    activeElement.queueValue(tasksState).toBeDone()
+                    activeElement.groupValue(tasksState).toBeDone()
                         .filter { it.status != TaskStatus.Inactive }
                 } else {
-                    activeElement.queueValue(tasksState).toBeDone()
+                    activeElement.groupValue(tasksState).toBeDone()
                         .filter { it.status != TaskStatus.Done && it.status != TaskStatus.Inactive }
                 }
             }
@@ -33,9 +32,9 @@ data class CurrentState(
         }
     }
 
-    fun queuesToChooseValue(tasksState: TasksState): List<Queue> {
-        return queuesToChoose.map {
-            tasksState.queues().find { queue -> queue.name == it }!!
+    fun groupsToChooseValue(tasksState: TasksState): List<Group> {
+        return groupsToChoose.mapNotNull {
+            tasksState.groups().find { queue -> queue.name == it }
         }
     }
 
@@ -43,7 +42,7 @@ data class CurrentState(
         val INITIAL = CurrentState(
             activeElement = null,
             // filled up on StateLoadedAction
-            queuesToChoose = listOf(),
+            groupsToChoose = listOf(),
             showDone = false
         )
 

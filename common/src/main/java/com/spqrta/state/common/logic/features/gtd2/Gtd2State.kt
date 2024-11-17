@@ -1,11 +1,9 @@
 package com.spqrta.state.common.logic.features.gtd2
 
-import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.element.Element
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
@@ -57,7 +55,7 @@ data class Gtd2State(
         val optFirstTask = { state: Gtd2State ->
             state.currentState.activeElement?.let {
                 when (it) {
-                    is ActiveElement.ActiveQueue -> it.queueValue(state.tasksState).toBeDone()
+                    is ActiveElement.ActiveQueue -> it.groupValue(state.tasksState).toBeDone()
                         .firstOrNull()
                 }
             }

@@ -61,7 +61,7 @@ fun StatsView(state: Gtd2Stats) {
             fontSize = FontSize.TITLE,
         )
         Text(
-            text = LocalTime.now().formatWithoutSeconds(),
+            text = DateTimeEnvironment.timeNow.formatWithoutSeconds(),
             fontSize = FontSize.BASE,
             modifier = Modifier.padding(start = 16.dp)
         )
@@ -70,7 +70,8 @@ fun StatsView(state: Gtd2Stats) {
             fontSize = FontSize.TITLE,
         )
         Text(
-            text = LocalTime.now().plusSeconds(state.estimate.totalSeconds).formatWithoutSeconds(),
+            text = DateTimeEnvironment.timeNow.plusSeconds(state.estimate.totalSeconds)
+                .formatWithoutSeconds(),
             fontSize = FontSize.TITLE,
             style = TextStyle(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(start = 16.dp)

@@ -1,6 +1,5 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
-import android.util.Log
 import com.spqrta.dynalist.utility.pure.Optional
 import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
@@ -9,8 +8,8 @@ import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
 import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
+import com.spqrta.state.common.logic.features.gtd2.element.Group
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
-import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 
 fun mapToCurrentState(
@@ -45,7 +44,7 @@ private fun mapToCurrentStateActiveQueue(
     val activeTask = oldActiveElement.activeTask.toNullable()
 
     val newActiveQueue =
-        tasksState.getElement(oldActiveElement.queue) as Queue?
+        tasksState.getElement(oldActiveElement.queue) as Group?
     return if (newActiveQueue == null) {
         mapToCurrentStateNoActiveElement(
             oldCurrentState,
@@ -98,7 +97,8 @@ private fun mapToCurrentStateNoActiveElement(
 ): CurrentState {
     val optActiveElement = CurrentState.optActiveElement
 
-    val queuesToChoose = tasksState.queues().filter { it.isLeafGroup() }
+    val queuesToChoose =
+        tasksState.groups().filter { it.isLeafGroup() && !it.name.value.contains("__") }
     val newActiveElement =
         queuesToChoose.let { queues ->
             if (queues.size == 1) {
@@ -120,6 +120,6 @@ private fun mapToCurrentStateNoActiveElement(
     return if (newActiveElement != null) {
         optActiveElement.set(oldCurrentState, newActiveElement)
     } else {
-        oldCurrentState.copy(activeElement = null, queuesToChoose = queuesToChoose.map { it.name })
+        oldCurrentState.copy(activeElement = null, groupsToChoose = queuesToChoose.map { it.name })
     }
 }

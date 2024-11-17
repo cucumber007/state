@@ -14,7 +14,7 @@ data class Queue(
     val elements: List<Element> = listOf(),
     override val displayName: String = "$name Queue",
     override val active: Boolean = elements.isNotEmpty(),
-) : Element {
+) : Element, Group {
     constructor(name: String, elements: List<Element>) : this(ElementName.QueueName(name), elements)
     constructor(name: String) : this(ElementName.QueueName(name))
 
@@ -52,21 +52,21 @@ data class Queue(
         }
     }
 
-    override fun mapRoutines(mapper: (Routine<*>) -> Routine<*>): Element {
+    override fun map(mapper: (Element) -> Element): Element {
         return copy(elements = elements.map {
-            it.mapRoutines(mapper)
+            it.map(mapper)
         })
+    }
+
+    override fun groups(): List<Group> {
+        return elements.map {
+            it.groups()
+        }.flatten()
     }
 
     override fun nonEstimated(): List<Element> {
         return elements.map {
             it.nonEstimated()
-        }.flatten()
-    }
-
-    override fun queues(): List<Queue> {
-        return listOf(this) + elements.map {
-            it.queues()
         }.flatten()
     }
 
@@ -102,5 +102,13 @@ data class Queue(
 
     override fun withActive(active: Boolean): Element {
         return copy(active = active)
+    }
+
+    override fun withNewContext(metaState: MetaState): Element {
+        return copy(
+            elements = elements.map {
+                it.withNewContext(metaState)
+            }
+        )
     }
 }

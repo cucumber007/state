@@ -57,8 +57,8 @@ sealed class RoutineTrigger<Context : RoutineContext> {
 
     companion object {
         fun fromString(data: String): RoutineTrigger<*>? {
-            return when (data) {
-                Day::class.simpleName -> {
+            return when (data.lowercase()) {
+                Day::class.simpleName?.lowercase() -> {
                     RoutineTrigger.Day.INITIAL
                 }
 
