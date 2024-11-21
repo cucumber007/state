@@ -41,6 +41,7 @@ fun mapToTasksState(
 
                 is DynalistLoadingState.Loaded -> {
                     dynalistState.loadingState.toElement().also {
+                        val teeth = it.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
                         println()
                     }
                 }
@@ -75,18 +76,19 @@ fun mergeTaskStates(
         if (oldTask != null) {
             // update statuses for the new task state to preserve tasks that are done etc.
             mergedTasksState = mergedTasksState.withToBeDone(task.name) {
-                if (it.status !is TaskStatus.Active) {
-                    it.withStatus(it.status)
+                if (oldTask.status !is TaskStatus.Active) {
+                    it.withStatus(oldTask.status)
                 } else {
                     it
                 }
             }
         }
     }
-    val old = newTasksState.estimate()
-    val new = mergedTasksState.estimate()
+    val old = oldTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
+    val new = newTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
+    val merged = mergedTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
     return mergedTasksState.withNewContext(metaState).also {
-        val withNc = it.estimate()
+        val withNc = it.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
         println()
     }
 }
