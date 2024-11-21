@@ -26,7 +26,9 @@ data class Flipper(
 
     @Suppress("RedundantNullableReturnType")
     override fun estimate(): TimeValue? {
-        return 0.toSeconds()
+        return scheduledElements.sumOf {
+            it.element.estimate()?.totalSeconds ?: 0
+        }.toSeconds()
     }
 
     override fun getElement(name: ElementName): Element? {
@@ -218,77 +220,77 @@ data class Flipper(
         }.toSeconds()
         val timeLeftForSqueeze = timeLeft - nonSqueezeEstimate
 
-        val newScheduledElements =
-            if (timeLeftForSqueeze < (squeeze.mapNotNull { it.element.estimate() }.nullIfEmpty()
-                    ?.min() ?: 0.toSeconds())
-            ) {
-                scheduledElements.map {
-                    when (it) {
-                        is FlipperSchedule.Squeeze -> {
-                            it.copy(element = it.element.withActive(false) as Task)
-                        }
+        val newScheduledElements = if (
+            timeLeftForSqueeze < (squeeze.mapNotNull { it.element.estimate() }.nullIfEmpty()
+                ?.min() ?: 0.toSeconds())
+        ) {
+            // if time left is less than minimal estimate of squeezable tasks, just make all inactive
+            scheduledElements.map {
+                when (it) {
+                    is FlipperSchedule.Squeeze -> {
+                        it.copy(element = it.element.withActive(false) as Task)
+                    }
 
-                        else -> it
-                    }
-                }
-            } else {
-                /**
-                 * Minimal amount of days between today and last routine completion to include it
-                 * in active values
-                 */
-                var squeezeValue = 0;
-                var newSqueeze = emptyList<FlipperSchedule.Squeeze>()
-                var newSqueezeEstimate = 0.toSeconds()
-                do {
-                    if (squeezeValue > 5) {
-                        var sumEstimate = 0
-                        newSqueeze = squeeze.map {
-                            // estimate for inactive is 0
-                            val element = it.element.withActive(true)
-                            val estimate = element.estimate()?.totalSeconds ?: 0
-                            it.copy(
-                                element = it.element.withActive(
-                                    if ((sumEstimate + estimate) < timeLeft.totalSeconds) {
-                                        sumEstimate += (it.element.estimate()?.totalSeconds
-                                            ?: 0).toInt()
-                                        true
-                                    } else {
-                                        false
-                                    }
-                                ) as Task
-                            )
-                        }
-                        break
-                    }
-                    newSqueeze = squeeze.map {
-                        it.copy(
-                            element = it.element.withSqueezeValue(
-                                squeezeValue,
-                                metaState.lastCompletedDate(it.element)
-                            )
-                        )
-                    }
-                    squeezeValue++
-                    newSqueezeEstimate = newSqueeze.sumOf {
-                        it.element.estimate()?.totalSeconds ?: 0
-                    }.toSeconds()
-                    println()
-                } while (newSqueezeEstimate > timeLeft)
-
-                scheduledElements.map { schedule ->
-                    when (schedule) {
-                        is FlipperSchedule.Squeeze -> {
-                            schedule.copy(
-                                element = schedule.element.withActive(
-                                    newSqueeze.first { it.element.name == schedule.element.name }.element.active
-                                ) as Task
-                            )
-                        }
-
-                        else -> schedule
-                    }
+                    else -> it
                 }
             }
+        } else {
+            /**
+             * Minimal amount of days between today and last routine completion to include it
+             * in active values
+             */
+            var squeezeValue = 0;
+            var newSqueeze = emptyList<FlipperSchedule.Squeeze>()
+            var newSqueezeEstimate = 0.toSeconds()
+            do {
+                if (squeezeValue > 5) {
+                    var sumEstimate = 0
+                    newSqueeze = squeeze.map {
+                        // estimate for inactive is 0
+                        val element = it.element.withActive(true)
+                        val estimate = element.estimate()?.totalSeconds ?: 0
+                        it.copy(
+                            element = it.element.withActive(
+                                if ((sumEstimate + estimate) < timeLeft.totalSeconds) {
+                                    sumEstimate += (it.element.estimate()?.totalSeconds
+                                        ?: 0).toInt()
+                                    true
+                                } else {
+                                    false
+                                }
+                            ) as Task
+                        )
+                    }
+                    break
+                }
+                newSqueeze = squeeze.map {
+                    it.copy(
+                        element = it.element.withSqueezeValue(
+                            squeezeValue,
+                            metaState.lastCompletedDate(it.element)
+                        )
+                    )
+                }
+                squeezeValue++
+                newSqueezeEstimate = newSqueeze.sumOf {
+                    it.element.estimate()?.totalSeconds ?: 0
+                }.toSeconds()
+            } while (newSqueezeEstimate > timeLeft)
+
+            scheduledElements.map { schedule ->
+                when (schedule) {
+                    is FlipperSchedule.Squeeze -> {
+                        schedule.copy(
+                            element = schedule.element.withActive(
+                                newSqueeze.first { it.element.name == schedule.element.name }.element.active
+                            ) as Task
+                        )
+                    }
+
+                    else -> schedule
+                }
+            }
+        }
 
         return this.copy(scheduledElements = newScheduledElements).also {
             val a = it.tasks().count { it.active }

@@ -1,6 +1,12 @@
 package com.spqrta.state.common.util.state_machine
 
+import com.spqrta.state.common.logic.AppState
+import com.spqrta.state.common.logic.features.gtd2.Gtd2State
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.optics.AppReadyOptics
+import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.optics.OpticGet
+import com.spqrta.state.common.util.optics.plus
 
 typealias Reducer<LocalAction, LocalState, Effect> =
             (LocalAction, LocalState) -> Reduced<out LocalState, out Effect>
@@ -15,7 +21,13 @@ fun <A, S, E> formatReducedValues(action: A, newState: S, effects: Set<E>): Stri
     val msg = StringBuilder()
 //        msg.appendLine(tag)
     msg.appendLine("v $action")
-    msg.appendLine("= $newState")
+    val castedState = newState as AppState
+    val gtdState = (AppStateOptics.optReady + AppReadyOptics.optGtd2State).get(castedState)
+    val tasksState =
+        (AppStateOptics.optReady + AppReadyOptics.optGtd2State + Gtd2State.optTaskTree).get(newState)
+    val flipper = tasksState?.getElement(ElementName.OtherName("Morning"))
+    val displayState = gtdState?.stats?.estimate
+    msg.appendLine("= $displayState")
     msg.appendLine("effects: [")
     effects.forEach { effect ->
         msg.appendLine("\t> $effect")

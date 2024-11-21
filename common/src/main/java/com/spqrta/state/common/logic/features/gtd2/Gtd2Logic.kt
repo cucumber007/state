@@ -10,6 +10,7 @@ import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTasksState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
+import com.spqrta.state.common.logic.features.gtd2.logic.mergeTaskStates
 import com.spqrta.state.common.logic.features.gtd2.meta.Meta
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
@@ -125,8 +126,16 @@ fun updateTasksStateSyncronized(
 
 fun updateTasksWithDeps(
     newParentState: Gtd2State,
-    newTasksState: TasksState,
+    newTasksStateUnmerged: TasksState,
 ): Gtd2State {
+    // to update context on task update
+    val newTasksState = mergeTaskStates(
+        metaState = newParentState.metaState,
+        newTasksState = newTasksStateUnmerged,
+        oldTasksState = newParentState.tasksState,
+    )
+    val old = newTasksStateUnmerged.getElement(ElementName.TaskName("Brush my teeth"))
+    val new = newTasksState.getElement(ElementName.TaskName("Brush my teeth"))
     return updateTasksStateSyncronized(
         newParentState,
         newTasksState

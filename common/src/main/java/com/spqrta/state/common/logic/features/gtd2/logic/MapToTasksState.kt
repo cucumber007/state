@@ -14,6 +14,7 @@ import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
 import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
 import com.spqrta.state.common.logic.features.gtd2.element.withTask
@@ -61,7 +62,7 @@ fun mapToTasksState(
 }
 
 // migrate task statuses from old state to new state
-private fun mergeTaskStates(
+fun mergeTaskStates(
     metaState: MetaState,
     newTasksState: TasksState,
     oldTasksState: TasksState
@@ -74,10 +75,16 @@ private fun mergeTaskStates(
         if (oldTask != null) {
             // update statuses for the new task state to preserve tasks that are done etc.
             mergedTasksState = mergedTasksState.withToBeDone(task.name) {
-                it.withStatus(oldTask.status)
+                if (it.status !is TaskStatus.Active) {
+                    it.withStatus(it.status)
+                } else {
+                    it
+                }
             }
         }
     }
+    val old = newTasksState.getElement(ElementName.TaskName("Brush my teeth"))
+    val new = mergedTasksState.getElement(ElementName.TaskName("Brush my teeth"))
     return mergedTasksState.withNewContext(metaState)
 }
 
