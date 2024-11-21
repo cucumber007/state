@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.gtd2.element
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.spqrta.dynalist.utility.pure.nullIfEmpty
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
@@ -211,7 +212,6 @@ data class Flipper(
 
     override fun withNewContext(metaState: MetaState): Element {
         val timeLeft = metaState.timeLeft
-
         val nonSqueeze = scheduledElements.filter { it !is FlipperSchedule.Squeeze }
         val squeeze = scheduledElements.filterIsInstance<FlipperSchedule.Squeeze>()
 
@@ -246,14 +246,13 @@ data class Flipper(
                 if (squeezeValue > 5) {
                     var sumEstimate = 0
                     newSqueeze = squeeze.map {
-                        // estimate for inactive is 0
-                        val element = it.element.withActive(true)
-                        val estimate = element.estimate()?.totalSeconds ?: 0
+                        // estimate for inactive is 0 so we check it for active
+                        val estimate = it.element.withActive(true).estimate()?.totalSeconds ?: 0
                         it.copy(
                             element = it.element.withActive(
                                 if ((sumEstimate + estimate) < timeLeft.totalSeconds) {
-                                    sumEstimate += (it.element.estimate()?.totalSeconds
-                                        ?: 0).toInt()
+                                    sumEstimate += estimate.toInt()
+                                    // set task as active if there is free time left
                                     true
                                 } else {
                                     false
@@ -292,10 +291,7 @@ data class Flipper(
             }
         }
 
-        return this.copy(scheduledElements = newScheduledElements).also {
-            val a = it.tasks().count { it.active }
-            println(a)
-        }
+        return this.copy(scheduledElements = newScheduledElements)
     }
 
     private fun Task.withSqueezeValue(squeezeValue: Int, lastCompleted: LocalDate): Task {

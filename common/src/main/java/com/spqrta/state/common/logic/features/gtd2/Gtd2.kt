@@ -93,7 +93,11 @@ object Gtd2 {
                 updateTasksWithDeps(
                     oldGtd2State,
                     newTasksState
-                ).withEffects(effects)
+                ).also {
+                    val old = oldGtd2State.tasksState.estimate()
+                    val new = it.tasksState.estimate()
+                    println()
+                }.withEffects(effects)
             }
 
             is DebugAction.ResetDay -> {

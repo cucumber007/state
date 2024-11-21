@@ -83,9 +83,12 @@ fun mergeTaskStates(
             }
         }
     }
-    val old = newTasksState.getElement(ElementName.TaskName("Brush my teeth"))
-    val new = mergedTasksState.getElement(ElementName.TaskName("Brush my teeth"))
-    return mergedTasksState.withNewContext(metaState)
+    val old = newTasksState.estimate()
+    val new = mergedTasksState.estimate()
+    return mergedTasksState.withNewContext(metaState).also {
+        val withNc = it.estimate()
+        println()
+    }
 }
 
 private fun emptyQueue(): Queue {

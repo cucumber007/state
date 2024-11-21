@@ -134,8 +134,8 @@ fun updateTasksWithDeps(
         newTasksState = newTasksStateUnmerged,
         oldTasksState = newParentState.tasksState,
     )
-    val old = newTasksStateUnmerged.getElement(ElementName.TaskName("Brush my teeth"))
-    val new = newTasksState.getElement(ElementName.TaskName("Brush my teeth"))
+    val old = newTasksStateUnmerged.estimate()
+    val new = newTasksState.estimate()
     return updateTasksStateSyncronized(
         newParentState,
         newTasksState
