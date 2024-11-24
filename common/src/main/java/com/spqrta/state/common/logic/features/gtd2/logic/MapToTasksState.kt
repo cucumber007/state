@@ -40,10 +40,7 @@ fun mapToTasksState(
                 }
 
                 is DynalistLoadingState.Loaded -> {
-                    dynalistState.loadingState.toElement().also {
-                        val teeth = it.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
-                        println()
-                    }
+                    dynalistState.loadingState.toElement()
                 }
             }
         }
@@ -84,13 +81,7 @@ fun mergeTaskStates(
             }
         }
     }
-    val old = oldTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
-    val new = newTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
-    val merged = mergedTasksState.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
-    return mergedTasksState.withNewContext(metaState).also {
-        val withNc = it.getToBeDone(ElementName.TaskName("Brush my teeth"))?.status
-        println()
-    }
+    return mergedTasksState.withNewContext(metaState)
 }
 
 private fun emptyQueue(): Queue {

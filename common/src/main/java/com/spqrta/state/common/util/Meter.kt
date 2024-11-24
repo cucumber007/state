@@ -1,4 +1,6 @@
-package com.spqrta.dynalist.utility
+package com.spqrta.state.common.util
+
+import com.spqrta.state.common.util.log.Logg
 
 class Meter(
     private val tag: String = "",
@@ -22,7 +24,7 @@ class Meter(
             if (message != null) {
                 res += " $message"
             }
-            Logg.d(res)
+            com.spqrta.state.common.util.log.Logg.d(res)
             lastLogTime = System.currentTimeMillis()
         }
     }
@@ -36,7 +38,7 @@ class Meter(
             if (message != null) {
                 res += " $message"
             }
-            Logg.d(res)
+            com.spqrta.state.common.util.log.Logg.d(res)
         }
     }
 }

@@ -64,7 +64,7 @@ data class Gtd2State(
             ({ state: Gtd2State -> state.tasksDatabase } to { state: Gtd2State, subState: TasksDatabaseState ->
                 state.copy(tasksDatabase = subState)
             }).asOptic()
-        val optTaskTree =
+        val optTasks =
             ({ state: Gtd2State -> state.tasksState } to { state: Gtd2State, subState: Element ->
                 state.copy(tasksState = subState)
             }).asOptic()

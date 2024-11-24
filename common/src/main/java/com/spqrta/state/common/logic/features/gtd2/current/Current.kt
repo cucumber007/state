@@ -27,9 +27,8 @@ import com.spqrta.state.common.util.state_machine.illegalAction
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.state_machine.withOptic
-import com.spqrta.state.common.util.testLog
+import com.spqrta.state.common.util.log.testLog
 import com.spqrta.state.common.util.time.toSeconds
-import java.time.LocalTime
 
 @SuppressLint("NewApi")
 object Current {
@@ -223,9 +222,6 @@ object Current {
                             }
 
                             optTimeredState.set(state, newTimeredState).withEffects(effects)
-                                .also {
-                                    testLog(newTimeredState)
-                                }
                         }
 
                         is TimeredState.Running -> {

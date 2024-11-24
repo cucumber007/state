@@ -24,6 +24,7 @@ import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
+import com.spqrta.state.common.util.debug.debugFirstTask
 import com.spqrta.state.common.util.optics.asOpticGet
 import com.spqrta.state.common.util.optics.asOpticSet
 import com.spqrta.state.common.util.optics.identityGet
@@ -93,17 +94,16 @@ object Gtd2 {
                 updateTasksWithDeps(
                     oldGtd2State,
                     newTasksState
-                ).also {
-                    val old = oldGtd2State.tasksState.estimate()
-                    val new = it.tasksState.estimate()
-                    println()
-                }.withEffects(effects)
+                ).withEffects(effects)
             }
 
             is DebugAction.ResetDay -> {
                 val newTasksState = oldGtd2State.tasksState.withDoneReset()
                 updateTasksWithDeps(
-                    oldGtd2State,
+                    // to avoid merging done states of the tasks from the old state
+                    oldGtd2State.copy(
+                        tasksState = newTasksState
+                    ),
                     newTasksState
                 ).withEffects()
             }

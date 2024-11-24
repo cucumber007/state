@@ -1,11 +1,8 @@
 package com.spqrta.state.common
 
 import com.spqrta.dynalist.model.DynalistNode
-import com.spqrta.dynalist.utility.pure.Optional
-import com.spqrta.dynalist.utility.pure.toOptional
 import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.AppReady
-import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.dynalist.DynalistStateAppDatabase
@@ -13,21 +10,14 @@ import com.spqrta.state.common.logic.features.frame.FrameState
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
-import com.spqrta.state.common.logic.features.gtd2.current.TimeredState
-import com.spqrta.state.common.logic.features.gtd2.current.TimeredTask
-import com.spqrta.state.common.logic.features.gtd2.data.RoutineFlowQueue
-import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.collections.asList
 import com.spqrta.state.common.util.optics.copyWithOptic
 import com.spqrta.state.common.util.optics.plus
-import com.spqrta.state.common.util.time.toSeconds
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Test
-import java.time.LocalDateTime
 
 class Gtd2RoutineActiveTest {
 
@@ -36,7 +26,7 @@ class Gtd2RoutineActiveTest {
         val optReady = AppStateOptics.optReady
         val optFrame = optReady + AppReadyOptics.optFrameState
         val optGtd2State = optReady + AppReadyOptics.optGtd2State
-        val optTaskTree = optGtd2State + Gtd2State.optTaskTree
+        val optTaskTree = optGtd2State + Gtd2State.optTasks
         val optActiveElement = optGtd2State + Gtd2State.optCurrent + CurrentState.optActiveQueue
         val optActiveTask =
             optGtd2State + Gtd2State.optCurrent + CurrentState.optActiveElement + ActiveElement.optActiveTask

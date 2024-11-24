@@ -1,4 +1,4 @@
-package com.spqrta.state.common.util
+package com.spqrta.state.common.util.log
 
 import android.util.Log
 

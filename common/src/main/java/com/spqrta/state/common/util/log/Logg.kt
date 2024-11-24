@@ -1,4 +1,4 @@
-package com.spqrta.dynalist.utility
+package com.spqrta.state.common.util.log
 
 import android.util.Log
 
@@ -9,7 +9,7 @@ object Logg {
 
     var externalLogConsumer: LogConsumer? = null
 
-    const val TAG = "cutag"
+    const val TAG = "kek"
 
     fun v(obj: Any?) {
         if (logEnabled) {

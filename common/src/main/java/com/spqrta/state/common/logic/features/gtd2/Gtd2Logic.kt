@@ -2,19 +2,18 @@
 
 package com.spqrta.state.common.logic.features.gtd2
 
-import android.util.Log
+import com.spqrta.state.common.util.log.Logg
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.current.CurrentState
-import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToCurrentState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToStats
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTasksState
 import com.spqrta.state.common.logic.features.gtd2.logic.mapToTinderState
 import com.spqrta.state.common.logic.features.gtd2.logic.mergeTaskStates
-import com.spqrta.state.common.logic.features.gtd2.meta.Meta
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.logic.features.gtd2.stats.Gtd2Stats
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderState
+import com.spqrta.state.common.util.debug.debugAlsoFirstTask
 import com.spqrta.state.common.util.tuple.Tuple4
 
 /**
@@ -134,8 +133,6 @@ fun updateTasksWithDeps(
         newTasksState = newTasksStateUnmerged,
         oldTasksState = newParentState.tasksState,
     )
-    val old = newTasksStateUnmerged.estimate()
-    val new = newTasksState.estimate()
     return updateTasksStateSyncronized(
         newParentState,
         newTasksState

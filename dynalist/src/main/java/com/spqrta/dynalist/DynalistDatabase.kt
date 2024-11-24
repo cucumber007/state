@@ -18,9 +18,7 @@ class DynalistDatabase(
     private var initialized = false
 
     suspend fun init() {
-        val nodes = getChildren(documentId).nodes.also {
-            println(it.map { it.id })
-        }
+        val nodes = getChildren(documentId).nodes
         val root = nodes.first { it.id == ROOT }
         val dataNode = nodes.firstOrNull { it.id == root.note }
         dataNodeId = if (root.note == null || dataNode == null) {

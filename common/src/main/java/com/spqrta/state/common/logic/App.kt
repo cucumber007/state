@@ -7,8 +7,11 @@ import com.spqrta.state.common.logic.action.AppAction
 import com.spqrta.state.common.logic.action.ClockAction
 import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.applyEffects
+import com.spqrta.state.common.logic.features.gtd2.Gtd2State
+import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.use_case.UseCases
 import com.spqrta.state.common.util.optics.OpticGet
+import com.spqrta.state.common.util.optics.plus
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.StateMachine
@@ -38,6 +41,10 @@ object App {
             applyEffects(it, effectsScope, useCases, App::handleAction)
         }
     ) {
+        override fun subStateForLog(state: AppState): Any? {
+            return (AppStateOptics.optReady + AppReady.optGtd2State + Gtd2State.optTasks).get(state)
+        }
+
         override fun shouldLog(
             action: AppAction,
             state: AppState,

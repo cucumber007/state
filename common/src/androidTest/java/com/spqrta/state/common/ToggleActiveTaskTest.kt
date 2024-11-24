@@ -38,7 +38,7 @@ class ToggleActiveTaskTest {
                 initialState = AppReady.INITIAL.let {
                     AppReadyOptics.optClockMode.set(it, None)
                 }.let {
-                    (AppReadyOptics.optGtd2State + Gtd2State.optTaskTree).set(
+                    (AppReadyOptics.optGtd2State + Gtd2State.optTasks).set(
                         it,
                         EmptyQueue.value
                     )

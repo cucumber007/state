@@ -31,17 +31,21 @@ open class StateMachine<A, S, E>(
                 val effects = stateChangeEffects.invoke(reduced.newState) + reduced.effects
                 applyEffects(effects)
                 if (shouldLog(action, reduced.newState, effects)) {
-                    log(format(action, reduced.newState, effects))
+                    log(format(action, subStateForLog(reduced.newState), effects))
                 }
             }
         }
+    }
+
+    protected open fun subStateForLog(state: S): Any? {
+        return state
     }
 
     protected open fun shouldLog(action: A, state: S, effects: Set<E>): Boolean {
         return true
     }
 
-    protected open fun format(action: A, newState: S, effects: Set<E>): String {
+    protected open fun format(action: A, newState: Any?, effects: Set<E>): String {
         return formatReducedValues(action, newState, effects)
     }
 

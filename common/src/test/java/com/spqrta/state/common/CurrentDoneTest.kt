@@ -22,7 +22,7 @@ class CurrentDoneTest {
         val optReady = AppStateOptics.optReady
         val optFrame = optReady + AppReadyOptics.optFrameState
         val optGtd2State = optReady + AppReadyOptics.optGtd2State
-        val optTaskTree = optGtd2State + Gtd2State.optTaskTree
+        val optTaskTree = optGtd2State + Gtd2State.optTasks
         val optActiveElement = optGtd2State + Gtd2State.optCurrent + CurrentState.optActiveQueue
         val optActiveTask =
             optGtd2State + Gtd2State.optCurrent + CurrentState.optActiveElement + ActiveElement.optActiveTask
