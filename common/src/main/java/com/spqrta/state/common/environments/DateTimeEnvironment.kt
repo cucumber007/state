@@ -1,6 +1,7 @@
 package com.spqrta.state.common.environments
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.BuildConfig
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -24,7 +25,12 @@ object DateTimeEnvironment {
         } else {
             LocalDateTime.now().plusDays(debugDateCompensation)
         }.let {
-            LocalDateTime.now().withHour(22)
+            if (BuildConfig.DEBUG) {
+                it.withHour(22)
+            } else {
+                it
+            }
+
         }
 
     val displayFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
