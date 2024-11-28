@@ -87,12 +87,15 @@ object Gtd2 {
                         }
 
                         TaskStatus.Inactive -> {
-                            it.withStatus(TaskStatus.Inactive)
+                            it.withStatus(TaskStatus.Active)
                         }
                     }
                 }
                 updateTasksWithDeps(
-                    oldGtd2State,
+                    // to avoid done state merging
+                    oldGtd2State.copy(
+                        tasksState = newTasksState
+                    ),
                     newTasksState
                 ).withEffects(effects)
             }
