@@ -46,7 +46,7 @@ import java.time.LocalTime
 fun CurrentView(state: Gtd2State) {
     when (val activeElement: ActiveElement? = state.currentState.activeElement) {
         is ActiveElement.ActiveQueue -> {
-            val estimate = state.tasksState.estimate() ?: 0.toSeconds()
+            val estimate = activeElement.groupValue(state.tasksState).estimate() ?: 0.toSeconds()
             val finishTime = DateTimeEnvironment.timeNow
                 .plusSeconds(estimate.totalSeconds)
                 .formatWithoutSeconds()

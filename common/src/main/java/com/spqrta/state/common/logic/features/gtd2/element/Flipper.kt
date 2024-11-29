@@ -250,7 +250,7 @@ data class Flipper(
                         val estimate = it.element.withActive(true).estimate()?.totalSeconds ?: 0
                         it.copy(
                             element = it.element.withActive(
-                                if ((sumEstimate + estimate) < timeLeft.totalSeconds) {
+                                if ((sumEstimate + estimate) < timeLeftForSqueeze.totalSeconds) {
                                     sumEstimate += estimate.toInt()
                                     // set task as active if there is free time left
                                     true
@@ -274,7 +274,7 @@ data class Flipper(
                 newSqueezeEstimate = newSqueeze.sumOf {
                     it.element.estimate()?.totalSeconds ?: 0
                 }.toSeconds()
-            } while (newSqueezeEstimate > timeLeft)
+            } while (newSqueezeEstimate > timeLeftForSqueeze)
 
             scheduledElements.map { schedule ->
                 when (schedule) {
@@ -291,7 +291,10 @@ data class Flipper(
             }
         }
 
-        return this.copy(scheduledElements = newScheduledElements)
+        return this.copy(scheduledElements = newScheduledElements).also {
+            val estimate = it.estimate()
+            println()
+        }
     }
 
     private fun Task.withSqueezeValue(squeezeValue: Int, lastCompleted: LocalDate): Task {

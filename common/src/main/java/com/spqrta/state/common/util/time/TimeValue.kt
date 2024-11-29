@@ -36,9 +36,13 @@ open class TimeValue(val totalSeconds: Long) : Comparable<TimeValue> {
     }
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 open class Seconds(private val value: Long) : TimeValue(value) {
     constructor(value: Int) : this(value.toLong())
+
+    override fun toString(): String {
+        return "$value (${value / 60} min / ${value / 3600} h)"
+    }
 }
 
 class PositiveSeconds(seconds: Long) : Seconds(abs(seconds)) {
