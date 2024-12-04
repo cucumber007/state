@@ -1,8 +1,6 @@
 package com.spqrta.state.common.logic.features.gtd2.logic
 
-import android.util.Log
 import com.spqrta.dynalist.model.DynalistNode
-import com.spqrta.state.common.R
 import com.spqrta.state.common.logic.features.dynalist.DynalistLoadingState
 import com.spqrta.state.common.logic.features.dynalist.DynalistState
 import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
@@ -12,12 +10,8 @@ import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Queue
 import com.spqrta.state.common.logic.features.gtd2.element.Routine
 import com.spqrta.state.common.logic.features.gtd2.element.Task
-import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
-import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.logic.features.gtd2.element.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
-import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineContext
-import com.spqrta.state.common.logic.features.gtd2.element.routine.RoutineTrigger
-import com.spqrta.state.common.logic.features.gtd2.element.withTask
 import com.spqrta.state.common.logic.features.gtd2.element.withToBeDone
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.result.Res

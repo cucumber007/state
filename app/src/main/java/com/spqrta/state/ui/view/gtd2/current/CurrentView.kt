@@ -36,6 +36,9 @@ import com.spqrta.state.common.logic.action.CurrentViewAction
 import com.spqrta.state.common.logic.effect.ViewEffect
 import com.spqrta.state.common.logic.features.gtd2.Gtd2State
 import com.spqrta.state.common.logic.features.gtd2.current.ActiveElement
+import com.spqrta.state.common.logic.features.gtd2.element.FlipperSchedule
+import com.spqrta.state.common.logic.features.gtd2.element.Routine
+import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.TaskStatus
 import com.spqrta.state.common.util.time.formatWithoutSeconds
 import com.spqrta.state.common.util.time.toSeconds
@@ -172,12 +175,20 @@ fun CurrentView(state: Gtd2State) {
                                         TaskStatus.Done -> Color.Gray to TextStyle(textDecoration = TextDecoration.LineThrough)
                                         TaskStatus.Inactive -> Color.Gray to TextStyle()
                                     }
+                                    val displayName = when (it) {
+                                        is Routine<*>, is Task -> it.displayName
+                                        is FlipperSchedule.Squeeze -> it.element.displayName + "\n(Done at ${
+                                            it.lastCompletedAt?.format(
+                                                DateTimeEnvironment.displayFormatter
+                                            )
+                                        })"
+                                    }
                                     ActionButton(
                                         action = CurrentViewAction.OnSubElementClick(it),
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
                                     ) {
                                         Text(
-                                            text = it.displayName,
+                                            text = displayName,
                                             fontSize = FontSize.BASE,
                                             modifier = Modifier.padding(
                                                 start = 16.dp,

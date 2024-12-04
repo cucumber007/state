@@ -3,7 +3,7 @@ package com.spqrta.state.common
 import com.spqrta.state.common.logic.features.gtd2.element.Flipper
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
-import com.spqrta.state.common.logic.features.gtd2.element.flipper.FlipperSchedule
+import com.spqrta.state.common.logic.features.gtd2.element.FlipperSchedule
 import com.spqrta.state.common.logic.features.gtd2.meta.MetaState
 import com.spqrta.state.common.util.time.toSeconds
 import junit.framework.TestCase.assertFalse

@@ -1,11 +1,12 @@
-package com.spqrta.state.common.logic.features.gtd2.element.flipper
+package com.spqrta.state.common.logic.features.gtd2.element
 
-import com.spqrta.state.common.logic.features.gtd2.element.Element
-import com.spqrta.state.common.logic.features.gtd2.element.Task
+import com.spqrta.state.common.logic.features.gtd2.element.misc.ElementName
+import com.spqrta.state.common.util.serialization.LocalDateSerializer
 import com.spqrta.state.common.util.serialization.LocalTimeSerializer
 import com.spqrta.state.common.util.time.TimeValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 import java.time.LocalTime
 
 @Serializable
@@ -37,8 +38,17 @@ sealed class FlipperSchedule(
 
     @Serializable
     data class Squeeze(
-        @SerialName("element_Squeeze") override val element: Task
-    ) : FlipperSchedule(element) {
+        @SerialName("element_Squeeze") override val element: Task,
+        @Serializable(with = LocalDateSerializer::class) val lastCompletedAt: LocalDate?
+    ) : FlipperSchedule(element), ToBeDone by element {
+
+        fun getToBeDone(name: ElementName): ToBeDone? {
+            return if (element.name == name) {
+                this
+            } else {
+                null
+            }
+        }
 
         override fun toString(): String {
             return "${javaClass.simpleName}($element)"
@@ -49,7 +59,10 @@ sealed class FlipperSchedule(
         fun parse(data: String, element: Element): FlipperSchedule? {
             return when (data.lowercase()) {
                 Squeeze::class.simpleName?.lowercase() -> {
-                    Squeeze(element as Task)
+                    Squeeze(
+                        element = element as Task,
+                        lastCompletedAt = null
+                    )
                 }
 
                 else -> {
