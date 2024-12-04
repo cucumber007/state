@@ -11,6 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ThumbUp
@@ -109,6 +111,21 @@ fun CurrentView(state: Gtd2State) {
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 ImageActionButton(
+                                    imageVector = if (state.currentState.showInactive) {
+                                        Icons.Default.Build
+                                    } else {
+                                        Icons.Default.Check
+                                    },
+                                    action = CurrentViewAction.OnToggleShowInactiveClick
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                ImageActionButton(
                                     imageVector = Icons.Default.Home,
                                     action = CurrentViewAction.OnScrollToActiveClick
                                 )
@@ -150,6 +167,11 @@ fun CurrentView(state: Gtd2State) {
                                         ActiveTaskView(activeTask)
                                     }
                                 } else {
+                                    val (color, style) = when (it.status) {
+                                        TaskStatus.Active -> Color.Black to TextStyle()
+                                        TaskStatus.Done -> Color.Gray to TextStyle(textDecoration = TextDecoration.LineThrough)
+                                        TaskStatus.Inactive -> Color.Gray to TextStyle()
+                                    }
                                     ActionButton(
                                         action = CurrentViewAction.OnSubElementClick(it),
                                         longPressAction = CurrentViewAction.OnSubElementLongClick(it)
@@ -161,16 +183,8 @@ fun CurrentView(state: Gtd2State) {
                                                 start = 16.dp,
                                                 bottom = 8.dp
                                             ),
-                                            color = if (it.status is TaskStatus.Done) {
-                                                Color.Gray
-                                            } else {
-                                                Color.Black
-                                            },
-                                            style = if (it.status is TaskStatus.Done) {
-                                                TextStyle(textDecoration = TextDecoration.LineThrough)
-                                            } else {
-                                                TextStyle()
-                                            }
+                                            color = color,
+                                            style = style
                                         )
                                     }
                                 }

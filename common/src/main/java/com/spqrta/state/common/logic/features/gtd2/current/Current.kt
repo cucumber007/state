@@ -292,6 +292,14 @@ object Current {
                 ).withEffects()
             }
 
+            is CurrentViewAction.OnToggleShowInactiveClick -> {
+                state.copy(
+                    currentState = state.currentState.copy(
+                        showInactive = !state.currentState.showInactive
+                    )
+                ).withEffects()
+            }
+
             is CurrentViewAction.OnScrollToActiveClick -> {
                 optActiveTask.get(state)?.toNullable()?.let { activeTask ->
                     state.currentState.tasksToShowValue(state.tasksState).indexOf(activeTask.task)
@@ -333,6 +341,7 @@ object Current {
             is CurrentViewAction.OnTimerReset,
             is CurrentViewAction.OnTimerStart,
             is CurrentViewAction.OnToggleShowDoneClick,
+            is CurrentViewAction.OnToggleShowInactiveClick
                 -> {
                 illegalAction(action, state)
             }

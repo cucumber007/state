@@ -22,4 +22,5 @@ sealed interface CurrentViewAction : AppAction {
     object OnTimerReset : Action()
     object OnTimerStart : Action()
     object OnToggleShowDoneClick : Action()
+    object OnToggleShowInactiveClick : Action()
 }

@@ -33,13 +33,20 @@ fun TaskView(task: Task, displayName: String? = null) {
             )
         },
         style = when (task.status) {
-            TaskStatus.Active -> TextStyle(color = Color.Black)
-            TaskStatus.Done -> TextStyle(
-                color = Color.Gray,
-                textDecoration = TextDecoration.LineThrough
-            )
+            TaskStatus.Active -> {
+                TextStyle(color = Color.Black)
+            }
 
-            TaskStatus.Inactive -> TextStyle(color = Color.Gray)
+            TaskStatus.Done -> {
+                TextStyle(
+                    color = Color.Gray,
+                    textDecoration = TextDecoration.LineThrough
+                )
+            }
+
+            TaskStatus.Inactive -> {
+                TextStyle(color = Color.Gray)
+            }
         }
     )
 }
