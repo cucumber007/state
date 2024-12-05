@@ -27,6 +27,14 @@ data class Queue(
         return sum.toSeconds()
     }
 
+    override fun format(): String {
+        return elements.joinToString("\n\t") {
+            it.format()
+        }.let {
+            "$name Queue\n$it"
+        }
+    }
+
     override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this

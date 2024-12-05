@@ -84,7 +84,10 @@ data class Gtd2State(
             currentState = CurrentState.INITIAL,
             metaState = MetaState.INITIAL,
             tasksState = INITIAL_TASK_TREE,
-            tasksDatabase = TasksDatabaseState(mapOf()),
+            tasksDatabase = TasksDatabaseState(
+                estimates = emptyMap(),
+                completed = emptyList(),
+            ),
             tinderState = TinderState.INITIAL,
         )
     }

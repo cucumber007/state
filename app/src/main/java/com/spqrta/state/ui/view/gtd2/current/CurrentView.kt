@@ -176,12 +176,25 @@ fun CurrentView(state: Gtd2State) {
                                         TaskStatus.Inactive -> Color.Gray to TextStyle()
                                     }
                                     val displayName = when (it) {
-                                        is Routine<*>, is Task -> it.displayName
-                                        is FlipperSchedule.Squeeze -> it.element.displayName + "\n(Done at ${
-                                            it.lastCompletedAt?.format(
-                                                DateTimeEnvironment.displayFormatter
-                                            )
-                                        })"
+                                        is Routine<*>, is Task -> {
+                                            it.displayName
+                                        }
+
+                                        is FlipperSchedule.Squeeze -> {
+                                            when (it.status) {
+                                                TaskStatus.Active, TaskStatus.Done -> {
+                                                    it.displayName
+                                                }
+
+                                                TaskStatus.Inactive -> {
+                                                    it.element.displayName + "\n(Done at ${
+                                                        it.lastCompletedAt?.format(
+                                                            DateTimeEnvironment.displayFormatter
+                                                        )
+                                                    })"
+                                                }
+                                            }
+                                        }
                                     }
                                     ActionButton(
                                         action = CurrentViewAction.OnSubElementClick(it),

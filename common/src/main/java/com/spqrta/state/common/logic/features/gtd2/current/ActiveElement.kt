@@ -19,7 +19,9 @@ sealed class ActiveElement {
     ) : ActiveElement() {
 
         fun activeTasksValue(tasksState: TasksState): List<ToBeDone> {
-            return groupValue(tasksState).toBeDone().filter { it.active }
+            return groupValue(tasksState).toBeDone().also {
+                println("ActiveTasksValue: $it")
+            }.filter { it.active }
         }
 
         fun groupValue(tasksState: TasksState): Group {

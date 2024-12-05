@@ -13,6 +13,11 @@ import java.time.LocalTime
 sealed class FlipperSchedule(
     open val element: Element
 ) {
+
+    open fun format(): String {
+        return "${javaClass.simpleName} ${element.format()}"
+    }
+
     @Serializable
     data class Just(
         @SerialName("element_Just") override val element: Element
@@ -41,6 +46,10 @@ sealed class FlipperSchedule(
         @SerialName("element_Squeeze") override val element: Task,
         @Serializable(with = LocalDateSerializer::class) val lastCompletedAt: LocalDate?
     ) : FlipperSchedule(element), ToBeDone by element {
+
+        override fun format(): String {
+            return "${javaClass.simpleName} $lastCompletedAt ${element.format()}"
+        }
 
         fun getToBeDone(name: ElementName): ToBeDone? {
             return if (element.name == name) {

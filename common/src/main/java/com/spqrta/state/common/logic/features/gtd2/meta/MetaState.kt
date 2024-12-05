@@ -2,6 +2,7 @@ package com.spqrta.state.common.logic.features.gtd2.meta
 
 import android.annotation.SuppressLint
 import com.spqrta.state.common.environments.DateTimeEnvironment
+import com.spqrta.state.common.logic.features.gtd2.TasksDatabaseState
 import com.spqrta.state.common.logic.features.gtd2.element.Task
 import com.spqrta.state.common.logic.features.gtd2.tinder.TinderPrompt
 import com.spqrta.state.common.util.serialization.LocalDateSerializer
@@ -28,6 +29,12 @@ data class MetaState(
         getNullProperties(goalFunction).map {
             TinderPrompt.UnknownMetaState(it)
         }
+    }
+
+    fun withUpdatedTasksDatabase(tasksDatabase: TasksDatabaseState): MetaState {
+        return copy(
+            tasksLastCompleted = tasksDatabase.tasksLastCompleted(),
+        )
     }
 
     private fun getNullProperties(instance: Any): List<MetaProperty> {
@@ -93,8 +100,8 @@ data class MetaState(
         field.set(instance, newValue)
     }
 
-    fun lastCompletedDate(element: Task): LocalDate {
-        return tasksLastCompleted[element.name.value] ?: LocalDate.MIN
+    fun lastCompletedDate(element: Task): LocalDate? {
+        return tasksLastCompleted[element.name.value]
     }
 
     companion object {

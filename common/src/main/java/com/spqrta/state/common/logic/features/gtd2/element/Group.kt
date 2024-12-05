@@ -9,6 +9,7 @@ sealed interface Group {
     val name: ElementName
 
     fun estimate(): TimeValue?
+    fun format(): String
     fun isLeafGroup(): Boolean
     fun toBeDone(): List<ToBeDone>
     fun tasks(): List<Task>

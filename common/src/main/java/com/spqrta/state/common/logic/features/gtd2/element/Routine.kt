@@ -64,6 +64,10 @@ data class Routine<Context : RoutineContext>(
         return mapper(this)
     }
 
+    override fun format(): String {
+        return innerElement.format()
+    }
+
     override fun groups(): List<Group> {
         return innerElement.groups()
     }

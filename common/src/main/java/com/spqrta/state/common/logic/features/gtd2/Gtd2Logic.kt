@@ -21,7 +21,7 @@ import com.spqrta.state.common.util.tuple.Tuple4
  *
  * (Meta) -> (Tasks)
  * (Dynalist) -> (TasksDatabase, Tasks)
- * (TasksDatabase) -> (Tasks, Current, GtdStats, Tinder)
+ * (TasksDatabase) -> (Tasks, Current, GtdStats, Tinder) + Meta
  * (Tasks) -> (Current, GtdStats, Tinder)
  * (Current) -> (GtdStats)
  * (GtdStats) -> ()
@@ -213,6 +213,10 @@ fun updateTasksDatabaseWithDeps(
                 newStats
             )
         }
+    }.let {
+        it.copy(
+            metaState = it.metaState.withUpdatedTasksDatabase(newTasksDatabaseState)
+        )
     }
 }
 

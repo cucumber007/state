@@ -23,6 +23,7 @@ sealed interface Element {
 
     fun map(mapper: (Element) -> Element): Element
 
+    fun format(): String
     fun groups(): List<Group>
     fun nonEstimated(): List<Element>
     fun tasks(): List<Task>

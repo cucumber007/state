@@ -26,7 +26,7 @@ object DateTimeEnvironment {
             LocalDateTime.now().plusDays(debugDateCompensation)
         }.let {
             if (BuildConfig.DEBUG) {
-                it.withHour(22)
+                it.withHour(20)
             } else {
                 it
             }

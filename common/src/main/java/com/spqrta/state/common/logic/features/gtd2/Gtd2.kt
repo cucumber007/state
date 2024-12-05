@@ -3,6 +3,7 @@ package com.spqrta.state.common.logic.features.gtd2
 import android.annotation.SuppressLint
 import android.icu.util.TimeUnit
 import android.util.Log
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.environments.tasks_database.TasksDatabaseEntry
 import com.spqrta.state.common.logic.AppReady
 import com.spqrta.state.common.logic.action.ClockAction
@@ -151,7 +152,8 @@ object Gtd2 {
                     val newTaskDatabase =
                         oldTaskDatabase.withNewEntry(
                             action.task.name.value, TasksDatabaseEntry.Completed(
-                                action.task
+                                dateTime = DateTimeEnvironment.dateTimeNow,
+                                routine = action.task
                             )
                         )
                     newTaskDatabase.withEffects(

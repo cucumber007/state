@@ -16,7 +16,7 @@ fun mapToStats(
 ): Gtd2Stats {
     return Gtd2Stats(
         timeLeft = calculateTimeLeft(),
-        estimate = tasksState.estimate() ?: 0.toSeconds()
+        estimate = tasksState.estimate() ?: 0.toSeconds(),
     )
 }
 

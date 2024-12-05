@@ -50,6 +50,10 @@ data class Task(
         }
     }
 
+    override fun format(): String {
+        return name.value
+    }
+
     override fun getElement(name: ElementName): Element? {
         return if (this.name == name) {
             this
