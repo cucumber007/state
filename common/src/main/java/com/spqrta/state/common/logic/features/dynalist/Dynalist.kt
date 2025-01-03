@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.dynalist
 
 import android.annotation.SuppressLint
+import com.spqrta.state.common.BuildConfig
 import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.logic.AppState
 import com.spqrta.state.common.logic.action.AppAction
@@ -15,6 +16,7 @@ import com.spqrta.state.common.logic.effect.AppEffect
 import com.spqrta.state.common.logic.effect.AppEffectNew
 import com.spqrta.state.common.logic.effect.DynalistEffect
 import com.spqrta.state.common.logic.effect.LoadDynalistEffect
+import com.spqrta.state.common.logic.effect.ShowToastEffect
 import com.spqrta.state.common.logic.optics.AppReadyOptics
 import com.spqrta.state.common.logic.optics.AppStateOptics
 import com.spqrta.state.common.util.result.Failure
@@ -26,16 +28,21 @@ import com.spqrta.state.common.util.optics.withSubState
 import com.spqrta.state.common.util.state_machine.Reduced
 import com.spqrta.state.common.util.state_machine.Reducer
 import com.spqrta.state.common.util.state_machine.chain
+import com.spqrta.state.common.util.state_machine.effectIf
 import com.spqrta.state.common.util.state_machine.widen
 import com.spqrta.state.common.util.state_machine.withEffects
 import com.spqrta.state.common.util.state_machine.withOptic
 import com.spqrta.state.common.util.time.toDays
+import com.spqrta.state.common.util.time.toSeconds
 import com.spqrta.state.common.util.toIso
-import java.time.LocalDateTime
 
 object Dynalist {
     private const val API_KEY_URL = "https://dynalist.io/developer"
-    private val UPDATE_TIMEOUT = 1.toDays()
+    private val UPDATE_TIMEOUT = if (BuildConfig.DEBUG) {
+        20.toSeconds()
+    } else {
+        1.toDays()
+    }
 
     val reducer = widen(
         typeGet(),
@@ -73,6 +80,7 @@ object Dynalist {
                         is DynalistLoadingState.Loaded -> {
                             if (loadingState.loadedAt.plusSeconds(UPDATE_TIMEOUT.totalSeconds)
                                     .isBefore(DateTimeEnvironment.dateTimeNow)
+                                && docCreated.periodicUpdatesEnabled
                             ) {
                                 docCreated.loadingState.withEffects(
                                     LoadDynalistEffect(
@@ -94,20 +102,45 @@ object Dynalist {
                 handleAction(action)
             }
 
-            is DebugAction.UpdateDynalist -> {
+            is DebugAction.TogglePeriodicDynalistUpdates -> {
                 withOptic(
                     action,
                     state,
                     DynalistState.optDocCreated,
                     identityOptional(),
-                    failIfNotApplicable = { true }
                 ) { docCreated ->
-                    docCreated.withEffects(
-                        LoadDynalistEffect(
-                            docCreated.key,
-                            docCreated.databaseDocId
-                        )
+                    val newState = docCreated.copy(
+                        periodicUpdatesEnabled = !docCreated.periodicUpdatesEnabled
                     )
+                    newState.withEffects()
+                }
+            }
+
+            is DebugAction.UpdateDynalist -> {
+                when (state) {
+                    is DynalistState.DocCreated -> {
+                        state.withEffects(
+                            LoadDynalistEffect(
+                                state.key,
+                                state.databaseDocId
+                            )
+                        )
+                    }
+
+                    is DynalistState.Error -> {
+                        reduce(
+                            DynalistAction.SetApiKey(state.key),
+                            DynalistState.KeyNotSet
+                        )
+                    }
+
+                    is DynalistState.CreatingDoc,
+                    is DynalistState.DocsLoading,
+                    is DynalistState.KeyNotSet -> {
+                        state.withEffects(
+                            ShowToastEffect("Dynalist is already updating: ${state.javaClass.simpleName}")
+                        )
+                    }
                 }
             }
 
@@ -125,13 +158,10 @@ object Dynalist {
                         }
 
                         is Success -> {
-                            DynalistState.DocCreated(
+                            DynalistState.DocCreated.initial(
                                 key = creatingDoc.key,
                                 databaseDocId = action.docResult.success.databaseDocId,
-                                loadingState = DynalistLoadingState.Loaded(
-                                    loadedAt = DateTimeEnvironment.dateTimeNow,
-                                    database = action.docResult.success.database
-                                )
+                                database = action.docResult.success.database
                             ).withEffects()
                         }
                     }
@@ -151,13 +181,10 @@ object Dynalist {
                             val result = action.docsResult.success
                             if (result.stateAppDatabaseDocData != null) {
                                 val (databaseDocId, database) = result.stateAppDatabaseDocData
-                                val newState = DynalistState.DocCreated(
+                                val newState = DynalistState.DocCreated.initial(
                                     key = docsLoading.key,
                                     databaseDocId = databaseDocId,
-                                    loadingState = DynalistLoadingState.Loaded(
-                                        loadedAt = DateTimeEnvironment.dateTimeNow,
-                                        database = database
-                                    )
+                                    database = database
                                 )
                                 newState.withEffects(
                                     ActionEffect(
@@ -176,7 +203,10 @@ object Dynalist {
                         }
 
                         is Failure -> {
-                            docsLoading.withEffects()
+                            DynalistState.Error(
+                                key = docsLoading.key,
+                                error = action.docsResult.failure.toString()
+                            ).withEffects()
                         }
                     }
                 }
@@ -193,27 +223,33 @@ object Dynalist {
                     when (docCreated.loadingState) {
                         is DynalistLoadingState.Initial -> {
                             when (action.docResult) {
+                                is Failure -> {
+                                    DynalistState.Error(
+                                        key = docCreated.key,
+                                        error = action.docResult.failure.toString()
+                                    ).withEffects(
+                                        ActionEffect(AppReadyAction.ShowErrorAction(action.docResult.failure))
+                                    )
+                                }
+
                                 is Success -> {
                                     DynalistLoadingState.Loaded(
                                         loadedAt = DateTimeEnvironment.dateTimeNow,
                                         database = action.docResult.success
-                                    ).withEffects<DynalistLoadingState, AppEffect>()
+                                    ).withEffects<DynalistLoadingState, AppEffect>().flatMapState {
+                                        DynalistState.optLoadingState.set(docCreated, it.newState)
+                                    }
                                 }
-
-                                is Failure -> {
-                                    docCreated.loadingState.withEffects(
-                                        ActionEffect(AppReadyAction.ShowErrorAction(action.docResult.failure))
-                                    )
-                                }
-                            }.flatMapState {
-                                DynalistState.optLoadingState.set(docCreated, it.newState)
                             }
                         }
 
                         is DynalistLoadingState.Loaded -> {
                             when (action.docResult) {
                                 is Failure -> {
-                                    docCreated.withEffects(
+                                    DynalistState.Error(
+                                        key = docCreated.key,
+                                        error = action.docResult.failure.toString()
+                                    ).withEffects(
                                         ActionEffect(AppReadyAction.ShowErrorAction(action.docResult.failure))
                                     )
                                 }
@@ -234,7 +270,9 @@ object Dynalist {
                     }.flatMapEffects {
                         it.effects + ActionEffect(
                             Gtd2Action.DynalistStateUpdated(it.newState)
-                        )
+                        ) + effectIf(BuildConfig.DEBUG) {
+                            ShowToastEffect("Dynalist loaded")
+                        }
                     }
                 }
             }
@@ -329,6 +367,10 @@ object Dynalist {
                         dynalistState
                     )
                 )
+            }
+
+            is DynalistState.Error -> {
+                dynalistState.withEffects()
             }
 
             is DynalistState.KeyNotSet -> {

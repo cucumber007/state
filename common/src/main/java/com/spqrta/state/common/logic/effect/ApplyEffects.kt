@@ -1,12 +1,15 @@
 package com.spqrta.state.common.logic.effect
 
 import com.spqrta.state.common.logic.action.AppAction
+import com.spqrta.state.common.logic.action.DynalistAction
 import com.spqrta.state.common.logic.action.PromptAction
 import com.spqrta.state.common.use_case.UseCases
 import com.spqrta.state.common.util.collections.asList
+import com.spqrta.state.common.util.result.asFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 fun applyEffects(

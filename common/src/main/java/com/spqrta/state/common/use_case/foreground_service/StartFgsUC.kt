@@ -24,9 +24,11 @@ class StartFgsUC(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(StateService.createStartIntent(context))
                 }
-                listOf()
+                listOf<AppAction>()
             } else {
-                listOf(AppReadyAction.ShowErrorAction(Exception("Notifications permission is not granted")))
+                listOf(
+//                    AppReadyAction.ShowErrorAction(Exception("Notifications permission is not granted"))
+                )
             }
         }.asFlow()
     }

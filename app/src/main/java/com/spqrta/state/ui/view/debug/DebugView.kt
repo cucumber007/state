@@ -30,14 +30,26 @@ fun DebugView(appState: AppReady) {
         }
         Box(Modifier.padding(bottom = padding)) {
             TextActionButton(
+                text = "Send test notification",
+                action = DebugAction.SendTestNotification,
+            )
+        }
+        Box(Modifier.padding(bottom = padding)) {
+            TextActionButton(
+                text = "Bump Date",
+                action = DebugAction.BumpDate
+            )
+        }
+        Box(Modifier.padding(bottom = padding)) {
+            TextActionButton(
                 text = "Clock mode: ${appState.clockMode}",
                 action = DebugAction.FlipClockMode
             )
         }
         Box(Modifier.padding(bottom = padding)) {
             TextActionButton(
-                text = "Send test notification",
-                action = DebugAction.SendTestNotification,
+                text = "Periodic Dynalist updates: ${appState.dynalistState.periodicUpdatesEnabledText()}",
+                action = DebugAction.TogglePeriodicDynalistUpdates
             )
         }
         Box(Modifier.padding(bottom = padding)) {
@@ -50,12 +62,6 @@ fun DebugView(appState: AppReady) {
             TextActionButton(
                 text = "Reset Day",
                 action = DebugAction.ResetDay
-            )
-        }
-        Box(Modifier.padding(bottom = padding)) {
-            TextActionButton(
-                text = "Bump Date",
-                action = DebugAction.BumpDate
             )
         }
 

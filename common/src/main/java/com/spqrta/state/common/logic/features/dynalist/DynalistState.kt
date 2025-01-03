@@ -1,6 +1,7 @@
 package com.spqrta.state.common.logic.features.dynalist
 
 import com.spqrta.state.common.BuildConfig
+import com.spqrta.state.common.environments.DateTimeEnvironment
 import com.spqrta.state.common.util.optics.asOpticOptional
 import kotlinx.serialization.Serializable
 
@@ -17,6 +18,12 @@ sealed class DynalistState {
     ) : DynalistState()
 
     @Serializable
+    data class Error(
+        val key: String,
+        val error: String
+    ) : DynalistState()
+
+    @Serializable
     data class CreatingDoc(
         val key: String,
         val dynalistUserRootId: String,
@@ -27,7 +34,44 @@ sealed class DynalistState {
         val key: String,
         val databaseDocId: String,
         val loadingState: DynalistLoadingState,
-    ) : DynalistState()
+        val periodicUpdatesEnabled: Boolean,
+    ) : DynalistState() {
+        companion object {
+            fun initial(
+                key: String,
+                databaseDocId: String,
+                database: DynalistStateAppDatabase
+            ) = DynalistState.DocCreated(
+                key = key,
+                databaseDocId = databaseDocId,
+                loadingState = DynalistLoadingState.Loaded(
+                    loadedAt = DateTimeEnvironment.dateTimeNow,
+                    database = database
+                ),
+                periodicUpdatesEnabled = true
+            )
+        }
+    }
+
+    fun periodicUpdatesEnabledText(): String {
+        return when (this) {
+            is DocCreated -> {
+                if (periodicUpdatesEnabled) {
+                    "Enabled"
+                } else {
+                    "Disabled"
+                }
+            }
+
+            is Error -> {
+                "Error"
+            }
+
+            else -> {
+                "Updating"
+            }
+        }
+    }
 
     companion object {
         val optCreatingDoc = ({ state: DynalistState ->

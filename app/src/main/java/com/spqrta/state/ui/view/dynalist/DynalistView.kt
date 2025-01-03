@@ -71,6 +71,10 @@ fun DynalistView(state: DynalistState) {
                     }
                 }
             }
+
+            is DynalistState.Error -> {
+                Text("Error: ${state.error}")
+            }
         }
     }
 }

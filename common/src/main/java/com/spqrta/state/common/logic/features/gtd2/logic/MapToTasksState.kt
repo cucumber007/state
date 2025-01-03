@@ -41,7 +41,8 @@ fun mapToTasksState(
 
         is DynalistState.CreatingDoc,
         is DynalistState.DocsLoading,
-        is DynalistState.KeyNotSet -> {
+        is DynalistState.KeyNotSet,
+        is DynalistState.Error -> {
             emptyQueue()
         }
     }.let { newTasksState: TasksState ->
