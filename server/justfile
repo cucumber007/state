@@ -1,26 +1,16 @@
-# List all available commands
-default:
-    @just --list
+alias r := run
 
-# Run the server
 run:
     ./gradlew run
 
-# Build the server
 build:
     ./gradlew build
 
-# Clean build files
 clean:
     ./gradlew clean
 
-# Run tests
 test:
     ./gradlew test
-
-# Create a distribution
-dist:
-    ./gradlew distZip
 
 # Run the server in development mode with auto-reload
 dev:

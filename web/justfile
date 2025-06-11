@@ -1,0 +1,8 @@
+alias r := run
+
+run:
+    #!/usr/bin/env sh
+    set -euo pipefail
+
+    cd kotlin && ./gradlew build
+    cd .. && npm run dev

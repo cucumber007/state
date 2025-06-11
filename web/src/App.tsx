@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 
 // This will be available after we build the Kotlin code
-declare const App: {
+declare const KotlinApp: {
   new (): {
     greet(name: string): string;
   };
@@ -12,7 +12,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   const handleClick = () => {
-    const app = new App();
+    const app = new KotlinApp();
     setMessage(app.greet("React"));
   };
 
