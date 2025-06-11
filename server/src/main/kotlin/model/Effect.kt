@@ -1,5 +1,14 @@
 package model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed class Effect {
-    data class HelloWorld(val message: String) : Effect()
+    abstract val id: String
+
+    @Serializable
+    data class HelloWorld(
+        override val id: String,
+        val message: String
+    ) : Effect()
 } 

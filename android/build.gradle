@@ -11,3 +11,12 @@ plugins {
     id 'com.google.gms.google-services' version '4.3.15' apply false
     id 'com.google.firebase.crashlytics' version '3.0.2' apply false
 }
+
+// Add Java toolchain configuration
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+}
