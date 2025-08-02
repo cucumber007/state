@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js") version "1.9.22"
+    kotlin("multiplatform") version "1.9.22"
 }
 
 group = "com.example"
@@ -7,6 +7,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
 kotlin {
@@ -20,9 +21,15 @@ kotlin {
         }
         binaries.executable()
     }
-}
-
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-    implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.9.1")
+    
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.9.1")
+                implementation(npm("react", "^19.1.0"))
+                implementation(npm("react-dom", "^19.1.0"))
+            }
+        }
+    }
 } 
