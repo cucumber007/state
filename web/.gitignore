@@ -1,3 +1,7 @@
+.idea/workspace.xml
+.idea/kotlinc.xml
+.idea/tasks.xml
+.idea/vcs.xml
 .gradle
 build
 
