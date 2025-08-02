@@ -5,7 +5,7 @@ module.exports = {
   entry: "./src/index.tsx",
   output: {
     path: path.resolve(__dirname, "../src/jsMain/resources"),
-    filename: "bundle.js",
+    filename: "app.js",
     clean: true,
   },
   resolve: {
@@ -26,12 +26,6 @@ module.exports = {
         {
           from: "src/index.html",
           to: "index.html",
-          transform(content) {
-            return content.toString().replace(
-              '<script type="module" src="./index.js"></script>',
-              '<script src="bundle.js"></script>'
-            );
-          },
         },
       ],
     }),

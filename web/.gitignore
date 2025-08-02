@@ -4,6 +4,7 @@
 .idea/vcs.xml
 .gradle
 build
+src/jsMain/resources/
 
 # Logs
 logs
