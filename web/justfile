@@ -6,3 +6,6 @@ build:
 
 run:
     ./gradlew jsBrowserDevelopmentRun
+
+update-lock:
+    ./gradlew kotlinUpgradeYarnLock

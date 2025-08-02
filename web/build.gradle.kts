@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.9.20"
+    kotlin("multiplatform") version "2.2.0"
 }
 
 group = "com.example"
@@ -24,8 +24,8 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:18.2.0-pre.385")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:18.2.0-pre.385")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-react:2025.8.0-19.1.1")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom:2025.8.0-19.1.1")
             }
         }
     }
