@@ -1,43 +1,50 @@
-# React + KotlinJS Demo
+# Kotlin Multiplatform JS Example
 
-This is a simple demo application that shows how to integrate KotlinJS with a React TypeScript application.
+A simple Kotlin Multiplatform project that generates JavaScript.
 
 ## Project Structure
 
-- `/src` - React TypeScript source code
-- `/kotlin` - Kotlin source code that compiles to JavaScript
-
-## Setup
-
-1. Install dependencies:
-
-```bash
-npm install
+```
+├── build.gradle.kts          # Gradle build configuration
+├── settings.gradle.kts       # Project settings
+├── gradle.properties         # Gradle properties
+├── src/
+│   └── jsMain/
+│       ├── kotlin/
+│       │   └── Main.kt      # Main Kotlin source file
+│       └── resources/
+│           └── index.html    # HTML file to test the JS
+└── README.md
 ```
 
-2. Build Kotlin code:
+## How to Build
+
+1. **Build the JavaScript:**
+
+   ```bash
+   ./gradlew jsBrowserDevelopmentRun
+   ```
+
+2. **Generate JavaScript files:**
+   ```bash
+   ./gradlew jsBrowserDevelopmentWebpack
+   ```
+
+The generated JavaScript files will be in the `build/distributions/` directory.
+
+## What it does
+
+- The Kotlin code in `Main.kt` gets compiled to JavaScript
+- It creates a simple web page with a button
+- When you click the button, it shows an alert message
+- The JavaScript is generated in the `build/distributions/` folder
+
+## Running the Example
+
+After building, you can open `src/jsMain/resources/index.html` in a browser to see the result, or use the development server:
 
 ```bash
-cd kotlin
-./gradlew build
+./gradlew jsBrowserDevelopmentRun
 ```
 
-3. Start the development server:
-
-```bash
-npm run dev
-```
-
-## How it works
-
-The application demonstrates a simple integration between React and KotlinJS:
-
-- The Kotlin code provides a simple greeting function
-- The React app uses this function when a button is clicked
-- The result is displayed on the screen
-
-## Development
-
-- React code is in `/src`
-- Kotlin code is in `/kotlin/src/main/kotlin`
-- After modifying Kotlin code, rebuild it using `./gradlew build` in the kotlin directory
+This will start a development server and open the page in your browser.
