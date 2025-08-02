@@ -1,17 +1,20 @@
 alias b := build
 alias ba := build-app
+alias r := run
 alias ra := run-app
 alias rk := run-kotlin
 
-build: 
+build: build-app
     ./gradlew jsBrowserDevelopmentWebpack
 
 [working-directory: 'ts']
-build-app: build
+build-app:
     npm run build
 
+run: run-app
+
 [working-directory: 'ts']
-run-app: build-app
+run-app: build
     npx http-server ../build/processedResources/js/main -p 8080 -o
     open http://localhost:8080
 
