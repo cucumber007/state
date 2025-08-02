@@ -4,8 +4,10 @@ alias r := run
 build:
     ./gradlew jsBrowserDevelopmentWebpack
 
-run:
-    ./gradlew jsBrowserDevelopmentRun
+[working-directory: 'ts']
+run: build
+    npx http-server ../build/processedResources/js/main -p 8080 -o
+    open http://localhost:8080
 
 update-lock:
     ./gradlew kotlinUpgradeYarnLock

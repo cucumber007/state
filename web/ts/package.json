@@ -1,0 +1,29 @@
+{
+    "name": "react-ts-app",
+    "version": "1.0.0",
+    "description": "Simple React TypeScript app",
+    "main": "index.js",
+    "scripts": {
+        "build": "webpack --config webpack.config.js",
+        "dev": "webpack --config webpack.config.js --watch"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.23.0",
+        "@babel/core": "^7.23.0",
+        "@babel/plugin-transform-modules-umd": "^7.27.1",
+        "@babel/preset-env": "^7.23.0",
+        "@babel/preset-react": "^7.22.0",
+        "@babel/preset-typescript": "^7.23.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "babel-loader": "^10.0.0",
+        "copy-webpack-plugin": "^13.0.0",
+        "typescript": "^5.2.0",
+        "webpack": "^5.101.0",
+        "webpack-cli": "^6.0.1"
+    }
+}
