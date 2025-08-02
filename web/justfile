@@ -1,0 +1,8 @@
+alias b := build
+alias r := run
+
+build:
+    ./gradlew jsBrowserDevelopmentWebpack
+
+run:
+    ./gradlew jsBrowserDevelopmentRun
